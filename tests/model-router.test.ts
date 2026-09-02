@@ -1,0 +1,3 @@
+import { describe,expect,it } from "vitest";
+import { estimateCredits,routeModel } from "@/lib/models/registry";
+describe("model router",()=>{it("routes normal creators to a curated standard model",()=>{expect(routeModel("image","standard")?.capability).toBe("image");expect(routeModel("video","standard")?.qualityTier).toBe("standard")});it("scales video credits with duration and resolution",()=>{const model=routeModel("video","standard")!;expect(estimateCredits(model,{duration:10,resolution:"720p"})).toBe(model.creditBase*2);expect(estimateCredits(model,{duration:5,resolution:"1080p"})).toBeGreaterThan(model.creditBase)});it("caps image output multiplier",()=>{const model=routeModel("image","fast")!;expect(estimateCredits(model,{count:99})).toBe(model.creditBase*4)})});

@@ -1,0 +1,233 @@
+/* Pricing is deliberately neutral and editorial: cream, ink and coral only. */
+.pricing-public {
+  --pricing-cream: #f7f5f0;
+  --pricing-paper: #fffdfa;
+  --pricing-ink: #151513;
+  --pricing-muted: #69655e;
+  --pricing-line: #d8d3c9;
+}
+
+.pricing-public .site-header {
+  position: relative;
+  z-index: 10;
+  color: var(--pricing-ink);
+}
+
+.pricing-public .pricing-hero {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding: clamp(100px, 12vw, 170px) 24px 64px;
+}
+
+.pricing-public .pricing-hero h1 {
+  font-size: clamp(66px, 8.4vw, 132px);
+  line-height: 0.84;
+  letter-spacing: -0.078em;
+}
+
+.pricing-public .pricing-hero h1 span { color: #aaa49a; }
+
+.pricing-public .pricing-hero > p:last-child {
+  max-width: 690px;
+  margin-top: 30px;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.pricing-public .billing-toggle { margin-bottom: 12px; }
+
+.pricing-public .billing-helper {
+  margin: 0 auto 38px;
+  color: var(--pricing-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.pricing-public .pricing-grid-public {
+  width: min(1480px, calc(100% - 48px));
+  border: 1px solid var(--pricing-line);
+  border-radius: 24px;
+  overflow: visible;
+  background: var(--pricing-paper);
+}
+
+body .pricing-public .pricing-grid-public article {
+  min-height: 655px;
+  padding: clamp(24px, 2.2vw, 36px);
+  border-bottom: 0;
+  border-right: 1px solid var(--pricing-line);
+  background: transparent;
+}
+
+body .pricing-public .pricing-grid-public article:last-child { border-right: 0; }
+
+body .pricing-public .pricing-grid-public article.featured {
+  z-index: 2;
+  margin: -12px 0;
+  min-height: 679px;
+  border: 1px solid #2a2925;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 85% 5%, rgba(255, 77, 61, 0.24), transparent 28%),
+    #171715;
+  box-shadow: 0 26px 70px rgba(28, 25, 20, 0.18);
+  transform: none;
+}
+
+body .pricing-public .pricing-grid-public article > em {
+  top: 24px;
+  right: 24px;
+  padding: 7px 9px;
+  border-radius: 99px;
+  background: #ff5c4d;
+  font-size: 10px;
+}
+
+.pricing-public .plan-heading {
+  min-height: 55px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.pricing-public .plan-heading > span {
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.045em;
+}
+
+.pricing-public .plan-heading > small {
+  color: var(--pricing-muted);
+  font-size: 12px;
+}
+
+.pricing-public .featured .plan-heading > small { color: rgba(255, 255, 255, 0.5); }
+
+body .pricing-public .pricing-grid-public .plan-description {
+  min-height: 76px;
+  margin: 22px 0 26px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+body .pricing-public .pricing-grid-public .plan-price h2 {
+  font-size: clamp(54px, 4.5vw, 72px);
+  line-height: 0.95;
+}
+
+body .pricing-public .pricing-grid-public .plan-price > span { font-size: 14px; }
+
+body .pricing-public .pricing-grid-public .annual-note {
+  margin: 8px 0 28px;
+  font-size: 13px;
+}
+
+body .pricing-public .pricing-grid-public article > strong {
+  padding-top: 24px;
+  border-top: 1px solid #e2ddd4;
+  color: var(--pricing-ink);
+  font-size: 14px;
+}
+
+body .pricing-public .pricing-grid-public article.featured > strong {
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #ff8176;
+}
+
+body .pricing-public .pricing-grid-public ul {
+  margin: 23px 0 30px;
+  gap: 14px;
+  font-size: 14px;
+}
+
+body .pricing-public .pricing-grid-public li svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #ee4b3c;
+}
+
+body .pricing-public .pricing-grid-public article > a {
+  min-height: 52px;
+  border: 1px solid #beb8ae;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+body .pricing-public .pricing-grid-public article > a:hover { background: #f0ece5; }
+
+body .pricing-public .pricing-grid-public article.featured > a:hover { background: #f2eee8; }
+
+.pricing-assurance {
+  width: min(1260px, calc(100% - 48px));
+  margin: 44px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--pricing-line);
+  border-bottom: 1px solid var(--pricing-line);
+}
+
+.pricing-assurance span {
+  min-height: 74px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #56524c;
+  font-size: 13px;
+  text-align: center;
+}
+
+.pricing-assurance svg { color: #e84a3b; }
+
+.pricing-public .pricing-calculator { margin-top: 115px; }
+
+.pricing-public .calculator-result {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(255, 94, 78, 0.3), transparent 33%),
+    linear-gradient(160deg, #1b1a17, #121210);
+}
+
+.pricing-public .pricing-comparison thead th { background: #171715; }
+
+.pricing-public .pricing-faq { background: #ebe7de; }
+
+.pricing-public .pricing-cta {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 77, 61, 0.16), transparent 32%),
+    #171715;
+}
+
+@media (max-width: 1050px) {
+  .pricing-public .pricing-grid-public { grid-template-columns: repeat(2, 1fr); }
+  body .pricing-public .pricing-grid-public article { border-bottom: 1px solid var(--pricing-line); }
+  body .pricing-public .pricing-grid-public article:nth-child(2) { border-right: 0; }
+  body .pricing-public .pricing-grid-public article.featured { margin: 0; min-height: 655px; border-radius: 0; }
+  .pricing-assurance { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .pricing-public .site-header { width: calc(100% - 28px); }
+  .pricing-public .pricing-hero { padding: 88px 14px 54px; text-align: left; }
+  .pricing-public .pricing-hero .eyebrow { justify-content: flex-start; }
+  .pricing-public .pricing-hero h1 { font-size: clamp(62px, 20vw, 88px); }
+  .pricing-public .pricing-hero > p:last-child { margin-inline: 0; font-size: 16px; }
+  .pricing-public .pricing-grid-public {
+    width: calc(100% - 28px);
+    grid-template-columns: 1fr;
+    border-radius: 18px;
+  }
+  body .pricing-public .pricing-grid-public article,
+  body .pricing-public .pricing-grid-public article.featured {
+    min-height: 600px;
+    border-right: 0;
+    border-bottom: 1px solid var(--pricing-line);
+    border-radius: 0;
+  }
+  body .pricing-public .pricing-grid-public article:last-child { border-bottom: 0; }
+  .pricing-assurance { width: calc(100% - 28px); grid-template-columns: 1fr; }
+  .pricing-assurance span { justify-content: flex-start; border-bottom: 1px solid var(--pricing-line); }
+  .pricing-assurance span:last-child { border-bottom: 0; }
+}

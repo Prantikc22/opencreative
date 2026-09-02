@@ -1,0 +1,2 @@
+-- Optional demo content is created per-user from the onboarding screen so all
+-- rows have a valid owner. Model metadata is seeded by the initial migration.

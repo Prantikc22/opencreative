@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OpenCreative
 
-## Getting Started
+OpenCreative is an open-source creative operating system for brands, agencies, and creators. It combines AI image, video, avatar, speech, transcription, translation, Brand DNA, asset management, campaign workflows, and transparent credit accounting in one Next.js application.
 
-First, run the development server:
+## Stack
+
+- Next.js 16, React 19, TypeScript, Tailwind CSS
+- Supabase Auth + Postgres with row-level security
+- OpenRouter for model discovery and generation APIs
+- Cloudflare R2 for private media storage with signed URLs
+- Vercel or Docker for deployment
+
+## Local setup
 
 ```bash
+npm install
+cp .env.example .env.local
+npm run storage:setup
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Apply [`supabase/migrations/20260901000000_initial.sql`](supabase/migrations/20260901000000_initial.sql) to your Supabase project before signing in. Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Verification
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Import the repository into Vercel, copy every variable from `.env.example` into the project environment, set `NEXT_PUBLIC_APP_URL` and `OPENROUTER_APP_URL` to the production URL, and rerun `npm run storage:setup` with production environment values so R2 allows the production origin.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See [ARCHITECTURE.md](ARCHITECTURE.md), [SELF_HOSTING.md](SELF_HOSTING.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Security
 
-## Deploy on Vercel
+Never commit `.env.local`. The service-role, OpenRouter, and R2 keys are server-only. Brand website analysis rejects private-network targets and redirects, uploads use short-lived signed URLs, and tenant data is protected by Postgres RLS.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT — see [LICENSE](LICENSE).
