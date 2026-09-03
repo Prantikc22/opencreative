@@ -137,7 +137,7 @@ export async function GET(request: Request) {
     name: "OpenCreative MCP",
     protocolVersion,
     endpoint: new URL("/api/mcp", request.url).toString(),
-    authentication: "Authorization: Bearer <Supabase access token>",
+    authentication: "Authorization: Bearer <OpenCreative Cloud MCP key>",
     tools: tools.map(({ name, description }) => ({ name, description })),
   });
 }
@@ -163,7 +163,7 @@ export async function POST(request: Request) {
   if (body.method !== "tools/call") return rpcError(body.id, -32601, "Method not found");
 
   if (!request.headers.get("authorization")?.match(/^Bearer\s+\S+/i)) {
-    return rpcError(body.id, -32001, "A Supabase access token is required.");
+    return rpcError(body.id, -32001, "An OpenCreative Cloud MCP key is required.");
   }
 
   const name = typeof body.params?.name === "string" ? body.params.name : "";

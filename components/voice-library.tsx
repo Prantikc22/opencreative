@@ -5,85 +5,18 @@ import Link from "next/link";
 import { ArrowRight, Mic2, Pause, Play, Search, Sparkles } from "lucide-react";
 
 const voices = [
-  [
-    "Maya",
-    "Warm · Assured",
-    "English, Hindi",
-    "#ef664f",
-    "Advertisement",
-    "/audio/maya.wav",
-  ],
-  [
-    "Theo",
-    "Natural · Bright",
-    "English",
-    "#d4a63e",
-    "Conversational",
-    "/audio/theo.wav",
-  ],
-  [
-    "Sora",
-    "Calm · Refined",
-    "Multilingual",
-    "#718e99",
-    "Narration",
-    "/audio/sora.wav",
-  ],
-  [
-    "Arlo",
-    "Deep · Cinematic",
-    "English",
-    "#5a514d",
-    "Trailer",
-    "/audio/arlo.wav",
-  ],
-  ["Nia", "Energetic · Clear", "Multilingual", "#8d719f", "UGC", "/audio/nia.wav"],
-  ["Dev", "Professional · Warm", "English, Hindi", "#6e8948", "Explainer", "/audio/dev.wav"],
-  [
-    "Lucia",
-    "Expressive · Elegant",
-    "Spanish, English",
-    "#b96c60",
-    "Podcast",
-    "/audio/lucia.wav",
-  ],
-  [
-    "Kenji",
-    "Clear · Measured",
-    "Japanese, English",
-    "#657696",
-    "Professional",
-    "/audio/kenji.wav",
-  ],
-  ["Amina", "Warm · Grounded", "Arabic, English", "#8d6d52", "Narration", "/audio/amina.wav"],
-  [
-    "Camille",
-    "Polished · Intimate",
-    "French, English",
-    "#806e93",
-    "Luxury",
-    "/audio/camille.wav",
-  ],
-  ["Mateo", "Friendly · Upbeat", "Spanish, English", "#4f8691", "UGC", "/audio/mateo.wav"],
-  ["Priya", "Bright · Precise", "Hindi, English", "#a96872", "Learning", "/audio/priya.wav"],
-  [
-    "Jonas",
-    "Confident · Direct",
-    "German, English",
-    "#596b89",
-    "Corporate",
-    "/audio/jonas.wav",
-  ],
-  ["Zuri", "Energetic · Magnetic", "English, Swahili", "#a25c48", "Social", "/audio/zuri.wav"],
-  [
-    "Ana",
-    "Natural · Optimistic",
-    "Portuguese, English",
-    "#638562",
-    "Lifestyle",
-    "/audio/ana.wav",
-  ],
-  ["Eli", "Youthful · Breezy", "English", "#5b85a2", "Conversational", "/audio/eli.wav"],
+  ["Maya", "Warm · Assured · Female", "Indian English", "#ef664f", "Advertisement", "/audio/maya.wav"],
+  ["Theo", "Natural · Bright · Male", "US English", "#d4a63e", "Conversational", "/audio/theo.wav"],
+  ["Ellis", "Measured · Cinematic · Male", "British English", "#718e99", "Trailer", "/audio/ellis.wav"],
+  ["Clara", "Editorial · Poised · Female", "British English", "#5a514d", "Narration", "/audio/clara.wav"],
+  ["Priya", "Expressive · Assured · Female", "Hindi", "#8d719f", "Learning", "/audio/priya.wav"],
+  ["Dev", "Grounded · Clear · Male", "Hindi", "#6e8948", "Explainer", "/audio/dev.wav"],
+  ["Lucia", "Elegant · Expressive · Female", "European Spanish", "#b96c60", "Podcast", "/audio/lucia.wav"],
+  ["Mateo", "Friendly · Upbeat · Male", "Latin American Spanish", "#4f8691", "UGC", "/audio/mateo.wav"],
+  ["Camille", "Polished · Calm · Female", "Metropolitan French", "#806e93", "Luxury", "/audio/camille.wav"],
+  ["Luc", "Direct · Confident · Male", "Metropolitan French", "#596b89", "Corporate", "/audio/luc.wav"],
+  ["Sora", "Soft · Composed · Female", "Japanese", "#638562", "Narration", "/audio/sora.wav"],
+  ["Kenji", "Focused · Modern · Male", "Japanese", "#657696", "Professional", "/audio/kenji.wav"],
 ] as const;
 
 export function VoiceLibrary() {
@@ -115,8 +48,8 @@ export function VoiceLibrary() {
     audio.current?.pause();
     audio.current = new Audio(sample);
     audio.current.onended = () => setPlaying("");
-    audio.current.play();
-    setPlaying(name);
+    audio.current.onerror = () => setPlaying("");
+    audio.current.play().then(() => setPlaying(name)).catch(() => setPlaying(""));
   }
   return (
     <div className="voice-library-page">

@@ -21,6 +21,7 @@ import {
   Package,
   Palette,
   PanelLeftClose,
+  PlugZap,
   Settings,
   Sparkles,
   UserRound,
@@ -150,6 +151,10 @@ export function AppSidebar({
           ))}
         </nav>
         <div className="sidebar-bottom">
+          <Link href="/account/mcp">
+            <PlugZap size={17} />
+            <span>MCP &amp; API keys</span>
+          </Link>
           <Link href="/account/affiliate">
             <BadgeDollarSign size={17} />
             <span>Affiliate earnings</span>

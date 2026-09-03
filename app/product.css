@@ -2167,8 +2167,31 @@
 .spin { animation: studio-spin .9s linear infinite; }
 @keyframes studio-spin { to { transform: rotate(360deg); } }
 
+/* Workspace-linked MCP keys */
+.mcp-account-grid { margin-top: 34px; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); border: 1px solid var(--border-strong); background: #fff; }
+.mcp-key-create, .mcp-key-list { min-height: 430px; padding: 30px; }
+.mcp-key-create { border-right: 1px solid var(--border-strong); }
+.mcp-key-create h2, .mcp-key-list h2 { margin: 0 0 14px; display: flex; align-items: center; gap: 9px; font-size: 20px; }
+.mcp-key-create > p, .mcp-key-list > p { max-width: 560px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.mcp-key-create form { margin-top: 28px; display: grid; grid-template-columns: 1fr auto; }
+.mcp-key-create form input { min-width: 0; min-height: 50px; padding: 0 14px; border: 1px solid var(--border-strong); border-right: 0; border-radius: 0; font: inherit; }
+.mcp-key-create form button, .mcp-key-secret button, .mcp-key-list article button { min-height: 50px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--border-strong); border-radius: 0; background: #0b0b0a; color: #fff; font-weight: 700; cursor: pointer; }
+.mcp-key-secret { margin-top: 24px; display: grid; border: 1px solid var(--coral); background: #fff4f1; }
+.mcp-key-secret > span { padding: 12px 14px 0; display: flex; align-items: center; gap: 7px; color: #9f2c1e; font-size: 12px; font-weight: 750; }
+.mcp-key-secret code { padding: 12px 14px 18px; overflow-wrap: anywhere; font: 12px/1.55 var(--font-geist-mono); }
+.mcp-key-secret button { border-width: 1px 0 0; }
+.mcp-key-list article { min-height: 92px; padding: 16px 0; display: flex; align-items: center; justify-content: space-between; gap: 18px; border-top: 1px solid var(--line); }
+.mcp-key-list article > div { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.mcp-key-list article code, .mcp-key-list article small { color: var(--muted); font-size: 11px; }
+.mcp-key-list article.revoked { opacity: .48; }
+.mcp-key-list article button { min-height: 38px; padding-inline: 12px; background: #fff; color: #0b0b0a; font-size: 11px; }
+
 @media (max-width: 800px) {
   .studio-result-panel { min-height: 520px; padding: 18px; }
   .agent-studio-switcher { grid-template-columns: 1fr; }
   .agent-compact-fields { grid-template-columns: 1fr; }
+  .mcp-account-grid { grid-template-columns: 1fr; }
+  .mcp-key-create { border-right: 0; border-bottom: 1px solid var(--border-strong); }
+  .mcp-key-create form { grid-template-columns: 1fr; }
+  .mcp-key-create form input { border-right: 1px solid var(--border-strong); border-bottom: 0; }
 }

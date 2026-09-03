@@ -183,13 +183,14 @@
 }
 
 /* Remote MCP */
-.mcp-public { min-height: 100vh; color: #0b0b0a; background: #f5f3ee; }
+.mcp-public { min-height: 100vh; color: #0b0b0a; background: #f5f3ee; --oc-red: #ff513f; --oc-black: #0b0b0a; }
+.mcp-public .home-header { position: absolute; inset: 0 0 auto; z-index: 20; height: 86px; padding: 0 3vw; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; border-bottom: 1px solid rgba(255,255,255,.28); background: #0b0b0a; color: #fff; }
 .mcp-hero { padding: 190px 5vw 110px; color: #fff; background: radial-gradient(circle at 78% 46%, rgba(255,81,63,.24), transparent 28%), #0b0b0a; }
 .mcp-hero > p:not(.section-kicker) { max-width: 720px; margin: 34px 0 0; color: #aaa; font-size: 19px; line-height: 1.6; }
 .mcp-hero h1 { max-width: 1220px; margin: 24px 0 0; font-size: clamp(74px, 10vw, 154px); line-height: .84; letter-spacing: -.075em; }
 .mcp-hero h1 em { color: var(--oc-red); }
 .mcp-actions { margin-top: 40px; display: flex; gap: 12px; }
-.mcp-tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0 4vw; border: 1px solid #0b0b0a; border-right: 0; border-bottom: 0; background: #fff; }
+.mcp-tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); margin: 90px 4vw 110px; border: 1px solid #0b0b0a; border-right: 0; border-bottom: 0; background: #fff; }
 .mcp-tool-grid article { min-height: 310px; padding: 32px; display: flex; flex-direction: column; border-right: 1px solid #0b0b0a; border-bottom: 1px solid #0b0b0a; }
 .mcp-tool-grid article svg { color: var(--oc-red); }
 .mcp-tool-grid h2 { margin: auto 0 15px; font-size: 30px; letter-spacing: -.05em; }
@@ -212,7 +213,7 @@
   .mcp-hero { padding: 135px 20px 80px; }
   .mcp-hero h1 { font-size: 64px; }
   .mcp-actions { align-items: flex-start; flex-direction: column; }
-  .mcp-tool-grid { grid-template-columns: 1fr; margin-inline: 20px; }
+  .mcp-tool-grid { grid-template-columns: 1fr; margin: 56px 20px 76px; }
   .mcp-tool-grid article { min-height: 230px; }
   .mcp-connect { padding: 85px 20px; }
 }

@@ -1,11 +1,60 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { requireApiUser } from "@/lib/supabase/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { hasProductEntitlement, type ProductFamily } from "@/lib/entitlements";
 
 export async function apiContext(requiredProduct?: ProductFamily, request?: Request) {
   const bearer = request?.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
+  if (bearer?.startsWith("oc_live_")) {
+    const supabase = createAdminClient();
+    const tokenHash = createHash("sha256").update(bearer).digest("hex");
+    const { data: apiKey } = await supabase
+      .from("workspace_api_keys")
+      .select("id,workspace_id,user_id,scopes")
+      .eq("token_hash", tokenHash)
+      .is("revoked_at", null)
+      .maybeSingle();
+    if (!apiKey) throw new Error("UNAUTHENTICATED");
+    if (requiredProduct && !apiKey.scopes?.includes(requiredProduct))
+      throw new Error(
+        `${requiredProduct === "agents" ? "Agent" : "Creative"} product access required`,
+      );
+    const [{ data: userResult }, { data: member }, { data: workspace }] =
+      await Promise.all([
+        supabase.auth.admin.getUserById(apiKey.user_id),
+        supabase
+          .from("workspace_members")
+          .select("role")
+          .eq("workspace_id", apiKey.workspace_id)
+          .eq("user_id", apiKey.user_id)
+          .maybeSingle(),
+        supabase
+          .from("workspaces")
+          .select("id,plan,settings,product_entitlements")
+          .eq("id", apiKey.workspace_id)
+          .maybeSingle(),
+      ]);
+    const user = userResult.user;
+    if (!user || !member || !workspace) throw new Error("UNAUTHENTICATED");
+    if (requiredProduct && !hasProductEntitlement(workspace, requiredProduct))
+      throw new Error(
+        `${requiredProduct === "agents" ? "Agent" : "Creative"} product access required`,
+      );
+    await supabase
+      .from("workspace_api_keys")
+      .update({ last_used_at: new Date().toISOString() })
+      .eq("id", apiKey.id);
+    return {
+      user,
+      supabase,
+      workspaceId: apiKey.workspace_id as string,
+      role: member.role as string,
+      workspace,
+    };
+  }
   const publicUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const publicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   const tokenClient = bearer && publicUrl && publicKey

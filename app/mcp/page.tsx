@@ -22,9 +22,9 @@ const configExample = [
   "{",
   '  "mcpServers": {',
   '    "opencreative": {',
-  '      "url": "https://YOUR_DOMAIN/api/mcp",',
+  '      "url": "https://opencreative.vercel.app/api/mcp",',
   '      "headers": {',
-  '        "Authorization": "Bearer YOUR_SUPABASE_ACCESS_TOKEN"',
+  '        "Authorization": "Bearer YOUR_OPENCREATIVE_MCP_KEY"',
   "      }",
   "    }",
   "  }",
@@ -40,7 +40,7 @@ export default function McpPage() {
         <h1>Give your agents<br /><em>a creative studio.</em></h1>
         <p>Connect compatible AI assistants to the same image, video, voice, music, avatar, and campaign workflow your team uses in OpenCreative.</p>
         <div className="mcp-actions">
-          <Link className="oc-button oc-button-coral" href="/signup">Create a workspace <ArrowRight size={16} /></Link>
+          <Link className="oc-button oc-button-coral" href="/account/mcp">Create an MCP key <ArrowRight size={16} /></Link>
           <a className="oc-button oc-button-dark" href="#connect">See connection guide <ArrowRight size={16} /></a>
         </div>
       </section>
@@ -59,13 +59,14 @@ export default function McpPage() {
         <div>
           <p className="section-kicker">CONNECT</p>
           <h2>One authenticated endpoint.</h2>
-          <p>The server uses your Supabase session access token, so an MCP client can only act inside the workspace and product family that user is allowed to access. Generation credits are reserved and returned on failed requests just like the web studio.</p>
+          <p>OpenCreative Cloud creates a dedicated MCP key from your signed-in account. The key is linked to your workspace, plan, creative entitlement, tenant permissions, and credit wallet—never to a raw Supabase credential.</p>
           <p>Reference inputs must be HTTPS URLs the model provider can fetch. Upload private files in OpenCreative first, then pass the resulting signed URL to the tool.</p>
+          <p>This hosted endpoint is a Cloud feature. Self-hosted installations can expose their own endpoint and authentication policy from their deployment.</p>
         </div>
         <div className="mcp-code-card">
           <span><Bot size={16} /> Remote MCP configuration</span>
           <pre><code>{configExample}</code></pre>
-          <small>Use <code>/api/mcp</code> on your deployed OpenCreative domain. Access tokens expire; refresh them through your authenticated client.</small>
+          <small>Create and revoke keys under <code>Account → MCP &amp; API keys</code>. Keys are stored as one-way hashes and the full value is shown only once.</small>
         </div>
       </section>
 
