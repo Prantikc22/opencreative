@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   let generationId: string | undefined;
   let context: Awaited<ReturnType<typeof apiContext>> | undefined;
   try {
-    context = await apiContext("creative");
+    context = await apiContext("creative", request);
     const input = schema.parse(await request.json());
     const model = routeModel("avatar", "premium");
     if (!model)

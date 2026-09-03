@@ -70,7 +70,13 @@
   display: grid;
   grid-template-columns: 1.65fr repeat(3, 0.7fr);
   gap: clamp(30px, 5vw, 80px);
-  padding: 62px 0 78px;
+  padding: 88px 0 78px;
+}
+
+.site-footer-note > a {
+  display: inline-flex;
+  margin-bottom: 28px;
+  color: inherit;
 }
 
 .site-footer-note span {
@@ -82,13 +88,15 @@
   font-weight: 650;
 }
 
-.site-footer-note i {
+.site-footer-note > span i {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: #c9f56c;
   box-shadow: 0 0 0 5px rgba(201, 245, 108, 0.1);
 }
+
+.site-footer-note > a .brand-mark { font-size: 18px; }
 
 .site-footer-note p {
   max-width: 280px;

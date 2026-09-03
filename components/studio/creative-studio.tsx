@@ -64,6 +64,8 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
   const [duration, setDuration] = useState(5);
   const [count, setCount] = useState(1);
   const [reference, setReference] = useState("");
+  const [references, setReferences] = useState<Array<{ name: string; url: string }>>([]);
+  const [uploadingReferences, setUploadingReferences] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState("");
   const [consent, setConsent] = useState(false);
   const [advancedModel, setAdvancedModel] = useState("");
@@ -152,6 +154,7 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
               advancedModel: quality === "advanced" ? advancedModel : undefined,
               aspectRatio: aspect,
               count,
+              references: references.length ? references.map((item) => item.url) : undefined,
               projectId: projectId || undefined,
               idempotencyKey: crypto.randomUUID(),
             }
@@ -165,6 +168,7 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
                 duration,
                 resolution: "720p",
                 generateAudio: true,
+                references: references.length ? references.map((item) => item.url) : undefined,
                 projectId: projectId || undefined,
                 idempotencyKey: crypto.randomUUID(),
               }
@@ -207,6 +211,45 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
     processing: "Saving your finished media",
     completed: "Creative ready",
   };
+  async function uploadReferenceFiles(files: FileList | null) {
+    if (!files?.length) return;
+    setUploadingReferences(true);
+    setError("");
+    try {
+      const selected = Array.from(files).slice(0, mode === "avatar" ? 1 : Math.max(0, 5 - references.length));
+      const uploaded: Array<{ name: string; url: string }> = [];
+      for (const file of selected) {
+        if (!file.type.startsWith("image/")) throw new Error("Reference files must be PNG, JPEG, WebP, or GIF images.");
+        const presign = await fetch("/api/storage/presign", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "upload", fileName: file.name, mimeType: file.type, size: file.size, category: mode === "avatar" ? "avatars" : "uploads" }),
+        });
+        const upload = await presign.json();
+        if (!presign.ok) throw new Error(upload.error || "Could not prepare the reference upload.");
+        const put = await fetch(upload.uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+        if (!put.ok) throw new Error("The reference upload did not complete.");
+        const delivery = await fetch("/api/storage/presign", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "download", assetId: upload.assetId }),
+        });
+        const delivered = await delivery.json();
+        if (!delivery.ok) throw new Error(delivered.error || "Could not prepare the reference for generation.");
+        uploaded.push({ name: file.name, url: delivered.downloadUrl });
+      }
+      if (mode === "avatar") {
+        setReference(uploaded[0]?.url || "");
+        setSelectedAvatar("");
+      } else {
+        setReferences((current) => [...current, ...uploaded].slice(0, 5));
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not upload the reference.");
+    } finally {
+      setUploadingReferences(false);
+    }
+  }
   return (
     <div className="studio-page">
       <header className="studio-intro">
@@ -269,6 +312,10 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
                 }}
                 placeholder="Paste a publicly accessible signed image URL"
               />
+              <label className="studio-reference-upload">
+                <ImagePlus size={17} /> {uploadingReferences ? "Uploading…" : "Upload your photo"}
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={uploadingReferences} onChange={(event) => uploadReferenceFiles(event.target.files)} />
+              </label>
               <label className="consent-check">
                 <input
                   type="checkbox"
@@ -280,6 +327,16 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
                   identity. Curated OpenCreative presenters are pre-authorized.
                 </span>
               </label>
+            </div>
+          )}
+          {mode !== "avatar" && (
+            <div className="control-section">
+              <label className="control-label">Reference images <span>optional · up to 5</span></label>
+              <label className="studio-reference-upload">
+                <ImagePlus size={17} /> {uploadingReferences ? "Uploading references…" : "Attach product, person, or style references"}
+                <input type="file" multiple accept="image/png,image/jpeg,image/webp,image/gif" disabled={uploadingReferences || references.length >= 5} onChange={(event) => uploadReferenceFiles(event.target.files)} />
+              </label>
+              {references.length > 0 && <div className="studio-reference-list">{references.map((item, index) => <button type="button" key={`${item.name}-${index}`} onClick={() => setReferences((current) => current.filter((_, position) => position !== index))}>{item.name}<span>×</span></button>)}</div>}
             </div>
           )}
           <div className="control-grid">

@@ -11,7 +11,7 @@ import { transcribeAudio } from "@/lib/openrouter/client";
 export const maxDuration = 60;
 const schema = z.object({
   base64: z.string().min(100).max(50_000_000),
-  format: z.enum(["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac"]),
+  format: z.enum(["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac", "mp4", "mov"]),
   language: z.string().length(2).optional(),
   durationSeconds: z.number().positive().max(3600).optional(),
   quality: z.enum(["standard", "premium"]).default("standard"),

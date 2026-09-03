@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Braces, Check, Cloud, Code2, Database, GitBranch, HardDrive, KeyRound, LockKeyhole, Route, ServerCog, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, AudioLines, Bot, Braces, Check, CircleUserRound, Clapperboard, Cloud, Code2, Database, GitBranch, HardDrive, ImageIcon, KeyRound, LockKeyhole, Music2, Route, ServerCog, ShieldCheck, Users } from "lucide-react";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
@@ -28,6 +28,22 @@ const safeguards = [
   [Users, "Tenant boundaries", "Every commercial record is scoped to a workspace, and database policies verify membership before access."],
   [LockKeyhole, "Server-only secrets", "OpenRouter, Supabase service-role, and storage credentials stay in the server runtime."],
   [ShieldCheck, "Metered generations", "Credits are reserved before provider work, settled after success, and returned when a job fails."],
+] as const;
+
+const capabilities = [
+  [ImageIcon, "Image", "Route prompts through the model registry, keep generation history, and save finished work to private media storage."],
+  [Clapperboard, "Video", "Submit asynchronous video jobs and poll provider status without asking the local machine to transcode media."],
+  [AudioLines, "Voice and dubbing", "Generate multilingual speech or transcribe uploaded audio and supported video containers."],
+  [Music2, "Music", "Generate provider-backed music when the selected OpenRouter model is available to your account."],
+  [CircleUserRound, "Avatars", "Store consented identities and use approved source media in presenter workflows."],
+  [Bot, "Agents", "Create workspace-scoped agents with separate knowledge, voice, sessions, messages, and usage."],
+] as const;
+
+const envGroups = [
+  ["Application", "NEXT_PUBLIC_APP_URL", "NEXT_PUBLIC_APP_NAME"],
+  ["Supabase", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "SUPABASE_SERVICE_ROLE_KEY"],
+  ["OpenRouter", "OPENROUTER_API_KEY", "OPENROUTER_SITE_URL", "OPENROUTER_APP_NAME"],
+  ["Cloudflare R2", "R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET_NAME"],
 ] as const;
 
 export default function OpenSourcePage() {
@@ -80,6 +96,18 @@ export default function OpenSourcePage() {
           <article><span>03</span><strong>Storage</strong><p>A private Cloudflare R2 bucket for source media, finished assets, and signed delivery.</p></article>
           <article><span>04</span><strong>Models</strong><p>An OpenRouter key for the models enabled in the capability registry.</p></article>
         </div>
+      </section>
+      <section className="oss-capabilities">
+        <header><p>WHAT SHIPS</p><h2>A useful core,<br />not a landing-page shell.</h2><span>The repository includes the product surfaces, model routing, tenant data model, private media flow, generation metering, and tests needed to extend the studio with your own provider accounts.</span></header>
+        <div>{capabilities.map(([Icon, title, copy]) => <article key={title}><Icon size={25} /><h3>{title}</h3><p>{copy}</p></article>)}</div>
+      </section>
+      <section className="oss-checklist">
+        <div><p>CONFIGURATION CHECKLIST</p><h2>Bring four service boundaries.</h2><span>Copy <code>.env.example</code>, add these server and public variables, then apply the included Supabase migrations. Secret values never belong in client components or source control.</span></div>
+        <aside>{envGroups.map(([label, ...names]) => <section key={label}><strong>{label}</strong>{names.map(name => <code key={name}>{name}</code>)}</section>)}</aside>
+      </section>
+      <section className="oss-cloud-choice">
+        <header><p>HOSTED OR SELF-HOSTED</p><h2>Control when you need it.<br />Convenience when you do not.</h2></header>
+        <div><article><span>SELF-HOSTED CORE</span><h3>Your infrastructure</h3><ul><li>Bring provider, database, and storage accounts</li><li>Run migrations and deployment yourself</li><li>Own upgrades, observability, and incident response</li><li>Inspect and adapt provider routing</li></ul><a href={productConfig.githubUrl} target="_blank" rel="noreferrer">Clone the core <ArrowRight size={15} /></a></article><article><span>OPENCREATIVE CLOUD</span><h3>Ready workspace</h3><ul><li>Start without provisioning infrastructure</li><li>Managed credit accounting and private media</li><li>Provider routing configured for the product</li><li>Product updates without manual deployment work</li></ul><Link className="oc-button oc-button-coral" href="/signup">Start free <ArrowRight size={15} /></Link></article></div>
       </section>
       <section className="oss-safeguards">
         <header><p>SECURITY MODEL</p><h2>Workspace isolation is part of the architecture.</h2></header>

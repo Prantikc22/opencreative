@@ -2,10 +2,12 @@ import Link from "next/link";
 import {
   ArrowRight,
   AudioLines,
+  Bot,
   CircleUserRound,
   Clapperboard,
   Images,
   PackageOpen,
+  Palette,
   Sparkles,
   WandSparkles,
 } from "lucide-react";
@@ -87,6 +89,10 @@ export default async function DashboardPage() {
   return (
     <div className="dashboard-page">
       <section className="dashboard-intro">
+        <nav className="dashboard-product-selector" aria-label="Choose workspace">
+          <Link className="active" href="/app"><Palette size={17} /> Creative Studio</Link>
+          <Link href="/studio/agents"><Bot size={17} /> OpenCreative Agents</Link>
+        </nav>
         <p className="eyebrow">
           <Sparkles size={13} /> Creative workspace
         </p>

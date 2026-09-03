@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import {
   Aperture,
+  BadgeDollarSign,
   AudioLines,
   Bot,
   CircleUserRound,
@@ -149,6 +150,10 @@ export function AppSidebar({
           ))}
         </nav>
         <div className="sidebar-bottom">
+          <Link href="/account/affiliate">
+            <BadgeDollarSign size={17} />
+            <span>Affiliate earnings</span>
+          </Link>
           <Link href="/account/credits">
             <Coins size={17} />
             <span>Credits & billing</span>

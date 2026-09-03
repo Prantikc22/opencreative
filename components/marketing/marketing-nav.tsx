@@ -27,6 +27,9 @@ const solutions = [
 const resources = [
   ["Showcase", "Work made across all six products", "/#showcase"],
   ["Pricing", "Plans, comparison, and calculator", "/pricing"],
+  ["Compare", "OpenCreative alongside specialist tools", "/compare"],
+  ["Affiliates", "Share OpenCreative and track rewards", "/affiliates"],
+  ["MCP", "Let AI agents use your creative tools", "/mcp"],
   ["Safety", "Consent, privacy, and provenance", "/#safety"],
   ["Open source", "Inspect and self-host the core", "/open-source"],
 ] as const;
@@ -51,6 +54,7 @@ export function MarketingNav() {
         <div className="mobile-nav-directory">
           <span>Products</span>{products.map(([name, , href]) => <Link href={href} key={name}>{name}</Link>)}
           <span>Solutions</span>{solutions.slice(0, 4).map(([name, , href]) => <Link href={href} key={name}>{name}</Link>)}
+          <span>Resources</span><Link href="/compare">Compare</Link><Link href="/affiliates">Affiliates</Link><Link href="/mcp">MCP</Link><Link href="/open-source">Open source</Link>
           <span>Company</span><a href="https://www.resolutexhq.com/about" target="_blank" rel="noreferrer">About</a><a href="https://www.resolutexhq.com/careers" target="_blank" rel="noreferrer">Careers</a>
         </div>
       </nav>

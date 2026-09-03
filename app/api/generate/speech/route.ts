@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   let generationId = "";
   let context: Awaited<ReturnType<typeof apiContext>> | undefined;
   try {
-    context = await apiContext("creative");
+    context = await apiContext("creative", request);
     const input = schema.parse(await request.json());
     const model = routeModel("speech", input.quality);
     if (!model) throw new Error("No speech model is available.");

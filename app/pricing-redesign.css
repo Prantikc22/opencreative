@@ -28,7 +28,7 @@
 .pricing-public .pricing-hero h1,
 .pricing-public .pricing-hero > p:not(.eyebrow),
 .pricing-public .pricing-jump-nav {
-  width: min(1200px, 100%);
+  width: min(840px, 100%);
   margin-left: auto;
   margin-right: auto;
 }
@@ -102,6 +102,9 @@
   font-size: 13px;
   font-weight: 750;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pricing-jump-nav a:last-child { border-right: 0; }

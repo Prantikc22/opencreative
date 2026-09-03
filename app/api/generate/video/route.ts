@@ -24,7 +24,7 @@ export async function POST(request: Request) {
   let generationId: string | undefined;
   let userId: string | undefined;
   try {
-    const context = await apiContext("creative");
+    const context = await apiContext("creative", request);
     userId = context.user.id;
     const input = schema.parse(await request.json());
     const model = routeModel("video", input.quality, input.advancedModel);
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
     });
   } catch (cause) {
     if (generationId && userId) {
-      const context = await apiContext("creative");
+      const context = await apiContext("creative", request);
       await failGeneration({
         supabase: context.supabase,
         generationId,

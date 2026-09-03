@@ -76,7 +76,7 @@ const outputSchema = {
 };
 export async function POST(request: Request) {
   try {
-    const context = await apiContext();
+    const context = await apiContext("creative", request);
     const input = schema.parse(await request.json());
     let memory = "";
     if (input.brandId) {

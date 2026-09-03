@@ -137,11 +137,14 @@ export async function generateMusic(input: {
         modalities: ["text", "audio"],
         audio: { format: input.format || "wav" },
         stream: true,
-        provider: { data_collection: "deny" },
+        provider: { allow_fallbacks: true, data_collection: "deny" },
       }),
     });
     if (!response.ok) {
-      lastError = `OpenRouter music ${response.status}: ${(await response.text()).slice(0, 500)}`;
+      const providerMessage = (await response.text()).slice(0, 1200);
+      lastError = providerMessage.includes("upstream_provider_account") || providerMessage.includes('"is_byok":true')
+        ? "OPENROUTER_MUSIC_BYOK_QUOTA: The connected Google AI Studio key has no Lyria quota. Enable Google billing, remove that BYOK key, or enable shared-capacity fallback in OpenRouter."
+        : `OpenRouter music ${response.status}: ${providerMessage.slice(0, 500)}`;
       if (response.status !== 429 && response.status < 500) break;
       if (attempt < 2)
         await new Promise((resolve) => setTimeout(resolve, 1800 * 2 ** attempt));

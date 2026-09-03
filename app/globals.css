@@ -944,6 +944,58 @@ a {
 .dashboard-intro {
   text-align: center;
 }
+.dashboard-product-selector {
+  width: fit-content;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  margin: 0 auto 34px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.dashboard-product-selector a {
+  min-height: 46px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  border-right: 1px solid var(--border);
+  font-weight: 700;
+}
+.dashboard-product-selector a:last-child { border-right: 0; }
+.dashboard-product-selector a.active { color: #fff; background: var(--ink); }
+
+.affiliate-dashboard { max-width: 1180px; margin: 0 auto; }
+.affiliate-enrol-card, .affiliate-link-card, .affiliate-payout-note {
+  margin-top: 38px;
+  padding: clamp(28px, 5vw, 62px);
+  border: 1px solid var(--border);
+  background: #fffdfa;
+}
+.affiliate-enrol-card { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; }
+.affiliate-enrol-card span, .affiliate-link-card span { color: var(--coral); font: 750 10px var(--font-geist-mono); letter-spacing: .14em; }
+.affiliate-enrol-card h2 { margin: 20px 0 14px; font-size: 40px; letter-spacing: -.05em; }
+.affiliate-enrol-card p, .affiliate-payout-note p { color: var(--muted); line-height: 1.6; }
+.affiliate-enrol-card form { display: flex; flex-direction: column; justify-content: flex-end; gap: 18px; }
+.affiliate-enrol-card label { display: grid; gap: 8px; font-weight: 750; }
+.affiliate-enrol-card input { min-height: 50px; padding: 0 14px; border: 1px solid var(--border); background: white; font: inherit; }
+.affiliate-enrol-card button { min-height: 52px; border: 0; background: var(--coral); color: white; font-weight: 800; cursor: pointer; }
+.affiliate-link-card { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.affiliate-link-card > div { display: grid; gap: 10px; }
+.affiliate-link-card strong { font-size: clamp(18px, 3vw, 30px); overflow-wrap: anywhere; }
+.affiliate-link-card small { color: var(--muted); text-transform: capitalize; }
+.affiliate-metrics { margin-top: 18px; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); }
+.affiliate-metrics article { min-height: 180px; padding: 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: white; }
+.affiliate-metrics article:last-child { border-right: 0; }
+.affiliate-metrics article span { margin: 24px 0 auto; color: var(--muted); }
+.affiliate-metrics article strong { margin-top: 8px; font-size: 34px; }
+.affiliate-payout-note strong { display: block; margin-top: 20px; }
+@media (max-width: 760px) {
+  .affiliate-enrol-card { grid-template-columns: 1fr; gap: 30px; }
+  .affiliate-metrics { grid-template-columns: 1fr 1fr; }
+  .affiliate-metrics article:nth-child(2) { border-right: 0; }
+  .affiliate-metrics article:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+}
 .dashboard-intro .eyebrow {
   justify-content: center;
 }
@@ -2970,6 +3022,27 @@ a {
   border-color: var(--coral);
   box-shadow: 0 0 0 3px rgba(239, 102, 79, 0.1);
 }
+
+.studio-reference-upload {
+  min-height: 52px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px dashed var(--border-strong);
+  color: var(--foreground);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 720;
+  cursor: pointer;
+}
+.studio-reference-upload:hover { border-style: solid; background: var(--surface-muted); }
+.studio-reference-upload input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.studio-reference-list { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 7px; }
+.studio-reference-list button { max-width: 100%; padding: 7px 9px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); color: var(--muted); background: var(--surface); font-size: 11px; cursor: pointer; }
+.studio-reference-list button span { color: var(--foreground); font-size: 16px; line-height: .8; }
+.control-label > span { color: var(--muted); font-weight: 500; }
 .prompt-foot {
   margin-top: -38px;
   padding: 0 10px 10px;

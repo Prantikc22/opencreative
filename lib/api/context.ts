@@ -1,11 +1,24 @@
 import "server-only";
 import { requireApiUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { hasProductEntitlement, type ProductFamily } from "@/lib/entitlements";
 
-export async function apiContext(requiredProduct?: ProductFamily) {
-  const user = await requireApiUser();
-  const supabase = await createClient();
+export async function apiContext(requiredProduct?: ProductFamily, request?: Request) {
+  const bearer = request?.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
+  const publicUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const tokenClient = bearer && publicUrl && publicKey
+    ? createSupabaseClient(publicUrl, publicKey, {
+        global: { headers: { Authorization: `Bearer ${bearer}` } },
+        auth: { persistSession: false, autoRefreshToken: false },
+      })
+    : null;
+  const user = tokenClient
+    ? (await tokenClient.auth.getUser(bearer)).data.user
+    : await requireApiUser();
+  if (!user) throw new Error("UNAUTHENTICATED");
+  const supabase = tokenClient || await createClient();
   const { data: member, error } = await supabase
     .from("workspace_members")
     .select("workspace_id,role,workspaces(plan,settings,product_entitlements)")
@@ -50,9 +63,12 @@ export function apiError(cause: unknown) {
             : message.toLowerCase().includes("insufficient")
               ? 402
               : 500;
+  const musicByok = message.includes("OPENROUTER_MUSIC_BYOK_QUOTA");
   return {
     message:
-      status === 503
+      musicByok
+        ? "Music generation is blocked by the connected Google provider quota. Enable Google billing or shared-capacity fallback in OpenRouter, then try again. Your credits were returned."
+        : status === 503
         ? "Media storage is temporarily unavailable. Your credits were returned. Please try again shortly."
         : status === 429
           ? "Provider capacity is temporarily unavailable. Your credits were returned. Please try again shortly."

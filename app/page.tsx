@@ -15,6 +15,7 @@ import {
   ScanFace,
   ShieldCheck,
   Sparkles,
+  Upload,
   Video,
   WandSparkles,
 } from "lucide-react";
@@ -32,13 +33,17 @@ const customerMarks = [
   { name: "The Baker’s Street", logo: "https://www.thebakersstreet.com/brand-wordmark.png" },
   { name: "OnePlus", logo: "https://cdn.simpleicons.org/oneplus/000000" },
   { name: "RVCJ Media", logo: null },
+  { name: "Twilio", logo: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Twilio-logo-red.svg" },
+  { name: "Ramp", logo: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Ramp_Business_Corporation_Logo.svg" },
+  { name: "DHL", logo: "https://cdn.simpleicons.org/dhl/000000" },
+  { name: "Epic Games", logo: "https://cdn.simpleicons.org/epicgames/000000" },
 ] as const;
 
 const avatars = [
   ["Mina", "Founder energy", "01"], ["Malik", "Bold and direct", "02"],
   ["Elena", "Warm authority", "03"], ["Mateo", "Thoughtful expert", "04"],
   ["Ravi", "Friendly guide", "05"], ["Noa", "Editorial calm", "06"],
-  ["Kenji", "Clear and bright", "07"], ["Amara", "High-energy host", "08"],
+  ["Kenji", "Clear and bright", "07"],
 ] as const;
 
 const reactions = [
@@ -55,7 +60,7 @@ const reactions = [
 const products = [
   { icon: ImageIcon, number: "01", title: "Image AI", copy: "Art direct campaign stills, product photography and visual concepts with your references intact.", className: "spectrum-image", href: "/studio/image", use: "Product launch" },
   { icon: Video, number: "02", title: "Video AI", copy: "Build shots, storyboards and finished campaign films without losing the thread between scenes.", className: "spectrum-video", href: "/studio/video", use: "Campaign film" },
-  { icon: AudioLines, number: "03", title: "Voice AI", copy: "Direct expressive speech, clone authorized voices, translate dialogue and keep timing under control.", className: "spectrum-voice", href: "/studio/audio", use: "Global narration" },
+  { icon: AudioLines, number: "03", title: "Voice & Translation", copy: "Create expressive speech in 80+ languages, translate dialogue, and localize uploaded video without losing the message.", className: "spectrum-voice", href: "/studio/audio", use: "Global narration" },
   { icon: Music2, number: "04", title: "Music AI", copy: "Create original arrangements and sonic identities that land on the same creative brief.", className: "spectrum-music", href: "/studio/music", use: "Original score" },
   { icon: ScanFace, number: "05", title: "Avatar AI", copy: "Choose a global presenter or build an authorized digital twin for repeatable production.", className: "spectrum-avatar", href: "/studio/avatar", use: "Presenter video" },
   { icon: Bot, number: "06", title: "Agent AI", copy: "Give customers a voice-first support agent on phone, laptop, or inside your product widget.", className: "spectrum-agent", href: "/studio/agents", use: "Customer support" },
@@ -113,11 +118,14 @@ export default function Home() {
 
       <section className="avatar-section-2026" id="avatars">
         <header className="home-display-heading"><p>GLOBAL PRESENTERS</p><h2>Find the face<br /><em>the story deserves.</em></h2><span>Every presenter opens the Avatar Studio with that selection ready. No detours.</span></header>
-        <div className="avatar-grid-2026">{avatars.map(([name, trait, id]) => <Link href={`/studio/avatar?presenter=${name.toLowerCase()}`} key={name}><Image src={`/avatars/avatar-${id}.png`} alt={`${name}, ${trait}`} fill sizes="(max-width: 700px) 50vw, 25vw" /><span>{trait}</span><strong>{name}</strong><small>Open in studio <ArrowRight size={12} /></small></Link>)}</div>
+        <div className="avatar-grid-2026">
+          {avatars.map(([name, trait, id]) => <Link href={`/studio/avatar?presenter=${name.toLowerCase()}`} key={name}><Image src={`/avatars/avatar-${id}.png`} alt={`${name}, ${trait}`} fill sizes="(max-width: 700px) 50vw, 25vw" /><span>{trait}</span><strong>{name}</strong><small>Open in studio <ArrowRight size={12} /></small></Link>)}
+          <Link className="avatar-own-card" href="/identities/avatars/new?source=authorized_upload"><Upload size={42} /><span>AUTHORIZED PHOTO</span><strong>Your own avatar</strong><small>Upload with consent <ArrowRight size={12} /></small></Link>
+        </div>
       </section>
 
       <section className="voice-section-2026" id="voices">
-        <header className="home-display-heading home-display-light"><p>VOICE WITHOUT BORDERS</p><h2>One message.<br /><em>A world of voices.</em></h2><span>Preview expressive speakers, switch languages and direct the performance before you generate.</span></header>
+        <header className="home-display-heading home-display-light"><p>VOICE WITHOUT BORDERS</p><h2>One message.<br /><em>80+ languages.</em></h2><span>Preview expressive speakers, translate uploaded audio or video, and direct localized speech before you generate.</span></header>
         <VoiceDemos />
       </section>
 
@@ -127,8 +135,15 @@ export default function Home() {
       </section>
 
       <section className="agents-section-2026" id="agents">
-        <header className="home-display-heading"><p>OPENCREATIVE AGENTS</p><h2>Support that listens.<br /><em>Answers that act.</em></h2><span>Customers speak through the microphone on any phone or laptop. Your agent uses the company knowledge base and can live inside a support widget.</span></header>
+        <header className="home-display-heading"><p>OPENCREATIVE AGENTS</p><h2>Resolve more conversations.<br /><em>Keep every answer on brand.</em></h2><span>Launch tenant-isolated voice and text agents from approved company knowledge. Help buyers choose, answer support questions, qualify leads, and hand complex cases to a person.</span></header>
+        <div className="agent-value-grid">
+          <article><strong>24/7</strong><span>Product and support answers</span></article>
+          <article><strong>80+</strong><span>Languages for global buyers</span></article>
+          <article><strong>1 workspace</strong><span>Knowledge, sessions, and analytics</span></article>
+          <article><strong>Escalation ready</strong><span>Define when a person takes over</span></article>
+        </div>
         <AgentDemo />
+        <div className="agents-cta-row"><div><strong>Start with one useful agent.</strong><span>Choose a name, add approved knowledge, select its voice, and test it before deployment.</span></div><Link className="oc-button oc-button-coral" href="/signup?product=agents&plan=agent-sandbox">Create an agent <ArrowRight size={16} /></Link></div>
       </section>
 
       <section className="orchestration-2026">
@@ -145,7 +160,7 @@ export default function Home() {
 
       <section className="showcase-2026" id="showcase">
         <header className="home-display-heading home-display-light"><p>MADE WITH OPENCREATIVE</p><h2>One brief.<br /><em>Four original worlds.</em></h2><span>Each project below was art directed as its own campaign, not recycled from the hero.</span></header>
-        <div className="showcase-grid-2026"><figure className="showcase-hero-card"><Image src="/showcase/forest-fragrance.png" alt="Amber fragrance campaign beside a forest stream" fill sizes="60vw" /><figcaption><span>PRODUCT FILM</span><strong>ROOT / FIRST LIGHT</strong><small>Image · Video · Music</small></figcaption></figure><figure><Image src="/showcase/coastal-serum.png" alt="Coastal skincare creator campaign" fill sizes="30vw" /><figcaption><span>CREATOR CAMPAIGN</span><strong>FIELD / OPEN AIR</strong></figcaption></figure><figure><Image src="/showcase/alpine-drive.png" alt="Automotive campaign at an alpine lake" fill sizes="30vw" /><figcaption><span>LAUNCH STORY</span><strong>NORTH / BLUE HOUR</strong></figcaption></figure><figure><Image src="/showcase/forest-studio.png" alt="Music producer in a forest listening studio" fill sizes="30vw" /><figcaption><span>ORIGINAL MUSIC</span><strong>CANOPY / LIVE SIGNAL</strong></figcaption></figure></div>
+        <div className="showcase-grid-2026"><figure className="showcase-hero-card showcase-video-card"><video autoPlay muted loop playsInline preload="metadata" poster="/showcase/forest-fragrance.png"><source src="/opencreative-hero.mp4" type="video/mp4" /></video><figcaption><span>PRODUCT FILM</span><strong>ROOT / FIRST LIGHT</strong><small>Video · Voice · Music</small></figcaption></figure><figure><Image src="/showcase/coastal-serum.png" alt="Coastal skincare creator campaign" fill sizes="30vw" /><figcaption><span>CREATOR CAMPAIGN</span><strong>FIELD / OPEN AIR</strong></figcaption></figure><figure><Image src="/showcase/alpine-drive.png" alt="North Blue Hour outdoor campaign" fill sizes="30vw" /><figcaption><span>LAUNCH FILM</span><strong>NORTH / BLUE HOUR</strong></figcaption></figure><figure><Image src="/showcase/forest-studio.png" alt="Music producer in a forest listening studio" fill sizes="30vw" /><figcaption><span>ORIGINAL MUSIC</span><strong>CANOPY / LIVE SIGNAL</strong></figcaption></figure></div>
       </section>
 
       <section className="safety-2026" id="safety">
@@ -155,7 +170,7 @@ export default function Home() {
 
       <section className="final-cta-2026">
         <div className="final-cta-rings" aria-hidden="true"><i /><i /><i /><i /></div>
-        <div><p>THE IDEA IS ENOUGH</p><h2>Bring the spark.<br /><em>Leave with the campaign.</em></h2><span>Start with 50 credits. Move from image to film, voice, music and agent without leaving the studio.</span><div><Link className="oc-button oc-button-coral" href="/signup">Start creating free <ArrowRight size={16} /></Link><Link className="oc-button oc-button-outline-light" href="/pricing">See pricing</Link></div></div>
+        <div className="final-cta-copy"><p>THE IDEA IS ENOUGH</p><h2>Bring the spark.<br /><em>Leave with the campaign.</em></h2><span>Start with 50 credits. Move from image to film, voice, music and agent without leaving the studio.</span><div><Link className="oc-button oc-button-coral" href="/signup">Start creating free <ArrowRight size={16} /></Link><Link className="oc-button oc-button-outline-light" href="/pricing">See pricing</Link></div></div>
       </section>
       <SupportAgentWidget />
       <SiteFooter />

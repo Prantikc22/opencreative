@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Code2 } from "lucide-react";
+import { ArrowUpRight, Code2 } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { productConfig } from "@/lib/config";
 
@@ -31,6 +31,9 @@ const footerGroups = [
       ["Pricing", "/pricing"],
       ["Safety", "/acceptable-use"],
       ["Showcase", "/#showcase"],
+      ["Compare", "/compare"],
+      ["Affiliates", "/affiliates"],
+      ["MCP", "/mcp"],
     ],
   },
 ] as const;
@@ -38,26 +41,9 @@ const footerGroups = [
 export function SiteFooter() {
   return (
     <footer className="site-footer-redesign">
-      <div className="site-footer-lead">
-        <div>
-          <Link href="/" aria-label={`${productConfig.name} home`}>
-            <BrandMark />
-          </Link>
-          <h2>Make more.<br /><em>Subscribe less.</em></h2>
-        </div>
-        <div>
-          <p>
-            One open creative studio for images, video, voice, music, avatars and
-            agents. No stack of expensive disconnected subscriptions.
-          </p>
-          <Link className="site-footer-cta" href="/signup">
-            Start creating free <ArrowRight size={17} />
-          </Link>
-        </div>
-      </div>
-
       <div className="site-footer-directory">
         <div className="site-footer-note">
+          <Link href="/" aria-label={`${productConfig.name} home`}><BrandMark /></Link>
           <span><i /> Open-source core</span>
           <p>{productConfig.tagline}</p>
         </div>

@@ -42,19 +42,24 @@ create index if not exists agents_workspace_updated_idx on public.agents(workspa
 create index if not exists agent_sessions_workspace_idx on public.agent_sessions(workspace_id,updated_at desc);
 create index if not exists agent_messages_session_idx on public.agent_messages(session_id,created_at);
 
+drop trigger if exists agents_touch on public.agents;
 create trigger agents_touch before update on public.agents for each row execute function public.touch_updated_at();
+drop trigger if exists agent_sessions_touch on public.agent_sessions;
 create trigger agent_sessions_touch before update on public.agent_sessions for each row execute function public.touch_updated_at();
 
 alter table public.agents enable row level security;
 alter table public.agent_sessions enable row level security;
 alter table public.agent_messages enable row level security;
 
+drop policy if exists agents_workspace_access on public.agents;
 create policy agents_workspace_access on public.agents for all
   using(public.is_workspace_member(workspace_id))
   with check(public.is_workspace_member(workspace_id));
+drop policy if exists agent_sessions_workspace_access on public.agent_sessions;
 create policy agent_sessions_workspace_access on public.agent_sessions for all
   using(public.is_workspace_member(workspace_id))
   with check(public.is_workspace_member(workspace_id));
+drop policy if exists agent_messages_workspace_access on public.agent_messages;
 create policy agent_messages_workspace_access on public.agent_messages for all
   using(public.is_workspace_member(workspace_id))
   with check(public.is_workspace_member(workspace_id));
@@ -74,4 +79,8 @@ on conflict (id) do update set
 insert into public.model_pricing(model_id,provider_cost,credit_formula)
 values
   ('google/lyria-3-clip-preview','{"usd_per_clip":0.04}'::jsonb,'{"base":8,"duration_seconds":30}'::jsonb),
-  ('google/lyria-3-pro-preview','{"usd_per_song":0.08}'::jsonb,'{"base":14,"full_song":true}'::jsonb);
+  ('google/lyria-3-pro-preview','{"usd_per_song":0.08}'::jsonb,'{"base":14,"full_song":true}'::jsonb)
+on conflict (model_id) do update set
+  provider_cost=excluded.provider_cost,
+  credit_formula=excluded.credit_formula,
+  updated_at=now();

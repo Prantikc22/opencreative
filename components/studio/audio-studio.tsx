@@ -267,7 +267,7 @@ export function AudioStudio() {
     const ext = (file.name.split(".").pop() || "mp3").toLowerCase();
     return {
       base64,
-      format: ["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac"].includes(ext)
+      format: ["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac", "mp4", "mov"].includes(ext)
         ? ext
         : "mp3",
     };
@@ -330,8 +330,8 @@ export function AudioStudio() {
             In any language.
           </h1>
           <p>
-            Speech, transcription and dubbing routed through the right
-            model—provider details stay out of your way.
+            Expressive speech in 80+ languages, transcription, and video dubbing
+            routed through the right model. Provider details stay out of your way.
           </p>
         </div>
       </header>
@@ -506,7 +506,7 @@ export function AudioStudio() {
             <p>
               {tab === "dub"
                 ? "Upload, transcribe, translate, then generate replacement speech. Composition stays a separate export step so you remain in control."
-                : "Upload audio or video and receive a clean transcript. Supported formats: MP3, WAV, M4A, OGG, WebM and AAC."}
+                : "Upload audio or video and receive a clean transcript. Supported formats include MP3, WAV, M4A, MP4, MOV, OGG, WebM and AAC."}
             </p>
             {tab === "dub" && (
               <label className="form-field">
