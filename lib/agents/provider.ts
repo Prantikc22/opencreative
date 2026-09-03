@@ -19,6 +19,25 @@ export type AgentAudioInput = {
   format: "wav" | "mp3" | "flac" | "m4a" | "ogg" | "webm" | "aac";
 };
 
+export async function transcribeAgentAudio(input: {
+  audio: AgentAudioInput;
+  language?: string;
+}) {
+  const transcription = await transcribeAudio({
+    model: agentModels.transcription,
+    base64: input.audio.base64,
+    format: input.audio.format,
+    language: input.language?.slice(0, 2),
+  });
+  const transcript = transcription.text.trim();
+  if (!transcript) throw new Error("I could not hear a question. Please try again.");
+  return {
+    transcript,
+    duration: Math.max(0, Number(transcription.duration || 0)),
+    model: agentModels.transcription,
+  };
+}
+
 export async function runAgentTurn(input: {
   text?: string;
   audio?: AgentAudioInput;
@@ -32,14 +51,12 @@ export async function runAgentTurn(input: {
   let message = input.text?.trim() || "";
   let inputAudioSeconds = 0;
   if (!message && input.audio) {
-    const transcription = await transcribeAudio({
-      model: agentModels.transcription,
-      base64: input.audio.base64,
-      format: input.audio.format,
-      language: input.language?.slice(0, 2),
+    const transcription = await transcribeAgentAudio({
+      audio: input.audio,
+      language: input.language,
     });
-    message = transcription.text.trim();
-    inputAudioSeconds = Math.max(0, Number(transcription.duration || 0));
+    message = transcription.transcript;
+    inputAudioSeconds = transcription.duration;
   }
   if (!message) throw new Error("Say or type a question first.");
 

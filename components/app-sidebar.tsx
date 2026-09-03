@@ -14,6 +14,7 @@ import {
   FolderOpen,
   GalleryHorizontalEnd,
   Images,
+  Inbox,
   LayoutGrid,
   Menu,
   Mic2,
@@ -151,6 +152,10 @@ export function AppSidebar({
           ))}
         </nav>
         <div className="sidebar-bottom">
+          <Link href="/account/support">
+            <Inbox size={17} />
+            <span>Support inbox</span>
+          </Link>
           <Link href="/account/mcp">
             <PlugZap size={17} />
             <span>MCP &amp; API keys</span>

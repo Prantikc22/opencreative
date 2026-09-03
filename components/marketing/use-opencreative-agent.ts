@@ -30,6 +30,7 @@ export function useOpenCreativeAgent(endpoint = "/api/nori", initialWelcome = we
   const [messages, setMessages] = useState<AgentMessage[]>([{ role: "agent", text: initialWelcome }]);
   const [listening, setListening] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
@@ -52,38 +53,39 @@ export function useOpenCreativeAgent(endpoint = "/api/nori", initialWelcome = we
     await next.play().catch(() => setSpeaking(false));
   }, []);
 
-  const send = useCallback(async (payload: Record<string, unknown>, optimisticText?: string) => {
-    if (sending) return;
+  const request = useCallback(async (payload: Record<string, unknown>) => {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payload, ...(sessionId.current ? { sessionId: sessionId.current } : {}) }),
+    });
+    const result = await response.json() as AgentResponse;
+    if (!response.ok || result.error) throw new Error(result.error || "The agent could not answer.");
+    if (result.sessionId) sessionId.current = result.sessionId;
+    return result;
+  }, [endpoint]);
+
+  const answer = useCallback(async (question: string, appendQuestion = true) => {
+    if (sending || transcribing) return;
     setSending(true);
     setError("");
-    if (optimisticText) setMessages((current) => [...current, { role: "user", text: optimisticText }]);
+    if (appendQuestion) setMessages((current) => [...current, { role: "user", text: question }]);
     try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, ...(sessionId.current ? { sessionId: sessionId.current } : {}) }),
-      });
-      const result = await response.json() as AgentResponse;
-      if (!response.ok || result.error) throw new Error(result.error || "The agent could not answer.");
-      if (result.sessionId) sessionId.current = result.sessionId;
-      setMessages((current) => [
-        ...current,
-        ...(!optimisticText ? [{ role: "user" as const, text: result.transcript }] : []),
-        { role: "agent" as const, text: result.text },
-      ]);
+      const result = await request({ text: question });
+      setMessages((current) => [...current, { role: "agent", text: result.text }]);
       await play(result.audioBase64, result.audioMimeType);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The agent could not answer. Please try again.");
     } finally {
       setSending(false);
     }
-  }, [endpoint, play, sending]);
+  }, [play, request, sending, transcribing]);
 
   const ask = useCallback((rawQuestion: string) => {
     const question = rawQuestion.trim();
     if (!question) return;
-    void send({ text: question }, question);
-  }, [send]);
+    void answer(question);
+  }, [answer]);
 
   const stopListening = useCallback(() => {
     if (timeout.current) clearTimeout(timeout.current);
@@ -121,7 +123,19 @@ export function useOpenCreativeAgent(endpoint = "/api/nori", initialWelcome = we
           binary += String.fromCharCode(...array.subarray(index, index + 0x8000));
         const mime = blob.type.toLowerCase();
         const format = mime.includes("ogg") ? "ogg" : mime.includes("mp4") ? "m4a" : "webm";
-        await send({ audio: { base64: btoa(binary), format } });
+        const audioInput = { base64: btoa(binary), format };
+        setTranscribing(true);
+        setError("");
+        try {
+          const transcription = await request({ audio: audioInput, transcribeOnly: true });
+          const transcript = transcription.transcript.trim();
+          setMessages((current) => [...current, { role: "user", text: transcript }]);
+          setTranscribing(false);
+          await answer(transcript, false);
+        } catch (cause) {
+          setError(cause instanceof Error ? cause.message : "I could not transcribe that. Please try again.");
+          setTranscribing(false);
+        }
       };
       recorder.current = next;
       setError("");
@@ -132,7 +146,7 @@ export function useOpenCreativeAgent(endpoint = "/api/nori", initialWelcome = we
       setListening(false);
       setError("Microphone access was not granted. Type your question or allow microphone access.");
     }
-  }, [listening, send, stopListening]);
+  }, [answer, listening, request, stopListening]);
 
-  return { messages, listening, speaking, sending, error, ask, startListening };
+  return { messages, listening, speaking, sending, transcribing, error, ask, startListening };
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { runAgentTurn } from "@/lib/agents/provider";
+import { runAgentTurn, transcribeAgentAudio } from "@/lib/agents/provider";
 
 export const maxDuration = 60;
 
@@ -10,6 +10,7 @@ const requestSchema = z.object({
     base64: z.string().min(100).max(12_000_000),
     format: z.enum(["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac"]),
   }).optional(),
+  transcribeOnly: z.boolean().optional().default(false),
 }).refine((value) => value.text || value.audio, "A text or voice question is required.");
 
 const noriKnowledge = `
@@ -40,6 +41,12 @@ export async function POST(request: Request) {
     if (!allowRequest(request))
       return NextResponse.json({ error: "Please wait a moment before asking Nori again." }, { status: 429 });
     const input = requestSchema.parse(await request.json());
+    if (input.transcribeOnly) {
+      if (!input.audio)
+        return NextResponse.json({ error: "Voice audio is required for transcription." }, { status: 400 });
+      const transcription = await transcribeAgentAudio({ audio: input.audio, language: "en" });
+      return NextResponse.json(transcription);
+    }
     const result = await runAgentTurn({
       ...input,
       name: "Nori, the OpenCreative guide",
