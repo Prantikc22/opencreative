@@ -5,6 +5,7 @@ import "./product.css";
 import "./marketing-v2.css";
 import "./site-footer.css";
 import "./pricing-redesign.css";
+import "./home-2026.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,8 +22,8 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   ),
   title: {
-    default: "OpenCreative — One AI studio. Anything you can imagine.",
-    template: "%s — OpenCreative",
+    default: "OpenCreative. One AI studio. Anything you can imagine.",
+    template: "%s | OpenCreative",
   },
   description:
     "Create cinematic videos, product ads, UGC, images, voices and avatars with the world's best AI models.",
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
     apple: "/icon.svg",
   },
   openGraph: {
-    title: "OpenCreative — One AI studio. Anything you can imagine.",
+    title: "OpenCreative. One AI studio. Anything you can imagine.",
     description:
       "Create cinematic videos, product ads, UGC, images, voices and avatars with the world's best AI models.",
     type: "website",
@@ -41,13 +42,13 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1734,
         height: 907,
-        alt: "OpenCreative — One AI studio. Anything you can imagine.",
+        alt: "OpenCreative. One AI studio. Anything you can imagine.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenCreative — One AI studio. Anything you can imagine.",
+    title: "OpenCreative. One AI studio. Anything you can imagine.",
     description:
       "Create cinematic videos, product ads, UGC, images, voices and avatars with the world's best AI models.",
     images: ["/og.png"],

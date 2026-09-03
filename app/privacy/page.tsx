@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { productConfig } from "@/lib/config";
 export const metadata: Metadata = { title: "Privacy" };
 export default function PrivacyPage() {
   return (
@@ -37,11 +38,24 @@ export default function PrivacyPage() {
           R2. Creative requests are sent to the configured model providers only
           when you initiate a workflow.
         </p>
-        <h2>Control</h2>
+        <h2>Retention and security</h2>
+        <p>
+          We retain account and transaction records for as long as needed to
+          provide the service, meet legal obligations and resolve disputes.
+          Private media uses access controls and time-limited delivery links.
+        </p>
+        <h2>Your control</h2>
         <p>
           You can delete projects, identities and media from the product. For an
           account-level request, contact{" "}
-          <a href="mailto:hello@opencreative.ai">hello@opencreative.ai</a>.
+          <a href={`mailto:${productConfig.supportEmail}`}>{productConfig.supportEmail}</a>.
+        </p>
+        <h2>Payments</h2>
+        <p>
+          Paddle acts as merchant of record for paid orders. Paddle processes
+          payment and billing information under its own privacy terms. We
+          receive subscription, transaction and entitlement status needed to
+          provide the product.
         </p>
       </section>
     </main>

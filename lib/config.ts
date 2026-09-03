@@ -8,4 +8,6 @@ export const productConfig = {
     "https://github.com/opencreative-ai/opencreative",
   supportEmail:
     process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "hello@opencreative.ai",
+  supportPhone: process.env.NEXT_PUBLIC_SUPPORT_PHONE || "",
+  legalName: process.env.NEXT_PUBLIC_LEGAL_NAME || "ResoluteX HQ",
 } as const;

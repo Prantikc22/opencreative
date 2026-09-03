@@ -1,101 +1,35 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, Coins, Sparkles } from "lucide-react";
-import { BrandMark } from "@/components/brand-mark";
+import { ArrowRight, Coins } from "lucide-react";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { PricingCalculator } from "@/components/pricing-calculator";
-import { PricingTable } from "@/components/pricing-table";
-import { pricingPlans } from "@/lib/pricing";
+import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
+import { PricingExperience } from "@/components/pricing-experience";
 export const metadata: Metadata = {
   title: "Pricing from $9/month",
-  description: "Start free, then scale from $9/month. Compare OpenCreative plans and estimate the right credit budget for your image, video, voice and avatar work.",
+  description: "Compare separate OpenCreative plans for creative production and customer agents, then estimate the right usage level.",
 };
 export default function Page() {
   return (
-    <main className="pricing-public">
-      <header className="site-header">
-        <Link href="/">
-          <BrandMark />
-        </Link>
-        <nav className="site-nav">
-          <Link href="/#workflows">Create</Link>
-          <Link href="/#brand-memory">Identities</Link>
-          <Link href="/#open-source">Open source</Link>
-          <a href="#calculator">Calculator</a>
-        </nav>
-        <div className="site-actions">
-          <Link className="text-button" href="/login">
-            Sign in
-          </Link>
-          <Link className="button button-coral button-compact" href="/signup">
-            Start creating
-          </Link>
-        </div>
-      </header>
+    <main className="home-2026 pricing-public">
+      <MarketingNav />
       <section className="pricing-hero">
         <p className="eyebrow">
           <Coins size={13} />
           Plans from $9 / month
         </p>
-        <h1>All the studio.<br /><span>Less subscription.</span></h1>
+        <h1>Choose the system.<br /><span>Pay for its pace.</span></h1>
         <p>
-          Start free, then pay for the pace you actually create at. No $79 jump,
-          no feature maze, and no card required to make your first project.
+          Creative production and customer agents have different economics. Pick
+          the product family you need, then add the other one separately when it earns a place.
         </p>
+        <nav className="pricing-jump-nav" aria-label="Pricing page sections">
+          <a href="#plans">Plans</a><a href="#calculator">Calculator</a><a href="#compare">Plan comparison</a><a href="#pricing-faq">FAQ</a>
+        </nav>
       </section>
-      <PricingTable />
-      <div className="pricing-assurance" aria-label="Pricing assurances">
-        <span><Check size={16} /> No card to start</span>
-        <span><Check size={16} /> See the cost before generating</span>
-        <span><Check size={16} /> Failed jobs refund automatically</span>
-        <span><Check size={16} /> Top up without changing plans</span>
-      </div>
-      <PricingCalculator />
+      <PricingExperience />
 
-      <section className="pricing-comparison" id="compare">
-        <header>
-          <p className="eyebrow"><Sparkles size={14} /> Compare plans</p>
-          <h2>See exactly what changes as you grow.</h2>
-          <p>No vague “more features” language. The useful differences are here.</p>
-        </header>
-        <div className="comparison-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Capability</th>
-                {pricingPlans.map((plan) => <th key={plan.id}>{plan.name}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                ["Monthly credits", "50 welcome", "250", "750", "2,000"],
-                ["Image, video and voice studios", true, true, true, true],
-                ["Avatar studio", true, true, true, true],
-                ["Projects and asset library", true, true, true, true],
-                ["Watermark-free commercial exports", false, true, true, true],
-                ["Brand, product and avatar identities", false, false, true, true],
-                ["UGC and product-video workflows", false, false, true, true],
-                ["Premium quality tiers", false, false, false, true],
-                ["Priority generation routing", false, false, false, true],
-                ["Support", "Community", "Standard", "Email", "Priority"],
-              ].map(([label, ...values]) => (
-                <tr key={String(label)}>
-                  <th>{label}</th>
-                  {values.map((value, index) => (
-                    <td key={`${label}-${index}`}>
-                      {typeof value === "boolean" ? (
-                        value ? <Check size={18} aria-label="Included" /> : <span aria-label="Not included">—</span>
-                      ) : value}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="pricing-faq">
+      <section className="pricing-faq" id="pricing-faq">
         <header>
           <p className="eyebrow">Pricing, answered</p>
           <h2>Clear before you commit.</h2>
@@ -103,11 +37,14 @@ export default function Page() {
         <div>
           {[
             ["Why start at $9?", "Most creators do not need a huge monthly generation allowance on day one. Starter covers regular image, voice and short-form video work, while top-ups handle unusually busy months."],
-            ["What does one credit buy?", "It depends on the model and format. An image can start at a few credits; video varies by duration and quality. OpenCreative shows the exact estimate before you generate."],
+            ["What does one creative credit buy?", "Credits are model-weighted. Standard images start at 12 credits, five seconds of standard 720p video is about 200 credits, and premium models use more. OpenCreative shows the exact estimate before you generate."],
+            ["Why are Agents separate?", "Agent conversations combine transcription, reasoning and speech synthesis continuously. Separate minute-based plans keep that cost transparent and stop agent traffic from draining a creative team’s generation credits."],
             ["Do failed generations use my credits?", "No. Credits are reserved when a job starts and returned automatically when the provider fails."],
             ["Can I start without a card?", "Yes. The Free plan includes 50 welcome credits and does not require a card."],
             ["Can I add credits without changing plans?", "Yes. One-off 250, 500 and 1,000-credit bundles are available from Credits & billing in the workspace."],
-            ["How does annual billing work?", "Annual plans reduce the effective monthly price by 15%. The yearly total is shown directly on each plan before you choose it."],
+            ["How does annual billing work?", "Annual plans reduce the effective monthly price by 20%. The yearly total is shown directly on each plan before you choose it."],
+            ["What is included in the $99 Studio plan?", "Studio includes 4,000 monthly credits, five workspace seats, shared brand systems, usage analytics and faster support for teams running multiple campaigns."],
+            ["When should I choose Enterprise?", "Enterprise is for custom credit volumes, seat counts, SSO, advanced access controls, tailored provider policies and dedicated support."],
             ["Can I use my own provider accounts?", "Yes. OpenCreative supports bringing your own OpenRouter, Supabase and Cloudflare R2 accounts when you self-host the open-source core."],
           ].map(([question, answer], index) => (
             <details key={question} open={index === 0}>
@@ -121,12 +58,13 @@ export default function Page() {
       <section className="pricing-cta">
         <p className="eyebrow">Start with the work, not a contract</p>
         <h2>Make the first thing free.<br /><em>Scale only when it earns it.</em></h2>
-        <p>50 free credits today. Starter is only $9 when you need more.</p>
+        <p>Start with 50 creative credits or 15 agent minutes. Choose only the product family you need.</p>
         <Link className="button button-coral" href="/signup">
           Start creating free <ArrowRight size={17} />
         </Link>
       </section>
 
+      <SupportAgentWidget />
       <SiteFooter />
     </main>
   );

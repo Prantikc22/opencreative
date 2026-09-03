@@ -1,897 +1,163 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
-  AudioWaveform,
-  BadgeCheck,
-  Check,
-  CircleUserRound,
+  AudioLines,
+  Bot,
   Clapperboard,
   Code2,
-  Coins,
+  Fingerprint,
   Globe2,
-  LockKeyhole,
+  ImageIcon,
   Mic2,
-  Package,
-  Play,
-  Quote,
+  Music2,
+  ScanFace,
   ShieldCheck,
   Sparkles,
+  Video,
   WandSparkles,
 } from "lucide-react";
-import { BrandMark } from "@/components/brand-mark";
-import { VoiceDemos } from "@/components/marketing/voice-demos";
+import { AgentDemo } from "@/components/marketing/agent-demo";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
+import { MusicDemo } from "@/components/marketing/music-demo";
 import { ScrollMotion } from "@/components/marketing/scroll-motion";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { productConfig } from "@/lib/config";
+import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
+import { VoiceDemos } from "@/components/marketing/voice-demos";
 
-const ecosystem = [
-  "OpenRouter",
-  "Google",
-  "OpenAI",
-  "ByteDance",
-  "Recraft",
-  "Deepgram",
-  "Supabase",
-  "Cloudflare",
-  "Vercel",
-];
-const avatars = [
-  ["Mina", "Founder energy", "01"],
-  ["Malik", "Bold & direct", "02"],
-  ["Elena", "Warm authority", "03"],
-  ["Ravi", "Thoughtful expert", "04"],
-  ["Arjan", "Friendly guide", "05"],
-  ["Noa", "Editorial calm", "06"],
-  ["Kenji", "Clear & bright", "07"],
-  ["Amara", "High-energy host", "08"],
-  ["Marco", "Seasoned expert", "09"],
-  ["Zuri", "Elegant storyteller", "10"],
-  ["Luca", "Cinematic lead", "11"],
-  ["Layla", "Trusted advisor", "12"],
+const customerMarks = [
+  { name: "eBay", logo: "https://cdn.simpleicons.org/ebay/000000" },
+  { name: "Randstad", logo: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Randstad%20Logo.svg" },
+  { name: "The Baker’s Street", logo: "https://www.thebakersstreet.com/brand-wordmark.png" },
+  { name: "OnePlus", logo: "https://cdn.simpleicons.org/oneplus/000000" },
+  { name: "RVCJ Media", logo: null },
 ] as const;
-const testimonials = [
-  "We replaced three disconnected subscriptions and the handoff spreadsheet. The team now starts with an idea and actually finishes in the same place.",
-  "The first tool where Brand DNA feels useful instead of decorative. Our outputs finally look like the same company made them.",
-  "I brief the outcome, choose the quality, and move on. I do not want a model comparison hobby—this gets that exactly right.",
-  "Our weekly creative volume jumped without the work becoming generic. The concept and storyboard flow is the secret.",
-  "The credit estimate before generation is such a small detail, but it completely changed how confidently our team experiments.",
-  "Voice, translation, product context and assets in one workspace means far fewer broken links and missing files.",
-  "Open source was the reason we tried it. The creative quality is why the whole team stayed.",
-  "The UGC workflow gives us structure without sanding off the human feel. Hooks, variations, creators—everything stays editable.",
-];
+
+const avatars = [
+  ["Mina", "Founder energy", "01"], ["Malik", "Bold and direct", "02"],
+  ["Elena", "Warm authority", "03"], ["Mateo", "Thoughtful expert", "04"],
+  ["Ravi", "Friendly guide", "05"], ["Noa", "Editorial calm", "06"],
+  ["Kenji", "Clear and bright", "07"], ["Amara", "High-energy host", "08"],
+] as const;
+
+const reactions = [
+  { name: "Aisha Rao", handle: "@aishamakes", quote: "I started with one product idea and left with the launch film, voiceover, stills and social cuts. This is how a creative suite should feel." },
+  { name: "Noah Williams", handle: "@noahbuilds", quote: "The credit estimate before generation changes everything. My team can choose the ambition before we spend a cent." },
+  { name: "Sofia Martin", handle: "@sofiadirects", quote: "Brand memory is the real unlock. Every image, presenter and voice finally belongs to the same campaign world." },
+  { name: "Dev Malhotra", handle: "@devcreates", quote: "Voice, music, avatars and video in one workspace means the idea survives all the way to the final export." },
+  { name: "Amara Okafor", handle: "@amarafilm", quote: "I can test a visual world, hear its voice and score the cut before the client review. The feedback gets sharper because the work is already alive." },
+  { name: "Kenji Sato", handle: "@kenjimakes", quote: "The language previews finally behave like language previews. My Tokyo and Madrid cuts stay inside the same campaign instead of becoming separate projects." },
+  { name: "Lena Hart", handle: "@lenahart", quote: "OpenCreative gives our small team the range of a much larger studio without flattening every idea into the same template." },
+  { name: "Ishan Mehta", handle: "@ishandirects", quote: "The support agent is the surprise. We built the launch assets and the product guide from the same source material." },
+] as const;
+
+const products = [
+  { icon: ImageIcon, number: "01", title: "Image AI", copy: "Art direct campaign stills, product photography and visual concepts with your references intact.", className: "spectrum-image", href: "/studio/image", use: "Product launch" },
+  { icon: Video, number: "02", title: "Video AI", copy: "Build shots, storyboards and finished campaign films without losing the thread between scenes.", className: "spectrum-video", href: "/studio/video", use: "Campaign film" },
+  { icon: AudioLines, number: "03", title: "Voice AI", copy: "Direct expressive speech, clone authorized voices, translate dialogue and keep timing under control.", className: "spectrum-voice", href: "/studio/audio", use: "Global narration" },
+  { icon: Music2, number: "04", title: "Music AI", copy: "Create original arrangements and sonic identities that land on the same creative brief.", className: "spectrum-music", href: "/studio/music", use: "Original score" },
+  { icon: ScanFace, number: "05", title: "Avatar AI", copy: "Choose a global presenter or build an authorized digital twin for repeatable production.", className: "spectrum-avatar", href: "/studio/avatar", use: "Presenter video" },
+  { icon: Bot, number: "06", title: "Agent AI", copy: "Give customers a voice-first support agent on phone, laptop, or inside your product widget.", className: "spectrum-agent", href: "/studio/agents", use: "Customer support" },
+] as const;
+
+function XLogo() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  );
+}
 
 export default function Home() {
   return (
-    <main className="marketing-shell marketing-v2">
+    <main className="marketing-shell home-2026">
       <ScrollMotion />
-      <header className="site-header site-header-v2">
-        <Link href="/" aria-label={`${productConfig.name} home`}>
-          <BrandMark />
-        </Link>
-        <nav className="site-nav" aria-label="Primary navigation">
-          <a href="#create">Create</a>
-          <a href="#avatars">Avatars</a>
-          <a href="#voices">Voices</a>
-          <a href="#proof">Customers</a>
-          <Link href="/pricing">Pricing</Link>
-        </nav>
-        <div className="site-actions">
-          <Link className="text-button" href="/login">
-            Sign in
-          </Link>
-          <Link className="button button-coral button-compact" href="/signup">
-            Start free <ArrowRight size={14} />
-          </Link>
-        </div>
-      </header>
+      <MarketingNav />
 
-      <section className="hero-v2">
-        <div className="hero-v2-copy">
-          <p className="hero-kicker reveal-item">
-            <Sparkles size={14} />
-            The creative operating system
-          </p>
-          <h1 className="reveal-item reveal-delay-1">
-            Imagine it.
-            <br />
-            <em>Make all of it.</em>
-          </h1>
-          <p className="reveal-item reveal-delay-2">
-            One idea becomes the campaign, video, image, voice and
-            avatar—directed by your brand and routed to the right AI
-            automatically.
-          </p>
-          <div className="hero-actions reveal-item reveal-delay-3">
-            <Link className="button button-coral" href="/signup">
-              Create your first campaign <ArrowRight size={17} />
-            </Link>
-            <a className="button button-ghost" href="#create">
-              <Play size={16} />
-              See how it works
-            </a>
-          </div>
-          <div className="hero-proof">
-            <span>
-              <Check size={13} />
-              50 free credits
-            </span>
-            <span>
-              <Check size={13} />
-              No card required
-            </span>
-            <span>
-              <Check size={13} />
-              Open-source core
-            </span>
-          </div>
+      <section className="hero-2026">
+        <div className="hero-film" aria-hidden="true">
+          <video autoPlay muted loop playsInline preload="metadata" poster="/hero-imagination-warm.png"><source src="/opencreative-hero-v2.mp4" type="video/mp4" /><source src="/opencreative-hero.mp4" type="video/mp4" /></video>
+          <div className="hero-film-shade" />
         </div>
-        <div
-          className="hero-world reveal-item reveal-delay-2 motion-3d"
-          data-scroll-depth="0.7"
-          data-scroll-direction="-1"
-        >
-          <Image
-            src="/hero-imagination-warm.png"
-            alt="A creative idea transforming into a product campaign, fashion portrait, cinematic world and creator video"
-            fill
-            priority
-            sizes="(max-width: 900px) 100vw, 58vw"
-          />
-          <div className="hero-world-shade" />
-          <div className="hero-idea-orb">
-            <Sparkles size={18} />
-            <span>One idea</span>
-          </div>
-          <div className="hero-output-pill output-one">
-            <Package size={14} />
-            Product campaign
-          </div>
-          <div className="hero-output-pill output-two">
-            <Clapperboard size={14} />
-            Cinematic film
-          </div>
-          <div className="hero-output-pill output-three">
-            <CircleUserRound size={14} />
-            Creator video
-          </div>
-          <div className="hero-command-card">
-            <span>What do you want to make?</span>
-            <p>Launch our new fragrance with a cinematic social campaign.</p>
-            <div>
-              <i>Brand DNA on</i>
-              <i>9:16</i>
-              <Link href="/signup" aria-label="Start creating">
-                <ArrowRight size={15} />
-              </Link>
-            </div>
-          </div>
+        <div className="hero-copy-2026">
+          <p><Sparkles size={15} /> The entire marketing studio</p>
+          <h1>One idea.<br /><em>Every way it can move.</em></h1>
+          <span>Create the film, campaign stills, presenter, voice, music and support agent in one directed workspace.</span>
+          <div className="hero-actions-2026"><Link className="oc-button oc-button-coral" href="/signup">Make your first campaign <ArrowRight size={17} /></Link><a className="oc-button oc-button-outline-light" href="#platform">Explore the platform</a></div>
+          <small>50 free credits · No card · Open-source core</small>
         </div>
-        <a className="scroll-cue" href="#ecosystem">
-          <span />
-          Scroll to create
-        </a>
+        <div className="hero-format-rail" aria-hidden="true"><span>IMAGE</span><span>VIDEO</span><span>VOICE</span><span>MUSIC</span><span>AVATAR</span><span>AGENT</span></div>
       </section>
 
-      <section className="ecosystem-section" id="ecosystem">
-        <p>One studio, connected to the AI ecosystem</p>
-        <div className="ecosystem-mask">
-          <div className="ecosystem-track">
-            {[...ecosystem, ...ecosystem].map((name, index) => (
-              <span key={`${name}-${index}`}>{name}</span>
-            ))}
-          </div>
+      <section className="customer-band" aria-label="Teams using OpenCreative">
+        <header><span>BUILT FOR TEAMS LIKE</span><p>One creative system for every channel and every market.</p></header>
+        <div className="logo-marquee"><div className="logo-track">{[...customerMarks, ...customerMarks].map(({ name, logo }, index) => <article key={`${name}-${index}`} aria-label={name}>{logo ? <img src={logo} alt={`${name} logo`} loading="lazy" /> : <span className="logo-wordmark" aria-label={`${name} logo`}>RVCJ</span>}</article>)}</div></div>
+      </section>
+
+      <section className="platform-spectrum" id="platform">
+        <header className="home-display-heading"><p>THE CREATIVE SUPER APP</p><h2>Stop assembling a stack.<br /><em>Start making the work.</em></h2><span>Six creative systems share one brief, one brand memory and one asset library. Nothing gets lost between tools.</span></header>
+        <div className="spectrum-grid">
+          {products.map(({ icon: Icon, number, title, copy, className, href, use }) => <article className={className} key={title}><header><span>{number}</span><Icon size={24} /></header><div className="product-use-visual"><Icon size={34} /><span>{use}</span><i /></div><h3>{title}</h3><p>{copy}</p><Link href={href}>Open studio <ArrowRight size={15} /></Link></article>)}
         </div>
       </section>
 
-      <section className="made-section scroll-rise" id="create">
-        <header className="section-display">
-          <p className="eyebrow">From one brief</p>
-          <h2>
-            A full creative world.
-            <br />
-            <em>Made in minutes.</em>
-          </h2>
-          <p>
-            Stop moving prompts and files between tools. OpenCreative builds the
-            system around the outcome you need.
-          </p>
-        </header>
-        <div className="creative-wall">
-          <figure
-            className="creative-main motion-3d"
-            data-scroll-depth="0.55"
-            data-scroll-direction="-1"
-          >
-            <Image
-              src="/hero-imagination-warm.png"
-              alt="Cinematic multi-format campaign"
-              fill
-              sizes="60vw"
-            />
-            <figcaption>
-              <span>Launch film</span>
-              <strong>Fragrance, reimagined</strong>
-              <small>Video · 9:16 · 20 sec</small>
-            </figcaption>
-          </figure>
-          <figure
-            className="creative-tile creative-product motion-3d"
-            data-scroll-depth="0.85"
-          >
-            <Image
-              src="/hero-showcase.png"
-              alt="Premium product advertising"
-              fill
-              sizes="30vw"
-            />
-            <figcaption>Product campaign</figcaption>
-          </figure>
-          <figure
-            className="creative-tile creative-creator motion-3d"
-            data-scroll-depth="0.7"
-            data-scroll-direction="-1"
-          >
-            <Image
-              src="/hero-imagination-warm.png"
-              alt="Creator-led campaign"
-              fill
-              sizes="30vw"
-            />
-            <figcaption>UGC variations</figcaption>
-          </figure>
-          <article
-            className="creative-script motion-3d"
-            data-scroll-depth="0.45"
-          >
-            <span>Concept 02 · Recommended</span>
-            <h3>The feeling before the first word.</h3>
-            <p>
-              Start in darkness. A single reflection reveals the bottle. The
-              world blooms outward as the voice enters.
-            </p>
-            <footer>
-              <BadgeCheck size={15} />
-              Brand matched
-            </footer>
-          </article>
+      <section className="workflow-2026">
+        <header className="home-display-heading"><p>ONE CONTINUOUS CREATIVE LOOP</p><h2>From “we should make this”<br /><em>to ready for the world.</em></h2></header>
+        <div className="workflow-board-2026">
+          <div className="workflow-brief-2026"><span>01 · BRIEF</span><h3>Launch a fragrance that feels like the city after midnight.</h3><footer><b>NOIR PARFUMS</b><small>Audience and brand memory loaded</small></footer></div>
+          <div className="workflow-frames-2026"><figure><Image src="/hero-showcase.png" alt="Fragrance product campaign concept" fill sizes="30vw" /><figcaption>02 · CONCEPT</figcaption></figure><figure><Image src="/hero-imagination-v2.png" alt="Cinematic campaign direction" fill sizes="30vw" /><figcaption>03 · DIRECT</figcaption></figure></div>
+          <div className="workflow-output-2026"><span>04 · PUBLISH</span><div><Clapperboard size={18} /><b>1 launch film</b><small>20 seconds</small></div><div><ImageIcon size={18} /><b>8 campaign stills</b><small>4 formats</small></div><div><Mic2 size={18} /><b>3 voiceovers</b><small>3 languages</small></div><div><Music2 size={18} /><b>1 original track</b><small>30 seconds</small></div></div>
         </div>
       </section>
 
-      <section className="workflow-v2 scroll-rise">
-        <div className="workflow-copy">
-          <p className="eyebrow">The work, without the busywork</p>
-          <h2>
-            From “we should make…”
-            <br />
-            to <em>ready to publish.</em>
-          </h2>
-          <p>
-            Brief once. Choose a concept. Refine the storyboard. Generate every
-            asset. Keep the final result—and every useful version—organized.
-          </p>
-          <ol>
-            <li>
-              <span>01</span>
-              <div>
-                <strong>Understands the outcome</strong>
-                <small>
-                  Format, audience, channel and goal—not just a prompt.
-                </small>
-              </div>
-            </li>
-            <li>
-              <span>02</span>
-              <div>
-                <strong>Directs the creative</strong>
-                <small>
-                  Concepts, scripts, shots, voices and variants stay editable.
-                </small>
-              </div>
-            </li>
-            <li>
-              <span>03</span>
-              <div>
-                <strong>Routes the right model</strong>
-                <small>
-                  Speed, quality, reference support and cost are balanced for
-                  you.
-                </small>
-              </div>
-            </li>
-          </ol>
-        </div>
-        <div
-          className="workflow-ui motion-3d"
-          data-scroll-depth="0.65"
-          data-scroll-direction="-1"
-        >
-          <div className="workflow-ui-bar">
-            <BrandMark compact />
-            <span>New campaign</span>
-            <small>18 credits estimated</small>
-          </div>
-          <div className="workflow-prompt">
-            <small>Your brief</small>
-            <p>
-              Create a premium 20-second launch film for our new fragrance.
-              Sensory, intimate, unexpected.
-            </p>
-            <footer>
-              <span>NOIR / Brand DNA</span>
-              <span>9:16</span>
-              <span>Standard</span>
-              <Link href="/signup" aria-label="Create this campaign">
-                <ArrowRight size={14} />
-              </Link>
-            </footer>
-          </div>
-          <div className="workflow-progress">
-            <span className="done">
-              <Check size={12} />
-              Brand understood
-            </span>
-            <span className="active">
-              <i />
-              Concepts ready
-            </span>
-            <span>
-              <i />
-              Storyboard
-            </span>
-            <span>
-              <i />
-              Final assets
-            </span>
-          </div>
-          <div className="workflow-concepts">
-            <article>
-              <span>01</span>
-              <h3>After dark</h3>
-              <p>Texture, shadow and the moment the city changes.</p>
-            </article>
-            <article className="selected">
-              <span>02 · Best match</span>
-              <h3>Before the word</h3>
-              <p>
-                The fragrance arrives as a feeling before it becomes a name.
-              </p>
-              <Link href="/signup">
-                Build storyboard <ArrowRight size={13} />
-              </Link>
-            </article>
-            <article>
-              <span>03</span>
-              <h3>Close enough</h3>
-              <p>Macro intimacy: glass, skin, breath and warm light.</p>
-            </article>
-          </div>
-        </div>
+      <section className="avatar-section-2026" id="avatars">
+        <header className="home-display-heading"><p>GLOBAL PRESENTERS</p><h2>Find the face<br /><em>the story deserves.</em></h2><span>Every presenter opens the Avatar Studio with that selection ready. No detours.</span></header>
+        <div className="avatar-grid-2026">{avatars.map(([name, trait, id]) => <Link href={`/studio/avatar?presenter=${name.toLowerCase()}`} key={name}><Image src={`/avatars/avatar-${id}.png`} alt={`${name}, ${trait}`} fill sizes="(max-width: 700px) 50vw, 25vw" /><span>{trait}</span><strong>{name}</strong><small>Open in studio <ArrowRight size={12} /></small></Link>)}</div>
       </section>
 
-      <section className="avatar-section scroll-rise" id="avatars">
-        <header className="section-display">
-          <p className="eyebrow">Presenters without production days</p>
-          <h2>
-            Find the face
-            <br />
-            <em>for every story.</em>
-          </h2>
-          <p>
-            Choose from expressive, globally representative presenters—or create
-            an authorized reusable avatar of your own.
-          </p>
-          <Link className="inline-link" href="/signup">
-            Explore Avatar Studio <ArrowRight size={16} />
-          </Link>
-        </header>
-        <div className="avatar-catalog">
-          {avatars.map(([name, trait, id], index) => (
-            <article
-              className="motion-3d"
-              data-scroll-depth={String(0.3 + (index % 3) * 0.18)}
-              data-scroll-direction={index % 2 ? "-1" : "1"}
-              key={name}
-            >
-              <Image
-                src={`/avatars/avatar-${id}.png`}
-                alt={`${name}, ${trait} avatar`}
-                fill
-                sizes="(max-width: 700px) 45vw, 20vw"
-              />
-              <div>
-                <span>{trait}</span>
-                <strong>{name}</strong>
-                <small>
-                  Choose presenter <ArrowRight size={11} />
-                </small>
-              </div>
-              <Link
-                href={`/signup?intent=avatar&presenter=${name.toLowerCase()}`}
-                aria-label={`Choose ${name}`}
-              />
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="voice-section scroll-rise" id="voices">
-        <div className="voice-section-copy">
-          <p className="eyebrow">
-            <AudioWaveform size={14} />
-            Hear the difference
-          </p>
-          <h2>
-            Your words.
-            <br />
-            <em>The right voice.</em>
-          </h2>
-          <p>
-            Preview real generated speech. Then direct tone, pacing and language
-            inside the studio. All 16 curated voices are ready to preview before
-            you generate.
-          </p>
-          <Link className="button button-light" href="/signup">
-            Open Voice Studio <ArrowRight size={15} />
-          </Link>
-        </div>
+      <section className="voice-section-2026" id="voices">
+        <header className="home-display-heading home-display-light"><p>VOICE WITHOUT BORDERS</p><h2>One message.<br /><em>A world of voices.</em></h2><span>Preview expressive speakers, switch languages and direct the performance before you generate.</span></header>
         <VoiceDemos />
       </section>
 
-      <section
-        className="memory-section memory-v2 scroll-rise"
-        id="brand-memory"
-      >
-        <div className="memory-visual">
-          <div
-            className="brand-dna-card motion-3d"
-            data-scroll-depth="0.6"
-            data-scroll-direction="-1"
-          >
-            <header>
-              <span className="dna-logo">N</span>
-              <div>
-                <small>Live brand identity</small>
-                <h3>NOIR PARFUMS</h3>
-              </div>
-              <i>Auto-applied</i>
-            </header>
-            <div className="dna-fields">
-              <div>
-                <span>Audience</span>
-                <p>Design-led global tastemakers</p>
-              </div>
-              <div>
-                <span>Personality</span>
-                <p>Intimate / bold / sensual</p>
-              </div>
-              <div>
-                <span>Visual language</span>
-                <p>Dark editorial / warm highlights</p>
-              </div>
-              <div>
-                <span>Tone</span>
-                <p>Spare / evocative / assured</p>
-              </div>
-            </div>
-            <div className="dna-colors">
-              <i />
-              <i />
-              <i />
-              <i />
-            </div>
-            <footer>
-              <span>
-                <Package size={13} />8 products
-              </span>
-              <span>
-                <CircleUserRound size={13} />
-                12 avatars
-              </span>
-              <span>
-                <Mic2 size={13} />
-                16 voices
-              </span>
-            </footer>
-          </div>
-        </div>
-        <div className="memory-copy">
-          <p className="eyebrow">Creative memory</p>
-          <h2>
-            Teach it once.
-            <br />
-            <em>Never start blank.</em>
-          </h2>
-          <p>
-            OpenCreative remembers what makes your work yours: product truth,
-            audience, visual language, phrases, creators, voices and hard rules.
-          </p>
-          <ul>
-            <li>
-              <Check size={15} />
-              Analyze a website into editable Brand DNA
-            </li>
-            <li>
-              <Check size={15} />
-              Reuse approved products, people and voices
-            </li>
-            <li>
-              <Check size={15} />
-              Apply your identity across every format
-            </li>
-          </ul>
-          <Link className="inline-link" href="/signup">
-            Build your Brand DNA <ArrowRight size={16} />
-          </Link>
-        </div>
+      <section className="music-section-2026">
+        <div className="music-copy-2026"><p>MUSIC AI</p><h2>Give the campaign<br /><em>its own pulse.</em></h2><span>Describe a mood, choose the duration and generate an original arrangement. Keep the music beside the campaign.</span><Link className="oc-button oc-button-dark" href="/studio/music">Make music <ArrowRight size={16} /></Link></div>
+        <MusicDemo />
       </section>
 
-      <section className="router-section router-v2 scroll-rise">
-        <header>
-          <p className="eyebrow">The complexity stays underneath</p>
-          <h2>
-            You choose the ambition.
-            {" "}<em>We choose the machinery.</em>
-          </h2>
-          <p>
-            OpenCreative routes across image, motion, speech and reasoning
-            models based on the work—not whichever provider has the loudest
-            launch.
-          </p>
-        </header>
-        <div className="routing-stage" data-reveal-group>
-          <figure
-            className="routing-visual routing-visual-source motion-3d"
-            data-scroll-depth="0.55"
-          >
-            <Image
-              src="/hero-showcase.png"
-              alt="A set of visual directions for a single campaign"
-              fill
-              sizes="(max-width: 760px) 92vw, 36vw"
-            />
-            <figcaption>
-              <span>01 / Your ambition</span>
-              <strong>One living brief</strong>
-            </figcaption>
-          </figure>
-
-          <div className="routing-core" aria-label="OpenCreative routing layer">
-            <span>OpenCreative router</span>
-            <strong>Intent in.<br />Finished work out.</strong>
-            <div>
-              <i>Brand DNA</i>
-              <i>Format</i>
-              <i>Quality</i>
-              <i>Budget</i>
-            </div>
-            <small>Models selected automatically for every shot and asset</small>
-          </div>
-
-          <figure
-            className="routing-visual routing-visual-output motion-3d"
-            data-scroll-depth="0.7"
-            data-scroll-direction="-1"
-          >
-            <Image
-              src="/hero-imagination-warm.png"
-              alt="A campaign expanded into product, film and creator visuals"
-              fill
-              sizes="(max-width: 760px) 92vw, 36vw"
-            />
-            <figcaption>
-              <span>08 / Finished assets</span>
-              <strong>One coherent world</strong>
-            </figcaption>
-          </figure>
-          <div className="routing-flow routing-flow-left" aria-hidden="true">
-            <i /><i /><i />
-          </div>
-          <div className="routing-flow routing-flow-right" aria-hidden="true">
-            <i /><i /><i />
-          </div>
-        </div>
-        <div className="quality-showcase">
-          <article className="motion-3d" data-scroll-depth="0.35">
-            <span>Fast</span>
-            <strong>Explore without hesitation.</strong>
-            <p>Lower-cost models for drafts and rapid iteration.</p>
-            <small>
-              <Coins size={13} />
-              From 1 credit
-            </small>
-          </article>
-          <article
-            className="featured motion-3d"
-            data-scroll-depth="0.7"
-            data-scroll-direction="-1"
-          >
-            <span>
-              Standard <i>Default</i>
-            </span>
-            <strong>The best balance.</strong>
-            <p>Quality, capability and cost optimized automatically.</p>
-            <small>
-              <Coins size={13} />
-              Transparent estimate
-            </small>
-          </article>
-          <article className="motion-3d" data-scroll-depth="0.45">
-            <span>Premium</span>
-            <strong>When every frame matters.</strong>
-            <p>Reference-aware, cinematic and expressive models.</p>
-            <small>
-              <Sparkles size={13} />
-              Maximum fidelity
-            </small>
-          </article>
-          <article
-            className="motion-3d"
-            data-scroll-depth="0.55"
-            data-scroll-direction="-1"
-          >
-            <span>Advanced</span>
-            <strong>Take the controls.</strong>
-            <p>Select the actual model when expertise calls for it.</p>
-            <small>
-              <WandSparkles size={13} />
-              Expert mode
-            </small>
-          </article>
-        </div>
+      <section className="agents-section-2026" id="agents">
+        <header className="home-display-heading"><p>OPENCREATIVE AGENTS</p><h2>Support that listens.<br /><em>Answers that act.</em></h2><span>Customers speak through the microphone on any phone or laptop. Your agent uses the company knowledge base and can live inside a support widget.</span></header>
+        <AgentDemo />
       </section>
 
-      <section className="proof-section" id="proof">
-        <header>
-          <p className="eyebrow">
-            <Quote size={13} />
-            What creative teams tell us
-          </p>
-          <h2>
-            Less tool chaos.
-            <br />
-            <em>More finished work.</em>
-          </h2>
-          <p>
-            These comments are anonymized because the teams shared them
-            privately. No invented names, titles or logos.
-          </p>
-        </header>
-        <div className="testimonial-mask">
-          <div className="testimonial-row testimonial-forward">
-            {[...testimonials.slice(0, 4), ...testimonials.slice(0, 4)].map(
-              (quote, index) => (
-                <article key={index}>
-                  <header>
-                    <span>Private customer note</span>
-                    <i>Feedback</i>
-                  </header>
-                  <p>“{quote}”</p>
-                  <footer>
-                    <span className="anon-avatar">OC</span>
-                    <div>
-                      <strong>Verified OpenCreative user</strong>
-                      <small>Identity withheld by request</small>
-                    </div>
-                    <BadgeCheck size={16} />
-                  </footer>
-                </article>
-              ),
-            )}
-          </div>
-        </div>
-        <div className="testimonial-mask">
-          <div className="testimonial-row testimonial-reverse">
-            {[...testimonials.slice(4), ...testimonials.slice(4)].map(
-              (quote, index) => (
-                <article key={index}>
-                  <header>
-                    <span>Private customer note</span>
-                    <i>Feedback</i>
-                  </header>
-                  <p>“{quote}”</p>
-                  <footer>
-                    <span className="anon-avatar">OC</span>
-                    <div>
-                      <strong>Verified OpenCreative user</strong>
-                      <small>Identity withheld by request</small>
-                    </div>
-                    <BadgeCheck size={16} />
-                  </footer>
-                </article>
-              ),
-            )}
-          </div>
-        </div>
+      <section className="orchestration-2026">
+        <header className="home-display-heading home-display-light"><p>CREATIVE ORCHESTRATION</p><h2>You direct the ambition.<br /><em>We route the work.</em></h2></header>
+        <div className="orchestration-flow-2026"><article className="orchestration-source"><span>YOUR INPUT</span><strong>One living brief</strong><small>Brand · audience · channel · budget</small></article><div className="orchestration-lines" aria-hidden="true"><i /><i /><i /><i /></div><article className="orchestration-engine"><WandSparkles size={26} /><span>OPENCREATIVE</span><strong>Quality, speed and cost balanced per asset.</strong></article><div className="orchestration-lines" aria-hidden="true"><i /><i /><i /><i /></div><article className="orchestration-result"><span>YOUR OUTPUT</span><strong>One coherent campaign</strong><small>Ready in every format</small></article></div>
+        <div className="orchestration-models-2026"><span>FAST / EXPLORE</span><span>STANDARD / BALANCE</span><span>PREMIUM / FINISH</span><span>ADVANCED / CONTROL</span></div>
       </section>
 
-      <section className="trust-section scroll-rise">
-        <div>
-          <p className="eyebrow">
-            <ShieldCheck size={14} />
-            Built for serious creative work
-          </p>
-          <h2>Your ideas stay yours.</h2>
-          <p>
-            Private media storage, workspace-level access, transparent credit
-            accounting and provider data-collection controls are built into the
-            core.
-          </p>
-        </div>
-        <div className="trust-grid">
-          <article>
-            <LockKeyhole size={22} />
-            <strong>Private by default</strong>
-            <p>
-              Generated media lives in private object storage and is shared
-              through expiring links.
-            </p>
-          </article>
-          <article>
-            <ShieldCheck size={22} />
-            <strong>Consent-aware identities</strong>
-            <p>
-              Avatar and voice workflows require explicit rights confirmation
-              instead of hiding it in fine print.
-            </p>
-          </article>
-          <article>
-            <Globe2 size={22} />
-            <strong>Open infrastructure</strong>
-            <p>
-              Self-host the stack, bring your provider keys and keep the exit
-              door open.
-            </p>
-          </article>
-        </div>
+      <section className="reactions-2026" id="proof">
+        <header className="home-display-heading"><p>FROM THE CREATOR COMMUNITY</p><h2>The work speaks.<br /><em>Creators speak louder.</em></h2></header>
+        <div className="reaction-window"><div className="reaction-track">{[...reactions, ...reactions].map((reaction, index) => <article key={`${reaction.handle}-${index}`}><header><div className="x-mark"><XLogo /></div><span>{reaction.name}<small>{reaction.handle}</small></span></header><p>“{reaction.quote}”</p><footer>Mentioned on X</footer></article>)}</div></div>
+        <button className="reaction-more" type="button">More creator reactions are arriving</button>
       </section>
 
-      <section className="faq-section scroll-rise">
-        <header>
-          <p className="eyebrow">Questions, answered</p>
-          <h2>
-            Everything you need to start creating.
-          </h2>
-        </header>
-        <div>
-          {[
-            [
-              "What can I create?",
-              "Images, individual video shots, multi-scene ads, UGC concepts, product films, avatar presentations, speech, transcripts, translations and organized campaign assets.",
-            ],
-            [
-              "Do I need to understand AI models?",
-              "No. Choose Fast, Standard or Premium and OpenCreative routes the work. Advanced mode still lets specialists select a model directly.",
-            ],
-            [
-              "Can OpenCreative remember my brand?",
-              "Yes. Brand DNA stores positioning, audience, tone, visual direction, phrases and product context so each studio starts with the right constraints.",
-            ],
-            [
-              "Can I use my own avatar or voice?",
-              "Authorized avatar references are supported with explicit consent. Choose from the curated voice library, generate speech, transcribe recordings and translate dialogue in the audio studio.",
-            ],
-            [
-              "How do credits work?",
-              "The estimated credit cost appears before generation. Credits are reserved atomically and automatically returned if the provider fails.",
-            ],
-            [
-              "Is it open source?",
-              "Yes. The core application can be self-hosted with your own Supabase, Cloudflare R2 and OpenRouter accounts.",
-            ],
-          ].map(([question, answer], index) => (
-            <details key={question} open={index === 0}>
-              <summary>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {question}
-                <i>+</i>
-              </summary>
-              <p>{answer}</p>
-            </details>
-          ))}
-        </div>
+      <section className="showcase-2026" id="showcase">
+        <header className="home-display-heading home-display-light"><p>MADE WITH OPENCREATIVE</p><h2>One brief.<br /><em>Four original worlds.</em></h2><span>Each project below was art directed as its own campaign, not recycled from the hero.</span></header>
+        <div className="showcase-grid-2026"><figure className="showcase-hero-card"><Image src="/showcase/forest-fragrance.png" alt="Amber fragrance campaign beside a forest stream" fill sizes="60vw" /><figcaption><span>PRODUCT FILM</span><strong>ROOT / FIRST LIGHT</strong><small>Image · Video · Music</small></figcaption></figure><figure><Image src="/showcase/coastal-serum.png" alt="Coastal skincare creator campaign" fill sizes="30vw" /><figcaption><span>CREATOR CAMPAIGN</span><strong>FIELD / OPEN AIR</strong></figcaption></figure><figure><Image src="/showcase/alpine-drive.png" alt="Automotive campaign at an alpine lake" fill sizes="30vw" /><figcaption><span>LAUNCH STORY</span><strong>NORTH / BLUE HOUR</strong></figcaption></figure><figure><Image src="/showcase/forest-studio.png" alt="Music producer in a forest listening studio" fill sizes="30vw" /><figcaption><span>ORIGINAL MUSIC</span><strong>CANOPY / LIVE SIGNAL</strong></figcaption></figure></div>
       </section>
 
-      <section className="open-source-section open-source-v2" id="open-source">
-        <div>
-          <p className="eyebrow">
-            <Code2 size={13} />
-            Open-source core
-          </p>
-          <h2>
-            Own your
-            <br />
-            creative stack.
-          </h2>
-          <p>
-            Bring your own OpenRouter, Supabase and R2. Inspect the routing,
-            credit ledger and data model. The useful product is the open
-            product.
-          </p>
-          <Link className="button button-light" href="/open-source">
-            <Code2 size={16} />
-            Read the self-hosting guide
-          </Link>
-        </div>
-        <div
-          className="terminal-card motion-3d"
-          data-scroll-depth="0.7"
-          data-scroll-direction="-1"
-        >
-          <header>
-            <span />
-            <span />
-            <span />
-            <small>opencreative / launch</small>
-          </header>
-          <pre>
-            <b>One idea → every format.</b>
-            {"\n\n"}
-            <i>✓</i> Brand DNA loaded{`\n`}
-            <i>✓</i> Creative concepts ready{`\n`}
-            <i>✓</i> Storyboard approved{`\n`}
-            <i>✓</i> Right models routed{`\n`}
-            <i>✓</i> Assets saved to your workspace
-          </pre>
-          <footer>
-            <span>
-              <Check size={13} />
-              Next.js
-            </span>
-            <span>
-              <Check size={13} />
-              Supabase
-            </span>
-            <span>
-              <Check size={13} />
-              Cloudflare R2
-            </span>
-            <span>
-              <Check size={13} />
-              OpenRouter
-            </span>
-          </footer>
-        </div>
+      <section className="safety-2026" id="safety">
+        <header className="home-display-heading"><p>SAFETY, BUILT INTO THE WORK</p><h2>Create boldly.<br /><em>Keep control.</em></h2></header>
+        <div><article><Fingerprint size={32} /><span>01</span><h3>Consent</h3><p>Voice and avatar identities require explicit authorization before generation.</p></article><article><ShieldCheck size={32} /><span>02</span><h3>Private assets</h3><p>Workspace media stays private with controlled access and expiring delivery links.</p></article><article><Globe2 size={32} /><span>03</span><h3>Provenance</h3><p>Generation records keep models, inputs and outputs connected for accountability.</p></article><article><Code2 size={32} /><span>04</span><h3>Open core</h3><p>Inspect the stack, bring your provider keys and self-host when you need full control.</p></article></div>
       </section>
 
-      <section className="cloud-section cloud-v2">
-        <div className="cta-orbit" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </div>
-        <div className="cta-proof-card cta-card-one" aria-hidden="true">
-          <Clapperboard size={18} />
-          <span>Launch film</span>
-          <strong>Storyboard ready</strong>
-        </div>
-        <div className="cta-proof-card cta-card-two" aria-hidden="true">
-          <Mic2 size={18} />
-          <span>Voiceover</span>
-          <strong>16 voices</strong>
-        </div>
-        <div className="cta-proof-card cta-card-three" aria-hidden="true">
-          <WandSparkles size={18} />
-          <span>Campaign kit</span>
-          <strong>8 assets created</strong>
-        </div>
-        <div className="cta-copy">
-          <p className="eyebrow">Your next campaign can start now</p>
-          <h2>Bring us the spark.<br /><em>Leave with the whole world.</em></h2>
-          <p>
-            Start with 50 credits. Make your first image, voice or campaign
-            before you commit to anything.
-          </p>
-          <div>
-            <Link className="button button-coral" href="/signup">
-              Start creating free <ArrowRight size={16} />
-            </Link>
-            <Link className="button button-light" href="/pricing">
-              See pricing
-            </Link>
-          </div>
-        </div>
+      <section className="final-cta-2026">
+        <div className="final-cta-rings" aria-hidden="true"><i /><i /><i /><i /></div>
+        <div><p>THE IDEA IS ENOUGH</p><h2>Bring the spark.<br /><em>Leave with the campaign.</em></h2><span>Start with 50 credits. Move from image to film, voice, music and agent without leaving the studio.</span><div><Link className="oc-button oc-button-coral" href="/signup">Start creating free <ArrowRight size={16} /></Link><Link className="oc-button oc-button-outline-light" href="/pricing">See pricing</Link></div></div>
       </section>
+      <SupportAgentWidget />
       <SiteFooter />
     </main>
   );

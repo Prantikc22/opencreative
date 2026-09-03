@@ -1,84 +1,96 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Code2,
-  Database,
-  HardDrive,
-  Route,
-} from "lucide-react";
+import { ArrowRight, Braces, Check, Cloud, Code2, Database, GitBranch, HardDrive, KeyRound, LockKeyhole, Route, ServerCog, ShieldCheck, Users } from "lucide-react";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
+import { SiteFooter } from "@/components/marketing/site-footer";
+import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
+import { productConfig } from "@/lib/config";
 
-export const metadata: Metadata = { title: "Open source" };
+export const metadata: Metadata = {
+  title: "Open source and self-hosting",
+  description: "Inspect, extend, and self-host the OpenCreative core with your own Supabase, R2, and OpenRouter accounts.",
+};
+
+const architecture = [
+  [Route, "Inspectable routing", "Model selection, capability rules, fallbacks, and credit estimates remain visible in application code."],
+  [Database, "Your data model", "Workspaces, agents, assets, generations, and the immutable credit ledger live in your Supabase project."],
+  [HardDrive, "Your media", "Uploads and generated files stay private in your R2 bucket and use short-lived signed delivery links."],
+] as const;
+
+const steps = [
+  ["01", "Clone and configure", "Copy the environment template and choose the provider accounts that your deployment will use."],
+  ["02", "Apply the data model", "Run the Supabase migrations to install workspace isolation, RLS policies, credits, agents, and generation history."],
+  ["03", "Connect private media", "Create an R2 bucket and provide the credentials used for private uploads and signed asset delivery."],
+  ["04", "Build and deploy", "Typecheck, test, and build the same Next.js application that runs the hosted product."],
+] as const;
+
+const safeguards = [
+  [Users, "Tenant boundaries", "Every commercial record is scoped to a workspace, and database policies verify membership before access."],
+  [LockKeyhole, "Server-only secrets", "OpenRouter, Supabase service-role, and storage credentials stay in the server runtime."],
+  [ShieldCheck, "Metered generations", "Credits are reserved before provider work, settled after success, and returned when a job fails."],
+] as const;
 
 export default function OpenSourcePage() {
   return (
-    <main className="legal-page">
-      <nav>
-        <Link href="/">
-          <ArrowLeft size={15} />
-          OpenCreative
-        </Link>
-        <Link className="button button-dark" href="/signup">
-          Start creating <ArrowRight size={15} />
-        </Link>
-      </nav>
-      <header>
-        <p className="eyebrow">
-          <Code2 size={14} />
-          Open-source core
-        </p>
-        <h1>Own your creative stack.</h1>
-        <p>
-          OpenCreative is designed around portable infrastructure: Next.js for
-          the product, Supabase for data and identity, Cloudflare R2 for private
-          media, and OpenRouter for model access.
-        </p>
-      </header>
-      <section className="legal-grid">
-        <article>
-          <Route />
-          <h2>Inspectable routing</h2>
-          <p>
-            Model selection, capability constraints and credit estimates live in
-            application code instead of an opaque proxy.
-          </p>
-        </article>
-        <article>
-          <Database />
-          <h2>Your data model</h2>
-          <p>
-            Projects, identities, assets, generations and the immutable credit
-            ledger are stored in your Supabase project.
-          </p>
-        </article>
-        <article>
-          <HardDrive />
-          <h2>Your media</h2>
-          <p>
-            Uploads and generated files stay in a private R2 bucket and are
-            delivered with short-lived signed links.
-          </p>
-        </article>
+    <main className="marketing-shell home-2026 open-source-page">
+      <MarketingNav />
+      <section className="oss-hero">
+        <div>
+          <p><Code2 size={15} /> OPEN-SOURCE CORE</p>
+          <h1>Own your<br />creative stack.</h1>
+          <span>Inspect the routing, keep control of your data, and deploy the core with infrastructure you own. Use the hosted studio when you want convenience, or self-host when control is the requirement.</span>
+          <div>
+            <a className="oc-button oc-button-coral" href={productConfig.githubUrl} target="_blank" rel="noreferrer">View the repository <ArrowRight size={16} /></a>
+            <Link className="oc-button oc-button-outline-light" href="#self-hosting">Self-hosting guide</Link>
+          </div>
+        </div>
+        <aside aria-label="OpenCreative deployment map">
+          <span>YOUR DEPLOYMENT</span>
+          <div><Braces size={22} /><strong>OpenCreative</strong><small>Next.js application</small></div>
+          <i />
+          <section>
+            <div><Database size={18} /><strong>Supabase</strong><small>Data and identity</small></div>
+            <div><Cloud size={18} /><strong>Cloudflare R2</strong><small>Private media</small></div>
+            <div><Route size={18} /><strong>OpenRouter</strong><small>Model access</small></div>
+          </section>
+        </aside>
       </section>
-      <section className="legal-copy" id="self-hosting">
-        <h2>Self-hosting</h2>
-        <p>
-          Use the included <code>.env.example</code>, apply the Supabase
-          migration, create a private R2 bucket, and provide an OpenRouter key.
-          The repository also includes architecture, deployment and contribution
-          documentation.
-        </p>
-        <pre>
-          npm install{"\n"}npm run typecheck{"\n"}npm run build{"\n"}npm start
-        </pre>
-        <h2 id="contributing">Contributing</h2>
-        <p>
-          Keep provider-specific behavior behind the routing and provider
-          layers, preserve workspace isolation, and add tests for changes to
-          authentication, credits, storage or generation state.
-        </p>
+      <section className="oss-architecture">
+        <header><p>PORTABLE BY DESIGN</p><h2>The important layers stay visible.</h2></header>
+        <div>{architecture.map(([Icon, title, copy]) => <article key={title}><Icon size={28} /><span>OPENCREATIVE CORE</span><h3>{title}</h3><p>{copy}</p></article>)}</div>
       </section>
+      <section className="oss-self-host" id="self-hosting">
+        <header>
+          <p><ServerCog size={15} /> SELF-HOSTING</p>
+          <h2>From clone to a private creative cloud.</h2>
+          <span>The deployment is a standard Next.js application with explicit provider boundaries. Nothing depends on a hidden media proxy.</span>
+        </header>
+        <div className="oss-steps">{steps.map(([number, title, copy]) => <article key={number}><span>{number}</span><h3>{title}</h3><p>{copy}</p></article>)}</div>
+        <div className="oss-terminal">
+          <header><span>PRODUCTION CHECK</span><small>zsh</small></header>
+          <pre><code>npm install{"\n"}npm run typecheck{"\n"}npm test{"\n"}npm run build{"\n"}npm start</code></pre>
+          <footer><Check size={15} /> No local video transcoding required</footer>
+        </div>
+      </section>
+      <section className="oss-environment">
+        <header><p><KeyRound size={15} /> REQUIRED SERVICES</p><h2>Four boundaries.<br />No mystery layer.</h2></header>
+        <div>
+          <article><span>01</span><strong>Application</strong><p>Node.js and a Next.js-compatible runtime for the web application and route handlers.</p></article>
+          <article><span>02</span><strong>Database</strong><p>Supabase Auth and Postgres with the included migrations and row-level security policies.</p></article>
+          <article><span>03</span><strong>Storage</strong><p>A private Cloudflare R2 bucket for source media, finished assets, and signed delivery.</p></article>
+          <article><span>04</span><strong>Models</strong><p>An OpenRouter key for the models enabled in the capability registry.</p></article>
+        </div>
+      </section>
+      <section className="oss-safeguards">
+        <header><p>SECURITY MODEL</p><h2>Workspace isolation is part of the architecture.</h2></header>
+        <div>{safeguards.map(([Icon, title, copy]) => <article key={title}><Icon size={27} /><h3>{title}</h3><p>{copy}</p></article>)}</div>
+      </section>
+      <section className="oss-contribute" id="contributing">
+        <div><GitBranch size={30} /><p>CONTRIBUTING</p><h2>Extend the core.<br /><em>Preserve the boundaries.</em></h2></div>
+        <aside><p>Provider-specific behavior belongs behind the routing and provider layers. Changes to authentication, credits, storage, or generation state should include tests.</p><a className="oc-button oc-button-coral" href={productConfig.githubUrl} target="_blank" rel="noreferrer">Open GitHub <ArrowRight size={16} /></a></aside>
+      </section>
+      <SiteFooter />
+      <SupportAgentWidget />
     </main>
   );
 }

@@ -7,7 +7,13 @@ export type GenerationStatus =
   | "failed"
   | "cancelled";
 export type GenerationCapability =
-  "text" | "image" | "video" | "speech" | "transcription" | "avatar";
+  | "text"
+  | "image"
+  | "video"
+  | "speech"
+  | "transcription"
+  | "avatar"
+  | "music";
 export type QualityTier = "fast" | "standard" | "premium" | "advanced";
 
 export interface ModelDefinition {
@@ -26,6 +32,7 @@ export interface ModelDefinition {
   supportsSpeech?: boolean;
   supportsTranscription?: boolean;
   supportsAvatar?: boolean;
+  supportsMusic?: boolean;
   supportedDurations?: number[];
   supportedAspectRatios?: string[];
   enabled: boolean;

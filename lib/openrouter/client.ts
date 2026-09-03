@@ -92,6 +92,103 @@ export async function creativeJson<T>({
   return JSON.parse(content) as T;
 }
 
+export async function chatText(input: {
+  system: string;
+  message: string;
+  model?: string;
+  history?: Array<{ role: "user" | "assistant"; content: string }>;
+}) {
+  const result = await apiJson<{
+    choices: Array<{ message: { content: string } }>;
+    usage?: Record<string, unknown>;
+  }>("/chat/completions", {
+    method: "POST",
+    body: JSON.stringify({
+      model: input.model || "google/gemini-3.5-flash-lite",
+      messages: [
+        { role: "system", content: input.system },
+        ...(input.history || []).slice(-10),
+        { role: "user", content: input.message },
+      ],
+      temperature: 0.35,
+      max_tokens: 420,
+      provider: { allow_fallbacks: true, data_collection: "deny" },
+    }),
+  });
+  const text = result.choices[0]?.message?.content?.trim();
+  if (!text) throw new Error("OpenRouter returned an empty agent response.");
+  return { text, usage: result.usage };
+}
+
+export async function generateMusic(input: {
+  model: string;
+  prompt: string;
+  format?: "wav" | "mp3";
+}) {
+  let lastError = "OpenRouter music generation failed.";
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const response = await fetch(`${API_BASE}/chat/completions`, {
+      method: "POST",
+      headers: headers(),
+      signal: AbortSignal.timeout(95_000),
+      body: JSON.stringify({
+        model: input.model,
+        messages: [{ role: "user", content: input.prompt }],
+        modalities: ["text", "audio"],
+        audio: { format: input.format || "wav" },
+        stream: true,
+        provider: { data_collection: "deny" },
+      }),
+    });
+    if (!response.ok) {
+      lastError = `OpenRouter music ${response.status}: ${(await response.text()).slice(0, 500)}`;
+      if (response.status !== 429 && response.status < 500) break;
+      if (attempt < 2)
+        await new Promise((resolve) => setTimeout(resolve, 1800 * 2 ** attempt));
+      continue;
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) throw new Error("OpenRouter returned an empty music stream.");
+    const decoder = new TextDecoder();
+    let pending = "";
+    let audioBase64 = "";
+    let transcript = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      pending += decoder.decode(value, { stream: true });
+      const lines = pending.split("\n");
+      pending = lines.pop() || "";
+      for (const line of lines) {
+        if (!line.startsWith("data: ") || line === "data: [DONE]") continue;
+        try {
+          const chunk = JSON.parse(line.slice(6)) as {
+            choices?: Array<{
+              delta?: { audio?: { data?: string; transcript?: string } };
+            }>;
+          };
+          const audio = chunk.choices?.[0]?.delta?.audio;
+          if (audio?.data) audioBase64 += audio.data;
+          if (audio?.transcript) transcript += audio.transcript;
+        } catch {
+          // Ignore provider keep-alive and non-JSON stream lines.
+        }
+      }
+    }
+    if (!audioBase64) {
+      lastError = "OpenRouter returned no audio for this music request.";
+      continue;
+    }
+    return {
+      bytes: Buffer.from(audioBase64, "base64"),
+      contentType: input.format === "mp3" ? "audio/mpeg" : "audio/wav",
+      transcript,
+    };
+  }
+  throw new Error(lastError);
+}
+
 export async function generateImage(input: {
   model: string;
   prompt: string;

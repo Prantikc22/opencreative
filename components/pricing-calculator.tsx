@@ -49,16 +49,16 @@ function SliderRow({
 
 export function PricingCalculator() {
   const [images, setImages] = useState(20);
-  const [videoSeconds, setVideoSeconds] = useState(60);
+  const [videoSeconds, setVideoSeconds] = useState(20);
   const [voiceMinutes, setVoiceMinutes] = useState(10);
-  const [avatarClips, setAvatarClips] = useState(2);
+  const [avatarClips, setAvatarClips] = useState(1);
 
   const estimatedCredits = useMemo(
     () =>
-      images * 2 +
-      Math.ceil(videoSeconds / 5) * 6 +
-      voiceMinutes * 2 +
-      avatarClips * 20,
+      images * 12 +
+      Math.ceil(videoSeconds / 5) * 200 +
+      voiceMinutes * 4 +
+      avatarClips * 105,
     [avatarClips, images, videoSeconds, voiceMinutes],
   );
 
@@ -74,8 +74,8 @@ export function PricingCalculator() {
         </p>
         <h2>Price the work you actually make.</h2>
         <p>
-          Move the sliders. We estimate a practical monthly credit budget and
-          recommend the smallest plan that fits it.
+          Move the sliders. This estimate uses the standard 720p video route,
+          standard images, voice and five-second avatar clips.
         </p>
       </header>
       <div className="calculator-shell">
@@ -85,7 +85,7 @@ export function PricingCalculator() {
             detail="Concepts, product shots and campaign stills"
             value={images}
             min={0}
-            max={200}
+            max={600}
             step={5}
             suffix="images"
             onChange={setImages}
@@ -95,7 +95,7 @@ export function PricingCalculator() {
             detail="Individual shots or assembled campaign footage"
             value={videoSeconds}
             min={0}
-            max={600}
+            max={1800}
             step={10}
             suffix="seconds"
             onChange={setVideoSeconds}
@@ -105,7 +105,7 @@ export function PricingCalculator() {
             detail="Narration, UGC reads and multilingual dialogue"
             value={voiceMinutes}
             min={0}
-            max={180}
+            max={600}
             step={5}
             suffix="minutes"
             onChange={setVoiceMinutes}
@@ -115,34 +115,34 @@ export function PricingCalculator() {
             detail="Authorized talking-avatar scenes"
             value={avatarClips}
             min={0}
-            max={30}
+            max={100}
             step={1}
             suffix="clips"
             onChange={setAvatarClips}
           />
           <small className="calculator-disclaimer">
-            Estimate only. The exact credit cost is always shown before each
-            generation and varies by model, duration and quality.
+            Premium models use more credits. The exact cost is always shown
+            before generation and failed jobs return the reserved credits.
           </small>
         </div>
         <aside className="calculator-result" aria-live="polite">
           <span>Recommended plan</span>
           <strong>{recommendation.name}</strong>
           <div>
-            <b>${recommendation.monthlyPrice}</b>
-            <small>per month</small>
+            <b>{recommendation.custom ? "Custom" : `$${recommendation.monthlyPrice}`}</b>
+            <small>{recommendation.custom ? "quote" : "per month"}</small>
           </div>
           <p>
             <Sparkles size={17} /> About {estimatedCredits.toLocaleString()} credits
             for this monthly mix.
           </p>
           <ul>
-            <li><Check size={16} /> {recommendation.credits.toLocaleString()} included credits</li>
+            <li><Check size={16} /> {recommendation.custom ? "Credits sized to your usage" : `${recommendation.credits.toLocaleString()} included credits`}</li>
             <li><Check size={16} /> Costs visible before generation</li>
             <li><Check size={16} /> Failed requests return reserved credits</li>
           </ul>
-          <Link href={`/signup?plan=${recommendation.id}`}>
-            Choose {recommendation.name} <ArrowRight size={17} />
+          <Link href={`/signup?product=creative&plan=${recommendation.id}`}>
+            {recommendation.custom ? "Request a quote" : `Choose ${recommendation.name}`} <ArrowRight size={17} />
           </Link>
         </aside>
       </div>

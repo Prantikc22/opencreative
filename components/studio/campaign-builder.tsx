@@ -327,7 +327,7 @@ export function CampaignBuilder({
               <p>Generate, edit or replace every scene independently.</p>
             </div>
             <span className="cost-badge">
-              <Coins size={14} /> Estimated 65 credits per 5s shot
+              <Coins size={14} /> Estimated 200 credits per 5s standard shot
             </span>
           </div>
           <div className="storyboard-list">

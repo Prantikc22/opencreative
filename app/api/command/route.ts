@@ -44,7 +44,7 @@ const routes: Record<string, string> = {
 };
 export async function POST(request: Request) {
   try {
-    await apiContext();
+    await apiContext("creative");
     const { prompt } = inputSchema.parse(await request.json());
     const plan = await creativeJson<{
       intent: string;

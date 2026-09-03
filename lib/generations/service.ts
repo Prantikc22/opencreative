@@ -111,7 +111,7 @@ export async function failGeneration(input: {
       supabase: input.supabase,
       userId: input.userId,
       generationId: input.generationId,
-      reason: "Generation failed — credits returned",
+      reason: "Generation failed. Credits returned",
     });
 }
 export async function completeGeneration(input: {

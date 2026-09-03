@@ -58,17 +58,20 @@ export function AuthForm({ mode }: { mode: Mode }) {
         router.push(params.get("next") || "/app");
         router.refresh();
       } else if (mode === "signup") {
+        const desiredProduct = params.get("product") === "agents" ? "agents" : "creative";
+        const desiredPlan = params.get("plan") || (desiredProduct === "agents" ? "agent-sandbox" : "free");
+        const onboardingPath = `/onboarding?product=${desiredProduct}&plan=${encodeURIComponent(desiredPlan)}`;
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            data: { full_name: fullName },
-            emailRedirectTo: `${location.origin}/auth/callback?next=/onboarding`,
+            data: { full_name: fullName, desired_product: desiredProduct, desired_plan: desiredPlan },
+            emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(onboardingPath)}`,
           },
         });
         if (error) throw error;
         if (data.session) {
-          router.push("/onboarding");
+          router.push(onboardingPath);
           router.refresh();
         } else setMessage("Check your inbox to confirm your account.");
       } else if (mode === "forgot") {

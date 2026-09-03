@@ -19,7 +19,7 @@ const output = {
 };
 export async function POST(request: Request) {
   try {
-    await apiContext();
+    await apiContext("creative");
     const input = schema.parse(await request.json());
     const result = await creativeJson<{
       translation: string;
