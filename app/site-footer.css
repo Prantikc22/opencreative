@@ -79,7 +79,7 @@
   color: inherit;
 }
 
-.site-footer-note span {
+.site-footer-note > span {
   display: flex;
   align-items: center;
   gap: 9px;
