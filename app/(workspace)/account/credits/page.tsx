@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, Coins, CreditCard, Sparkles } from "lucide-react";
 import { getWorkspaceContext } from "@/lib/workspace";
-import { creditBundles, pricingPlans } from "@/lib/pricing";
-import { productConfig } from "@/lib/config";
+import { agentPricingPlans, annualTotal, creditBundles, monthlyEquivalent, pricingPlans } from "@/lib/pricing";
+import { PaddleCheckoutButton } from "@/components/paddle-checkout-button";
+import { paddlePriceId } from "@/lib/paddle/server";
+import { ManageBillingButton } from "@/components/manage-billing-button";
 export const metadata: Metadata = { title: "Credits & billing" };
-export default async function Page() {
-  const { supabase, workspaceId, wallet, workspace } =
+export default async function Page({ searchParams }: { searchParams: Promise<{ billing?: string; checkout?: string }> }) {
+  const params = await searchParams;
+  const cadence = params.billing === "annual" ? "annual" : "monthly";
+  const { user, supabase, workspaceId, wallet, workspace } =
     await getWorkspaceContext();
   const { data: transactions } = await supabase
     .from("credit_transactions")
@@ -36,8 +40,14 @@ export default async function Page() {
           <small>credits · {workspace?.plan || "free"} plan</small>
         </div>
       </header>
+      {params.checkout === "success" && <p className="checkout-success">Payment received. Your plan or credits will appear as soon as Paddle sends its signed confirmation.</p>}
+      <nav className="billing-cadence" aria-label="Billing frequency">
+        <Link className={cadence === "monthly" ? "active" : ""} href="/account/credits?billing=monthly">Monthly</Link>
+        <Link className={cadence === "annual" ? "active" : ""} href="/account/credits?billing=annual">Annual · save 20%</Link>
+      </nav>
+      <ManageBillingButton />
       <section className="plan-grid">
-        {pricingPlans.map((plan) => (
+        {pricingPlans.filter((plan) => !plan.custom).map((plan) => (
           <article
             className={
               String(workspace?.plan).toLowerCase() === plan.id
@@ -48,9 +58,10 @@ export default async function Page() {
           >
             <span>{plan.name}</span>
             <div className="plan-price compact">
-              <h2>${plan.monthlyPrice}</h2>
+              <h2>${cadence === "annual" ? monthlyEquivalent(plan.monthlyPrice).toFixed(2) : plan.monthlyPrice}</h2>
               <span>per month</span>
             </div>
+            {cadence === "annual" && plan.monthlyPrice > 0 && <small>${annualTotal(plan.monthlyPrice).toFixed(2)} billed yearly</small>}
             <strong>
               <Sparkles size={14} />
               {plan.credits.toLocaleString()} credits
@@ -65,6 +76,8 @@ export default async function Page() {
             </ul>
             {plan.id === (workspace?.plan || "free") ? (
               <span className="plan-state">Current plan</span>
+            ) : plan.monthlyPrice > 0 ? (
+              <PaddleCheckoutButton priceId={paddlePriceId(plan.id, cadence)} label={`Choose ${plan.name}`} workspaceId={workspaceId} userId={user.id} purchaseType="subscription" itemId={plan.id} />
             ) : (
               <Link className="plan-state plan-action" href={`/pricing#${plan.id}`}>
                 View plan <ArrowRight size={14} />
@@ -72,6 +85,20 @@ export default async function Page() {
             )}
           </article>
         ))}
+      </section>
+      <section className="agent-billing-section">
+        <div className="section-head"><div><p className="eyebrow">Customer agents</p><h2>Add voice and text agent capacity.</h2></div><p>Agent capacity is metered separately but lives in the same account, tenant, support inbox, and billing history.</p></div>
+        <div className="bundle-grid agent-billing-grid">
+          {agentPricingPlans.filter((plan) => plan.monthlyPrice > 0 && !plan.custom).map((plan) => (
+            <article className={plan.featured ? "featured" : ""} key={plan.id}>
+              {plan.featured && <em>Best for teams</em>}
+              <span>{plan.name}</span>
+              <strong>${cadence === "annual" ? monthlyEquivalent(plan.monthlyPrice).toFixed(2) : plan.monthlyPrice}<small>/mo</small></strong>
+              <p>{plan.includedMinutes.toLocaleString()} included agent minutes · {plan.agents} agents</p>
+              <PaddleCheckoutButton priceId={paddlePriceId(plan.id, cadence)} label={`Add ${plan.name}`} workspaceId={workspaceId} userId={user.id} purchaseType="subscription" itemId={plan.id} />
+            </article>
+          ))}
+        </div>
       </section>
       <section className="bundle-section">
         <div className="section-head">
@@ -88,19 +115,11 @@ export default async function Page() {
               <span>{bundle.credits.toLocaleString()} credits</span>
               <strong>${bundle.price}</strong>
               <p>{bundle.description}</p>
-              <a
-                href={`mailto:${productConfig.supportEmail}?subject=${encodeURIComponent(`OpenCreative ${bundle.credits} credit top-up`)}&body=${encodeURIComponent(`Please help me add the ${bundle.credits}-credit bundle to workspace ${workspaceId}.`)}`}
-              >
-                Request this bundle <ArrowRight size={15} />
-              </a>
+              <PaddleCheckoutButton priceId={paddlePriceId(`credits-${bundle.credits}`, "one-time")} label={`Buy ${bundle.credits.toLocaleString()} credits`} workspaceId={workspaceId} userId={user.id} purchaseType="credit_topup" itemId={`credits-${bundle.credits}`} />
             </article>
           ))}
         </div>
-        <p className="payment-note">
-          <CreditCard size={16} /> Secure self-serve card checkout is awaiting a
-          payment-provider connection. Bundle requests open a pre-filled billing
-          email; credits are never granted before payment is verified.
-        </p>
+        <p className="payment-note"><CreditCard size={16} /> Secure checkout is handled by Paddle. Credits are added only after signed payment confirmation.</p>
       </section>
       <section className="ledger-section">
         <div className="section-head">

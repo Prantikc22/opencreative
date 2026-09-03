@@ -7,7 +7,7 @@ import { SupportAgentWidget } from "@/components/marketing/support-agent-widget"
 import { PricingExperience } from "@/components/pricing-experience";
 export const metadata: Metadata = {
   title: "Pricing from $9/month",
-  description: "Compare separate OpenCreative plans for creative production and customer agents, then estimate the right usage level.",
+  description: "Compare OpenCreative plans for creative production and customer agents, then estimate the right usage level.",
 };
 export default function Page() {
   return (
@@ -20,8 +20,8 @@ export default function Page() {
         </p>
         <h1>Choose the system.<br /><span>Pay for its pace.</span></h1>
         <p>
-          Creative production and customer agents have different economics. Pick
-          the product family you need, then add the other one separately when it earns a place.
+          Creative production and customer agents use different meters. Choose
+          the workflow you need today and manage both from one OpenCreative account.
         </p>
         <nav className="pricing-jump-nav" aria-label="Pricing page sections">
           <a href="#plans">Plans</a><a href="#calculator">Calculator</a><a href="#compare">Plan comparison</a><a href="#pricing-faq">FAQ</a>

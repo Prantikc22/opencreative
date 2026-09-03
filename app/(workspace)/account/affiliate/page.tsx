@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { BadgeDollarSign, Copy, MousePointerClick, ReceiptText, Users } from "lucide-react";
+import { BadgeDollarSign, MousePointerClick, ReceiptText, Users } from "lucide-react";
 import { getWorkspaceContext } from "@/lib/workspace";
 import { createAffiliateAccount } from "./actions";
+import { CopyButton } from "@/components/copy-button";
 
 export const metadata: Metadata = { title: "Affiliate earnings" };
 
@@ -16,7 +17,7 @@ export default async function AffiliateDashboardPage() {
       <div><span>START EARNING</span><h2>Create your referral link.</h2><p>Join in one step. We will create a unique link and keep clicks, conversions, and payouts together.</p></div>
       <form action={createAffiliateAccount}><label>Payout email<input name="payoutEmail" type="email" required defaultValue={user.email || ""} /></label><button type="submit">Join the affiliate program</button></form>
     </section> : <>
-      <section className="affiliate-link-card"><div><span>YOUR REFERRAL LINK</span><strong>{origin}/r/{account.code}</strong><small>Status: {account.status}</small></div><Copy size={25} /></section>
+      <section className="affiliate-link-card"><div><span>YOUR REFERRAL LINK</span><strong>{origin}/r/{account.code}</strong><small>Status: {account.status}</small></div><CopyButton value={`${origin}/r/${account.code}`} /></section>
       <section className="affiliate-metrics">
         <article><MousePointerClick size={20} /><span>Clicks</span><strong>{account.click_count}</strong></article>
         <article><Users size={20} /><span>Conversions</span><strong>{account.conversion_count}</strong></article>

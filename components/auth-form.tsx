@@ -60,12 +60,13 @@ export function AuthForm({ mode }: { mode: Mode }) {
       } else if (mode === "signup") {
         const desiredProduct = params.get("product") === "agents" ? "agents" : "creative";
         const desiredPlan = params.get("plan") || (desiredProduct === "agents" ? "agent-sandbox" : "free");
-        const onboardingPath = `/onboarding?product=${desiredProduct}&plan=${encodeURIComponent(desiredPlan)}`;
+        const desiredBilling = params.get("billing") === "annual" ? "annual" : "monthly";
+        const onboardingPath = `/onboarding?product=${desiredProduct}&plan=${encodeURIComponent(desiredPlan)}&billing=${desiredBilling}`;
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            data: { full_name: fullName, desired_product: desiredProduct, desired_plan: desiredPlan },
+            data: { full_name: fullName, desired_product: desiredProduct, desired_plan: desiredPlan, desired_billing: desiredBilling },
             emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(onboardingPath)}`,
           },
         });

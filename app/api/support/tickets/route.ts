@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { escapeHtml, sendEmail } from "@/lib/email/resend";
 
 const ticketSchema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -75,8 +76,16 @@ export async function POST(request: Request) {
       .select("id,created_at")
       .single();
     if (error) throw error;
+    const reference = `OC-${String(data.id).slice(0, 8).toUpperCase()}`;
+    if (process.env.RESEND_API_KEY) {
+      await sendEmail({
+        to: input.email.toLowerCase(),
+        subject: `We received your request · ${reference}`,
+        html: `<h1>We have your request.</h1><p>Hi ${escapeHtml(input.name)},</p><p>Your support request is now in the workspace inbox. A reply will be sent to this email.</p><p><strong>Reference:</strong> ${reference}</p><p>${escapeHtml(input.message)}</p>`,
+      }).catch((emailError) => console.error("Support acknowledgement email failed", emailError));
+    }
     return NextResponse.json({
-      ticket: { id: data.id, reference: `OC-${String(data.id).slice(0, 8).toUpperCase()}`, createdAt: data.created_at },
+      ticket: { id: data.id, reference, createdAt: data.created_at },
     }, { status: 201 });
   } catch (cause) {
     if (cause instanceof z.ZodError)

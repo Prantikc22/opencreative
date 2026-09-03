@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { ExternalLink, Inbox, Mail, Phone } from "lucide-react";
+import { Inbox, Mail, Phone } from "lucide-react";
 import { getWorkspaceContext } from "@/lib/workspace";
+import { SupportTicketReply } from "@/components/support-ticket-reply";
 
 export const metadata: Metadata = { title: "Support inbox" };
 
@@ -29,16 +30,14 @@ export default async function SupportInboxPage() {
 
   return <div className="support-inbox-page">
     <header className="library-head"><div><p className="eyebrow"><Inbox size={13} /> Support inbox</p><h1>Every handoff.<br />One clear queue.</h1><p>Requests from Nori and your customer agents stay inside this workspace.</p></div></header>
-    {error ? <section className="support-inbox-empty"><h2>Run the latest Supabase migration.</h2><p>The support ticket table is not available yet. Apply <code>20260903040000_support_tickets.sql</code>, then refresh this page.</p></section>
+    {error ? <section className="support-inbox-empty"><h2>Run the latest Supabase migration.</h2><p>The support and billing schema is not available yet. Apply <code>supabase/OPENCREATIVE_PENDING_MIGRATIONS.sql</code>, then refresh this page.</p></section>
       : tickets.length === 0 ? <section className="support-inbox-empty"><Inbox size={28} /><h2>No open conversations yet.</h2><p>New support tickets will appear here with the customer’s contact details and message.</p></section>
       : <section className="support-ticket-list">{tickets.map((ticket) => {
         const agent = Array.isArray(ticket.agents) ? ticket.agents[0] : ticket.agents;
-        const subject = encodeURIComponent(`Re: ${ticket.subject} [OC-${ticket.id.slice(0, 8).toUpperCase()}]`);
-        const body = encodeURIComponent(`Hi ${ticket.requester_name},\n\nThanks for contacting us.\n\n\n\n— OpenCreative Support`);
         return <article key={ticket.id}>
           <header><div><span>{ticket.status}</span><small>{new Date(ticket.created_at).toLocaleString()}</small></div><strong>{agent?.name || "Nori · OpenCreative"}</strong></header>
           <h2>{ticket.subject}</h2><p>{ticket.message}</p>
-          <footer><div><span><Mail size={14} /> {ticket.requester_email}</span><span><Phone size={14} /> {ticket.requester_phone}</span></div><a href={`mailto:${ticket.requester_email}?subject=${subject}&body=${body}`}>Reply by email <ExternalLink size={14} /></a></footer>
+          <footer><div><span><Mail size={14} /> {ticket.requester_email}</span><span><Phone size={14} /> {ticket.requester_phone}</span></div><SupportTicketReply ticketId={ticket.id} requesterName={ticket.requester_name} /></footer>
         </article>;
       })}</section>}
   </div>;

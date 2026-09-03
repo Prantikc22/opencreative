@@ -28,7 +28,7 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
         </button>
       </div>
       <p className="billing-helper">
-        Creative plans unlock image, video, voice, music and avatar tools. Agent access is sold separately.
+        Creative plans unlock image, video, voice, music and avatar tools. OpenCreative Agents are available in the adjacent tab.
       </p>
       <div className="pricing-grid-public">
         {selfServePlans.map((plan) => {
@@ -72,7 +72,7 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
                   </li>
                 ))}
               </ul>
-              <Link href={plan.id === "free" ? "/signup?product=creative" : `/signup?product=creative&plan=${plan.id}`}>
+              <Link href={plan.id === "free" ? "/signup?product=creative" : `/signup?product=creative&plan=${plan.id}&billing=${annual ? "annual" : "monthly"}`}>
                 {plan.custom ? "Request a custom quote" : plan.id === "free" ? "Start creating free" : `Choose ${plan.name}`}
                 <ArrowRight size={16} />
               </Link>
@@ -108,7 +108,7 @@ function AgentPricingTable({ annual, setAnnual }: { annual: boolean; setAnnual: 
         <button className={!annual ? "active" : ""} onClick={() => setAnnual(false)}>Monthly</button>
         <button className={annual ? "active" : ""} onClick={() => setAnnual(true)}>Annual <span>Save {annualDiscount}%</span></button>
       </div>
-      <p className="billing-helper">Agent plans unlock voice and text agents only. Creative Studio access is a separate subscription.</p>
+      <p className="billing-helper">Agent plans cover voice and text agent usage. Your OpenCreative account can also add Creative Studio whenever needed.</p>
       <div className="pricing-grid-public agent-pricing-grid">
         {selfServePlans.map((plan) => {
           const price = annual ? monthlyEquivalent(plan.monthlyPrice) : plan.monthlyPrice;
@@ -121,7 +121,7 @@ function AgentPricingTable({ annual, setAnnual }: { annual: boolean; setAnnual: 
               <small className="annual-note">{annual && plan.monthlyPrice > 0 ? `$${annualTotal(plan.monthlyPrice).toFixed(2)} billed yearly` : plan.monthlyPrice ? "Billed monthly" : "No card required"}</small>
               <strong><Sparkles size={15} /> What you get</strong>
               <ul>{plan.features.map((feature) => <li key={feature}><Check size={16} />{feature}</li>)}</ul>
-              <Link href={`/signup?product=agents&plan=${plan.id}`}>{plan.monthlyPrice ? `Choose ${plan.name}` : "Test an agent free"}<ArrowRight size={16} /></Link>
+              <Link href={`/signup?product=agents&plan=${plan.id}&billing=${annual ? "annual" : "monthly"}`}>{plan.monthlyPrice ? `Choose ${plan.name}` : "Test an agent free"}<ArrowRight size={16} /></Link>
             </article>
           );
         })}

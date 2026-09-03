@@ -1,4 +1,4 @@
-import { KeyRound, PlugZap, Trash2 } from "lucide-react";
+import { CheckCircle2, KeyRound, PlugZap, Trash2 } from "lucide-react";
 import { getWorkspaceContext } from "@/lib/workspace";
 import { McpKeyManager } from "@/components/mcp-key-manager";
 import { revokeMcpKeyAction } from "./actions";
@@ -29,6 +29,14 @@ export default async function McpKeysPage() {
           ))}
         </section>
       </div>
+      <section className="mcp-connect-guide">
+        <div><p className="eyebrow">Connection guide</p><h2>Connect in three minutes.</h2><p>Create a key above, then add OpenCreative as a remote HTTP MCP server in your compatible client. The key belongs to this signed-in cloud workspace—never use a Supabase access token.</p></div>
+        <ol>
+          <li><CheckCircle2 size={18} /><span><strong>1. Create and copy a key</strong><small>It is displayed once and can be revoked here at any time.</small></span></li>
+          <li><CheckCircle2 size={18} /><span><strong>2. Add the server URL</strong><code>{`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/mcp`}</code></span></li>
+          <li><CheckCircle2 size={18} /><span><strong>3. Authenticate requests</strong><code>Authorization: Bearer oc_live_…</code><small>Calls inherit your tenant permissions and consume this workspace&apos;s credits.</small></span></li>
+        </ol>
+      </section>
     </div>
   );
 }

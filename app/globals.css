@@ -20,6 +20,7 @@
   --radius-lg: 24px;
   --shadow-soft: 0 28px 80px rgba(16, 16, 15, 0.12);
 }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -4446,4 +4447,51 @@ body .pricing-public .pricing-footnote {
   .pricing-footer { grid-template-columns: 1fr 1fr; }
   .pricing-footer > .brand-mark,
   .pricing-footer > p { grid-column: 1/-1; }
+}
+
+/* Launch dashboard polish: readable controls, clear billing, and account grouping. */
+.sidebar-account-label { margin: 12px 23px 5px; color: rgba(255,255,255,.34); font: 700 10px/1 var(--font-geist-mono); letter-spacing: .16em; text-transform: uppercase; }
+.sidebar-collapsed .sidebar-account-label { display: none; }
+.credits-pill.credits-low { border-color: #ff513f; background: #fff3f0; }
+.credits-pill.credits-low span { color: #bd3023; font-weight: 750; }
+.studio-intro > div > p:last-child, .campaign-builder-head > div > p:last-child { font-size: 16px; line-height: 1.6; }
+.studio-controls { padding: 38px 40px 64px; }
+.control-section { margin-bottom: 30px; }
+.control-label, .choice-label { margin-bottom: 12px; font-size: 13px; }
+.studio-prompt { min-height: 180px; padding: 18px; font-size: 17px; line-height: 1.65; }
+.prompt-foot { margin-top: 0; padding: 8px 2px 0; }
+.prompt-foot span, .prompt-foot button { font-size: 12px; }
+.segmented button { min-height: 46px; font-size: 13px; }
+.generate-button { min-height: 54px; font-size: 15px; }
+.canvas-empty p, .generation-live > small { font-size: 14px; line-height: 1.6; }
+.support-inbox-page { width: min(1220px, calc(100% - 60px)); padding: 55px 0 90px; }
+.mcp-connect-guide { margin-top: 22px; padding: clamp(28px,4vw,52px); display: grid; grid-template-columns: .8fr 1.2fr; gap: 60px; border: 1px solid var(--border-strong); background: #171715; color: #fff; }
+.mcp-connect-guide h2 { margin: 18px 0 14px; font-size: clamp(32px,4vw,52px); letter-spacing: -.055em; }
+.mcp-connect-guide p { color: #aaa79f; font-size: 15px; line-height: 1.65; }
+.mcp-connect-guide ol { margin: 0; padding: 0; list-style: none; display: grid; }
+.mcp-connect-guide li { padding: 20px 0; display: flex; gap: 14px; border-bottom: 1px solid rgba(255,255,255,.14); }
+.mcp-connect-guide li:first-child { padding-top: 0; }
+.mcp-connect-guide li:last-child { border-bottom: 0; }
+.mcp-connect-guide li > span { display: grid; gap: 7px; min-width: 0; }
+.mcp-connect-guide code { padding: 9px 11px; overflow-wrap: anywhere; background: rgba(255,255,255,.08); color: #ff8176; font: 12px/1.5 var(--font-geist-mono); }
+.mcp-connect-guide small { color: #918e87; font-size: 13px; }
+.copy-action, .support-reply-toggle, .paddle-buy-button { min-height: 46px; padding: 0 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--border-strong); background: #171715; color: #fff; font-weight: 750; cursor: pointer; }
+.copy-action { flex: 0 0 auto; }
+.paddle-buy-wrap { margin-top: auto; display: grid; gap: 6px; }
+.paddle-buy-button { width: 100%; justify-content: space-between; }
+.paddle-buy-button:disabled { opacity: .46; cursor: not-allowed; }
+.paddle-buy-wrap > small { color: #b52e23; }
+.bundle-grid .paddle-buy-wrap { margin-top: auto; }
+.support-reply-composer { width: min(520px,100%); display: grid; gap: 10px; }
+.support-reply-composer label { display: grid; gap: 7px; font-weight: 700; }
+.support-reply-composer textarea { min-height: 120px; resize: vertical; }
+.support-reply-composer > div { display: flex; justify-content: flex-end; gap: 8px; }
+.support-reply-composer button { min-height: 40px; padding: 0 13px; display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border-strong); background: #fff; cursor: pointer; }
+.support-reply-composer button:last-child { background: #171715; color: #fff; }
+.support-reply-composer > small { color: #b52e23; }
+@media (max-width: 800px) {
+  .studio-controls { padding: 28px 18px 48px; }
+  .support-inbox-page { width: calc(100% - 30px); padding-top: 34px; }
+  .mcp-connect-guide { grid-template-columns: 1fr; gap: 30px; }
+  .affiliate-link-card { align-items: flex-start; flex-direction: column; }
 }

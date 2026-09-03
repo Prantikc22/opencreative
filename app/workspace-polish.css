@@ -1,0 +1,71 @@
+/* Last in the cascade: workspace controls keep a legible launch baseline. */
+.app-shell, .app-content { font-size: 15px; }
+.app-sidebar a, .app-sidebar button, .workspace-topbar,
+.app-content :where(p, li, label, button, input, select, textarea, a) { font-size: 14px; }
+.app-content small, .app-content .eyebrow, .app-content .control-label,
+.app-content .choice-label, .app-content .form-field > span { font-size: 13px; line-height: 1.5; }
+.library-head > div > p:last-child, .identity-form-page > header > p:last-child { font-size: 15px; line-height: 1.65; }
+.wallet-card span, .wallet-card small { font-size: 12px; }
+.studio-controls { padding: 38px 40px 64px; }
+.control-section { margin-bottom: 30px; }
+.control-label, .choice-label { margin-bottom: 12px; font-size: 13px; }
+.studio-prompt { min-height: 180px; padding: 18px; font-size: 17px; line-height: 1.65; }
+.prompt-foot { margin-top: 0; padding: 8px 2px 0; }
+.prompt-foot span, .prompt-foot button { font-size: 12px; }
+.segmented button { min-height: 46px; font-size: 13px; }
+.generate-button { min-height: 54px; font-size: 15px; }
+.plan-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.plan-grid article { min-height: 380px; padding: 24px; }
+.plan-grid article > span, .plan-grid article > strong { font-size: 12px; }
+.plan-grid ul { font-size: 12px; line-height: 1.5; }
+.plan-grid .plan-price h2 { font-size: 36px; }
+.billing-cadence { margin-top: 28px; display: inline-grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border-strong); }
+.billing-cadence a { min-height: 44px; padding: 0 18px; display: grid; place-items: center; color: var(--muted); font-weight: 700; }
+.billing-cadence a + a { border-left: 1px solid var(--border-strong); }
+.billing-cadence a.active { background: var(--ink); color: #fff; }
+.checkout-success { margin: 24px 0 0; padding: 16px 18px; border: 1px solid #4a8e37; background: #f0f8ea; color: #2f6223; }
+.manage-billing-wrap { margin: 18px 0 0; display: flex; align-items: center; gap: 12px; }
+.manage-billing-wrap button { min-height: 42px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-strong); background: #fff; font-weight: 700; cursor: pointer; }
+.manage-billing-wrap small { color: #b52e23; }
+.agent-billing-section { margin-top: 76px; padding-top: 48px; border-top: 1px solid var(--line); }
+.agent-billing-section > .section-head { align-items: end; }
+.agent-billing-section > .section-head h2 { margin: 10px 0 0; font-size: clamp(32px,4vw,52px); letter-spacing: -.055em; }
+.agent-billing-section > .section-head > p { max-width: 460px; color: var(--muted); line-height: 1.6; }
+.agent-billing-grid article > strong small { margin-left: 6px; color: var(--muted); font-size: 13px; letter-spacing: 0; }
+.payment-note { font-size: 13px; }
+.sidebar-account-label { margin: 12px 23px 5px; color: rgba(255,255,255,.34); font: 700 10px/1 var(--font-geist-mono); letter-spacing: .16em; text-transform: uppercase; }
+.sidebar-collapsed .sidebar-account-label { display: none; }
+.credits-pill.credits-low { border-color: #ff513f; background: #fff3f0; }
+.credits-pill.credits-low span { color: #bd3023; font-weight: 750; }
+.support-inbox-page { width: min(1220px, calc(100% - 60px)); max-width: none; margin: 0 auto; padding: 55px 0 90px; }
+.support-inbox-empty { min-height: 390px; padding: 52px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px; border: 1px solid var(--line); background: #fff; }
+.support-inbox-empty h2 { margin: 0; font-size: clamp(32px,4vw,54px); letter-spacing: -.055em; }
+.support-ticket-list article { padding: 30px; }
+.mcp-connect-guide { margin-top: 22px; padding: clamp(28px,4vw,52px); display: grid; grid-template-columns: .8fr 1.2fr; gap: 60px; border: 1px solid var(--border-strong); background: #171715; color: #fff; }
+.mcp-connect-guide h2 { margin: 18px 0 14px; font-size: clamp(32px,4vw,52px); letter-spacing: -.055em; }
+.mcp-connect-guide p { color: #aaa79f; font-size: 15px; line-height: 1.65; }
+.mcp-connect-guide ol { margin: 0; padding: 0; list-style: none; display: grid; }
+.mcp-connect-guide li { padding: 20px 0; display: flex; gap: 14px; border-bottom: 1px solid rgba(255,255,255,.14); }
+.mcp-connect-guide li:first-child { padding-top: 0; }
+.mcp-connect-guide li:last-child { border-bottom: 0; }
+.mcp-connect-guide li > span { display: grid; gap: 7px; min-width: 0; }
+.mcp-connect-guide code { padding: 9px 11px; overflow-wrap: anywhere; background: rgba(255,255,255,.08); color: #ff8176; font: 12px/1.5 var(--font-geist-mono); }
+.mcp-connect-guide small { color: #918e87; font-size: 13px; }
+.copy-action, .support-reply-toggle, .paddle-buy-button { min-height: 46px; padding: 0 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--border-strong); background: #171715; color: #fff; font-weight: 750; cursor: pointer; }
+.paddle-buy-wrap { margin-top: auto; display: grid; gap: 6px; }
+.paddle-buy-button { width: 100%; justify-content: space-between; }
+.paddle-buy-button:disabled { opacity: .46; cursor: not-allowed; }
+.support-reply-composer { width: min(520px,100%); display: grid; gap: 10px; }
+.support-reply-composer label { display: grid; gap: 7px; font-weight: 700; }
+.support-reply-composer textarea { min-height: 120px; padding: 12px; resize: vertical; }
+.support-reply-composer > div { display: flex; justify-content: flex-end; gap: 8px; }
+.support-reply-composer button { min-height: 40px; padding: 0 13px; border: 1px solid var(--border-strong); background: #fff; cursor: pointer; }
+.support-reply-composer button:last-child { background: #171715; color: #fff; }
+@media (max-width: 1100px) { .plan-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 800px) {
+  .studio-controls { padding: 28px 18px 48px; }
+  .plan-grid { grid-template-columns: 1fr; }
+  .support-inbox-page { width: calc(100% - 30px); padding-top: 34px; }
+  .mcp-connect-guide { grid-template-columns: 1fr; gap: 30px; }
+  .affiliate-link-card { align-items: flex-start; flex-direction: column; }
+}

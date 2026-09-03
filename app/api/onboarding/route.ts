@@ -58,8 +58,15 @@ export async function POST(request: Request) {
         next: `/identities/brands/${brand.id}?analyze=1`,
       });
     }
+    const desiredPlan = String(user.user_metadata.desired_plan || "free");
+    const desiredBilling = user.user_metadata.desired_billing === "annual" ? "annual" : "monthly";
+    const needsCheckout = !["free", "agent-sandbox", "enterprise", "agent-enterprise"].includes(desiredPlan);
     return NextResponse.json({
-      next: input.brandMode === "upload" ? "/identities/brands/new" : "/app",
+      next: input.brandMode === "upload"
+        ? "/identities/brands/new"
+        : needsCheckout
+          ? `/account/credits?plan=${encodeURIComponent(desiredPlan)}&billing=${desiredBilling}`
+          : "/app",
     });
   } catch (cause) {
     return NextResponse.json(

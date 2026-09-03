@@ -43,7 +43,7 @@ const groups = [
       ["AI Image", "/studio/image", Images],
       ["Avatar", "/studio/avatar", CircleUserRound],
       ["Voice", "/studio/audio", AudioLines],
-      ["Music", "/studio/music", Music2],
+      ["Music · Beta", "/studio/music", Music2],
       ["Agents", "/studio/agents", Bot],
       ["Dub & Translate", "/studio/audio?mode=dub", Mic2],
     ],
@@ -156,6 +156,7 @@ export function AppSidebar({
             <Inbox size={17} />
             <span>Support inbox</span>
           </Link>
+          <p className="sidebar-account-label">Account</p>
           <Link href="/account/mcp">
             <PlugZap size={17} />
             <span>MCP &amp; API keys</span>

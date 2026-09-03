@@ -1,5 +1,6 @@
 export const productConfig = {
   name: process.env.NEXT_PUBLIC_APP_NAME || "OpenCreative",
+  appUrl: (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, ""),
   tagline: "The open-source AI creative studio.",
   description:
     "Create videos, ads, UGC, images, voices and avatars with the world's best AI models.",

@@ -6,6 +6,7 @@ import "./marketing-v2.css";
 import "./site-footer.css";
 import "./pricing-redesign.css";
 import "./home-2026.css";
+import "./workspace-polish.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
