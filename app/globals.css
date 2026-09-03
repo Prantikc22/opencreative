@@ -4477,6 +4477,8 @@ body .pricing-public .pricing-footnote {
 .mcp-connect-guide small { color: #918e87; font-size: 13px; }
 .copy-action, .support-reply-toggle, .paddle-buy-button { min-height: 46px; padding: 0 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--border-strong); background: #171715; color: #fff; font-weight: 750; cursor: pointer; }
 .copy-action { flex: 0 0 auto; }
+.copy-action-wrap { display: grid; justify-items: end; gap: 7px; }
+.copy-action-wrap > small { max-width: 260px; color: #b52e23; text-align: right; }
 .paddle-buy-wrap { margin-top: auto; display: grid; gap: 6px; }
 .paddle-buy-button { width: 100%; justify-content: space-between; }
 .paddle-buy-button:disabled { opacity: .46; cursor: not-allowed; }
@@ -4489,9 +4491,23 @@ body .pricing-public .pricing-footnote {
 .support-reply-composer button { min-height: 40px; padding: 0 13px; display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border-strong); background: #fff; cursor: pointer; }
 .support-reply-composer button:last-child { background: #171715; color: #fff; }
 .support-reply-composer > small { color: #b52e23; }
+.low-credit-callout { min-height: 34px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; background: #ff513f; color: #fff; font-size: 12px; font-weight: 780; }
+.mcp-config-example { grid-column: 1 / -1; min-width: 0; padding-top: 28px; border-top: 1px solid rgba(255,255,255,.14); }
+.mcp-config-example > strong { display: block; margin-bottom: 12px; font-size: 16px; }
+.mcp-config-example pre { margin: 0; padding: 18px; overflow: auto; background: #0d0d0c; }
+.mcp-config-example pre code { display: block; padding: 0; background: transparent; color: #f4f1e9; font-size: 13px; white-space: pre; }
+.mcp-config-example p { margin-bottom: 0; }
+/* The legacy dashboard began at 7–10px in many controls. Keep all operational copy comfortably readable. */
+.app-content { font-size: 15px; }
+.app-content :where(p, li, label, input, select, textarea, button, a) { font-size: max(14px, 1em); }
+.app-content small { font-size: max(12px, .86em); line-height: 1.5; }
+.quality-grid strong { font-size: 14px; }
+.quality-grid small { font-size: 12px; }
+.studio-reference-list button, .actual-steps span, .result-grid figcaption { font-size: 12px; }
 @media (max-width: 800px) {
   .studio-controls { padding: 28px 18px 48px; }
   .support-inbox-page { width: calc(100% - 30px); padding-top: 34px; }
   .mcp-connect-guide { grid-template-columns: 1fr; gap: 30px; }
   .affiliate-link-card { align-items: flex-start; flex-direction: column; }
+  .low-credit-callout { display: none; }
 }

@@ -54,7 +54,7 @@ async function setProductEntitlement(
   admin: ReturnType<typeof createAdminClient>,
   workspaceId: string,
   family: "creative" | "agents",
-  enabled: boolean,
+  plan: string | null,
 ) {
   const { data: workspace, error: readError } = await admin
     .from("workspaces")
@@ -62,10 +62,10 @@ async function setProductEntitlement(
     .eq("id", workspaceId)
     .single();
   if (readError) throw readError;
-  const existing = (workspace?.product_entitlements || {}) as Record<string, boolean>;
+  const existing = (workspace?.product_entitlements || {}) as Record<string, string | null>;
   const { error } = await admin
     .from("workspaces")
-    .update({ product_entitlements: { ...existing, [family]: enabled } })
+    .update({ product_entitlements: { ...existing, [family]: plan } })
     .eq("id", workspaceId);
   if (error) throw error;
 }
@@ -82,9 +82,19 @@ export async function POST(request: Request) {
     const type = String(event.eventType);
     const eventId = String(event.eventId);
     const custom = (data.customData || data.custom_data || {}) as Record<string, string>;
-    const workspaceId = custom.workspace_id;
+    let workspaceId = custom.workspace_id;
     const userId = custom.user_id || null;
     const admin = createAdminClient();
+    const providerCustomerId = String(data.customerId || data.customer_id || "");
+
+    if (!workspaceId && providerCustomerId) {
+      const { data: knownCustomer } = await admin
+        .from("billing_customers")
+        .select("workspace_id")
+        .eq("provider_customer_id", providerCustomerId)
+        .maybeSingle();
+      workspaceId = String(knownCustomer?.workspace_id || "");
+    }
 
     if (workspaceId && userId && (data.customerId || data.customer_id)) {
       const { data: authUser } = await admin.auth.admin.getUserById(userId);
@@ -110,6 +120,19 @@ export async function POST(request: Request) {
           p_workspace_id: workspaceId,
           p_user_id: userId,
           p_credits: credits,
+          p_transaction_id: String(data.id || ""),
+          p_payload: { price_id: priceId, total: data.details?.totals?.total, currency_code: data.currencyCode || data.currency_code },
+        });
+        if (error) throw error;
+      } else if (workspaceId && planPrices.has(priceId) && !planPrices.get(priceId)?.startsWith("agent-")) {
+        const plan = planPrices.get(priceId)!;
+        const includedCredits = pricingPlans.find((item) => item.id === plan)?.credits || 0;
+        const { error } = await admin.rpc("apply_paddle_subscription_payment", {
+          p_event_id: eventId,
+          p_workspace_id: workspaceId,
+          p_user_id: userId,
+          p_plan: plan,
+          p_credits: includedCredits,
           p_transaction_id: String(data.id || ""),
           p_payload: { price_id: priceId, total: data.details?.totals?.total, currency_code: data.currencyCode || data.currency_code },
         });
@@ -158,7 +181,7 @@ export async function POST(request: Request) {
         const { error } = await admin.from("subscriptions").upsert(payload, { onConflict: "provider_subscription_id" });
         if (error) throw error;
         const active = ["active", "trialing", "past_due"].includes(String(data.status));
-        await setProductEntitlement(admin, workspaceId, isAgent ? "agents" : "creative", active);
+        await setProductEntitlement(admin, workspaceId, isAgent ? "agents" : "creative", active ? plan : null);
         if (!isAgent && active) {
           const { error: planError } = await admin.from("workspaces").update({ plan }).eq("id", workspaceId);
           if (planError) throw planError;

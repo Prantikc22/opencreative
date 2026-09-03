@@ -87,7 +87,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
         ))}
       </section>
       <section className="agent-billing-section">
-        <div className="section-head"><div><p className="eyebrow">Customer agents</p><h2>Add voice and text agent capacity.</h2></div><p>Agent capacity is metered separately but lives in the same account, tenant, support inbox, and billing history.</p></div>
+        <div className="section-head"><div><p className="eyebrow">Customer agents</p><h2>Voice and text agents are built in.</h2></div><p>Choose the capacity you need inside the same OpenCreative account, workspace, support inbox, and billing history.</p></div>
         <div className="bundle-grid agent-billing-grid">
           {agentPricingPlans.filter((plan) => plan.monthlyPrice > 0 && !plan.custom).map((plan) => (
             <article className={plan.featured ? "featured" : ""} key={plan.id}>

@@ -65,8 +65,9 @@ for (const [key, name, monthly, annual, description] of catalog) {
   const monthlyPrice = await ensurePrice(product, key, "monthly", monthly, description);
   const annualPrice = await ensurePrice(product, key, "annual", annual, description);
   const envKey = key.toUpperCase().replaceAll("-", "_");
-  env[`PADDLE_PRICE_${envKey}_MONTHLY`] = monthlyPrice.id;
-  env[`PADDLE_PRICE_${envKey}_ANNUAL`] = annualPrice.id;
+  const prefix = key.startsWith("agent-") ? "PADDLE_PRICE" : "PADDLE_PRICE_CREATIVE";
+  env[`${prefix}_${envKey}_MONTHLY`] = monthlyPrice.id;
+  env[`${prefix}_${envKey}_ANNUAL`] = annualPrice.id;
 }
 for (const [key, name, amount, description] of bundles) {
   const product = await ensureProduct(key, name, description);
@@ -89,6 +90,8 @@ if (!destination) {
     destination: destinationUrl,
     type: "url",
     subscribedEvents: [
+      "customer.created",
+      "customer.updated",
       "transaction.completed",
       "subscription.created",
       "subscription.updated",
@@ -99,6 +102,7 @@ if (!destination) {
 }
 env.PADDLE_NOTIFICATION_WEBHOOK_SECRET = destination.endpointSecretKey;
 
+env.NEXT_PUBLIC_PADDLE_ENV = "sandbox";
 const lines = Object.entries(env).map(([key, value]) => `${key}=${value}`);
 await writeFile(".env.paddle.generated", `${lines.join("\n")}\n`, { mode: 0o600 });
 console.log(`Paddle sandbox catalog ready: ${catalog.length * 2 + bundles.length} prices and one signed webhook destination.`);

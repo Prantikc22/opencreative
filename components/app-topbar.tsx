@@ -23,7 +23,7 @@ export function AppTopbar({
       } catch { /* Keep the last known balance when offline. */ }
     };
     void refresh();
-    const interval = window.setInterval(refresh, 10000);
+    const interval = window.setInterval(refresh, 3000);
     window.addEventListener("opencreative:credits-updated", refresh);
     window.addEventListener("focus", refresh);
     return () => {
@@ -39,6 +39,7 @@ export function AppTopbar({
         <span>Your creative workspace</span>
       </div>
       <div className="topbar-actions">
+        {balance <= 25 && <Link className="low-credit-callout" href="/account/credits">Running low — top up now</Link>}
         <Link className={`credits-pill ${balance <= 25 ? "credits-low" : ""}`} href="/account/credits">
           <Coins size={15} />
           <strong>{balance}</strong>

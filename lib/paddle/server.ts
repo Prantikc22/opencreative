@@ -32,5 +32,7 @@ const envNames: Record<string, string> = {
 
 export function paddlePriceId(item: string, cadence: "monthly" | "annual" | "one-time") {
   const name = envNames[`${item}:${cadence}`];
-  return name ? process.env[name] || "" : "";
+  if (!name) return "";
+  const legacyName = name.replace("PADDLE_PRICE_CREATIVE_", "PADDLE_PRICE_");
+  return process.env[name] || process.env[legacyName] || "";
 }

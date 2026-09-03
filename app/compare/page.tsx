@@ -22,7 +22,7 @@ const rows = [
   ["Video translation", true, true, true, false, false],
   ["Avatar presenters", true, true, true, false, true],
   ["Original music", "Beta", true, false, false, true],
-  ["Customer agents", true, true, false, false, false],
+  ["Customer agents in the same workspace", true, true, false, false, false],
   ["Shared brand workspace", true, true, true, true, true],
   ["Open-source core", true, false, false, false, false],
   ["MCP creative tools", true, false, false, false, false],
@@ -33,6 +33,9 @@ const rows = [
   ["Tenant support inbox", true, false, false, false, false],
   ["Affiliate dashboard", true, false, false, false, false],
   ["Credit estimate before generation", true, false, false, false, false],
+  ["Products, brands, voices, and avatars as reusable identities", true, false, false, false, false],
+  ["Shot-by-shot campaign planning", true, false, false, false, false],
+  ["One ledger across image, video, voice, avatar, and agents", true, false, false, false, false],
 ] as const;
 
 export default function ComparePage() {

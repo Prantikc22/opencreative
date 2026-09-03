@@ -7,7 +7,7 @@ export async function getWorkspaceContext() {
   const supabase = await createClient();
   const { data: membership, error } = await supabase
     .from("workspace_members")
-    .select("workspace_id, role, workspaces(id,name,slug,plan,settings)")
+    .select("workspace_id, role, workspaces(id,name,slug,plan,settings,product_entitlements)")
     .eq("user_id", user.id)
     .limit(1)
     .maybeSingle();
