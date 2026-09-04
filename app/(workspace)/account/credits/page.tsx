@@ -12,6 +12,16 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
   const cadence = params.billing === "annual" ? "annual" : "monthly";
   const { user, supabase, workspaceId, wallet, workspace } =
     await getWorkspaceContext();
+  const { data: syncedSubscription } = await supabase
+    .from("subscriptions")
+    .select("plan,status,cancel_at_period_end,current_period_end")
+    .eq("workspace_id", workspaceId)
+    .eq("provider", "paddle")
+    .in("status", ["active", "trialing", "past_due"])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const currentPlan = syncedSubscription?.plan || workspace?.plan || "free";
   const { data: transactions } = await supabase
     .from("credit_transactions")
     .select(
@@ -38,7 +48,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
         <div className="wallet-card">
           <span>Available</span>
           <strong>{wallet?.balance || 0}</strong>
-          <small>credits · {workspace?.plan || "free"} plan</small>
+          <small>credits · {currentPlan} plan</small>
         </div>
       </header>
       {params.checkout === "success" && !checkoutConfirmed && <p className="checkout-success">Payment received. We’re waiting for Paddle’s signed confirmation. Your balance will update automatically.</p>}
@@ -51,7 +61,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
         {pricingPlans.filter((plan) => !plan.custom).map((plan) => (
           <article
             className={
-              String(workspace?.plan).toLowerCase() === plan.id
+              String(currentPlan).toLowerCase() === plan.id
                 ? "current"
                 : ""
             }
@@ -75,7 +85,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
                 </li>
               ))}
             </ul>
-            {plan.id === (workspace?.plan || "free") ? (
+            {plan.id === currentPlan ? (
               <span className="plan-state">Current plan</span>
             ) : plan.monthlyPrice > 0 ? (
               <PaddleCheckoutButton priceId={paddlePriceId(plan.id, cadence)} label={`Choose ${plan.name}`} workspaceId={workspaceId} userId={user.id} purchaseType="subscription" itemId={plan.id} />
