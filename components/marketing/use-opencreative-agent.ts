@@ -65,15 +65,27 @@ export function useOpenCreativeAgent(endpoint = "/api/nori", initialWelcome = we
     return result;
   }, [endpoint]);
 
-  const answer = useCallback(async (question: string, appendQuestion = true) => {
+  const answer = useCallback(async (question: string, appendQuestion = true, synthesize = false) => {
     if (sending || transcribing) return;
     setSending(true);
     setError("");
     if (appendQuestion) setMessages((current) => [...current, { role: "user", text: question }]);
     try {
-      const result = await request({ text: question });
-      setMessages((current) => [...current, { role: "agent", text: result.text }]);
-      await play(result.audioBase64, result.audioMimeType);
+      const result = await request({ text: question, synthesize });
+      setMessages((current) => [...current, { role: "agent", text: "" }]);
+      const typing = (async () => {
+        const step = Math.max(2, Math.ceil(result.text.length / 90));
+        for (let length = step; length < result.text.length; length += step) {
+          setMessages((current) => current.map((message, index) =>
+            index === current.length - 1 ? { ...message, text: result.text.slice(0, length) } : message,
+          ));
+          await new Promise((resolve) => setTimeout(resolve, 14));
+        }
+        setMessages((current) => current.map((message, index) =>
+          index === current.length - 1 ? { ...message, text: result.text } : message,
+        ));
+      })();
+      await Promise.all([typing, play(result.audioBase64, result.audioMimeType)]);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The agent could not answer. Please try again.");
     } finally {
@@ -131,7 +143,7 @@ export function useOpenCreativeAgent(endpoint = "/api/nori", initialWelcome = we
           const transcript = transcription.transcript.trim();
           setMessages((current) => [...current, { role: "user", text: transcript }]);
           setTranscribing(false);
-          await answer(transcript, false);
+          await answer(transcript, false, true);
         } catch (cause) {
           setError(cause instanceof Error ? cause.message : "I could not transcribe that. Please try again.");
           setTranscribing(false);

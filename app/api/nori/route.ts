@@ -11,6 +11,7 @@ const requestSchema = z.object({
     format: z.enum(["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac"]),
   }).optional(),
   transcribeOnly: z.boolean().optional().default(false),
+  synthesize: z.boolean().optional().default(false),
 }).refine((value) => value.text || value.audio, "A text or voice question is required.");
 
 const noriKnowledge = `
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
       knowledge: noriKnowledge,
       language: "en",
       voice: "Kore",
+      synthesize: input.synthesize,
     });
     return NextResponse.json(result);
   } catch (cause) {

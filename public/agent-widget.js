@@ -1,0 +1,28 @@
+(() => {
+  const script = document.currentScript;
+  if (!script || document.getElementById("opencreative-agent-widget")) return;
+  const agentId = script.dataset.agentId;
+  if (!agentId) return;
+  const origin = new URL(script.src).origin;
+  const position = script.dataset.position === "right" ? "right" : "left";
+  const color = /^#[0-9a-f]{6}$/i.test(script.dataset.color || "") ? script.dataset.color : "#ff513f";
+  const label = script.dataset.label || "Chat with us";
+  const root = document.createElement("div");
+  root.id = "opencreative-agent-widget";
+  const side = position === "left" ? "left:20px" : "right:20px";
+  const button = document.createElement("button");
+  button.type = "button";
+  button.setAttribute("aria-label", label);
+  button.style.cssText = `position:fixed;z-index:2147483646;bottom:20px;${side};height:54px;padding:0 18px;border:0;border-radius:27px;background:${color};color:#fff;box-shadow:0 12px 34px rgba(0,0,0,.22);font:700 14px system-ui;cursor:pointer;display:flex;align-items:center;gap:9px`;
+  const mark = document.createElement("span");
+  mark.textContent = "✦";
+  mark.style.fontSize = "19px";
+  button.append(mark, document.createTextNode(label));
+  const frame = document.createElement("iframe");
+  frame.title = label;
+  frame.src = `${origin}/embed/agent/${encodeURIComponent(agentId)}`;
+  frame.style.cssText = `display:none;position:fixed;z-index:2147483647;bottom:86px;${side};width:min(390px,calc(100vw - 28px));height:min(610px,calc(100vh - 110px));border:0;border-radius:18px;box-shadow:0 22px 70px rgba(0,0,0,.28);background:transparent`;
+  root.append(button, frame);
+  button.addEventListener("click", () => { frame.style.display = frame.style.display === "none" ? "block" : "none"; });
+  document.body.appendChild(root);
+})();

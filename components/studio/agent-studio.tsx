@@ -3,6 +3,14 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Bot, LoaderCircle, Mic, Plus, Save, Send } from "lucide-react";
 import { useOpenCreativeAgent } from "@/components/marketing/use-opencreative-agent";
+import { CopyButton } from "@/components/copy-button";
+
+type WidgetSettings = {
+  accent?: string;
+  launcherLabel?: string;
+  position?: "left" | "right";
+  theme?: "light" | "dark";
+};
 
 type SavedAgent = {
   id: string;
@@ -14,6 +22,7 @@ type SavedAgent = {
   voice: string;
   language: string;
   status: "draft" | "active" | "paused";
+  settings?: { widget?: WidgetSettings };
 };
 
 const blankAgent = {
@@ -36,6 +45,10 @@ export function AgentStudio() {
   const [welcomeMessage, setWelcomeMessage] = useState(blankAgent.welcomeMessage);
   const [language, setLanguage] = useState(blankAgent.language);
   const [voice, setVoice] = useState(blankAgent.voice);
+  const [widgetAccent, setWidgetAccent] = useState("#ff513f");
+  const [widgetLabel, setWidgetLabel] = useState("Chat with us");
+  const [widgetPosition, setWidgetPosition] = useState<"left" | "right">("left");
+  const [widgetTheme, setWidgetTheme] = useState<"light" | "dark">("light");
   const [draft, setDraft] = useState("What can you help me with?");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -52,6 +65,10 @@ export function AgentStudio() {
     setWelcomeMessage(agent.welcome_message);
     setLanguage(agent.language);
     setVoice(agent.voice);
+    setWidgetAccent(agent.settings?.widget?.accent || "#ff513f");
+    setWidgetLabel(agent.settings?.widget?.launcherLabel || "Chat with us");
+    setWidgetPosition(agent.settings?.widget?.position || "left");
+    setWidgetTheme(agent.settings?.widget?.theme || "light");
     setNotice("");
   }
 
@@ -76,6 +93,10 @@ export function AgentStudio() {
     setWelcomeMessage(blankAgent.welcomeMessage);
     setLanguage(blankAgent.language);
     setVoice(blankAgent.voice);
+    setWidgetAccent("#ff513f");
+    setWidgetLabel("Chat with us");
+    setWidgetPosition("left");
+    setWidgetTheme("light");
     setNotice("New agent ready to configure.");
   }
 
@@ -86,7 +107,7 @@ export function AgentStudio() {
       const response = await fetch(agentId ? `/api/agents/${agentId}` : "/api/agents", {
         method: agentId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description, knowledgeText: knowledge, systemPrompt, welcomeMessage, language, voice }),
+        body: JSON.stringify({ name, description, knowledgeText: knowledge, systemPrompt, welcomeMessage, language, voice, widget: { accent: widgetAccent, launcherLabel: widgetLabel, position: widgetPosition, theme: widgetTheme } }),
       });
       const result = await response.json() as { agent?: SavedAgent; error?: string };
       if (!response.ok || !result.agent) throw new Error(result.error || "Could not save this agent.");
@@ -110,6 +131,12 @@ export function AgentStudio() {
     setDraft("");
   }
 
+  const widgetOrigin = process.env.NEXT_PUBLIC_APP_URL || "https://www.opencreativehq.com";
+  const escapedWidgetLabel = widgetLabel.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[character] || character);
+  const widgetSnippet = agentId
+    ? `<script src="${widgetOrigin}/agent-widget.js" data-agent-id="${agentId}" data-position="${widgetPosition}" data-label="${escapedWidgetLabel}" data-color="${widgetAccent}" async></script>`
+    : "";
+
   return (
     <div className="studio-page agent-studio-page">
       <header className="studio-intro"><div><p className="eyebrow"><Bot size={13} /> OpenCreative Agents</p><h1>Build support that listens.</h1><p>Every agent is isolated to this workspace, grounded in its own approved knowledge, and powered by the production voice pipeline.</p></div></header>
@@ -128,6 +155,16 @@ export function AgentStudio() {
           <div className="control-section"><label className="control-label">Approved knowledge</label><textarea className="studio-prompt" value={knowledge} onChange={(event) => setKnowledge(event.target.value)} /></div>
           <div className="control-section"><label className="control-label">Behaviour</label><textarea className="studio-prompt agent-system-prompt" value={systemPrompt} onChange={(event) => setSystemPrompt(event.target.value)} /></div>
           <div className="agent-compact-fields"><label><span>Language</span><select value={language} onChange={(event) => setLanguage(event.target.value)}><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="ja">Japanese</option></select></label><label><span>Voice</span><select value={voice} onChange={(event) => setVoice(event.target.value)}><option value="Kore">Kore</option><option value="Aoede">Aoede</option><option value="Orus">Orus</option><option value="Leda">Leda</option><option value="Puck">Puck</option><option value="Charon">Charon</option></select></label></div>
+          <div className="agent-widget-settings">
+            <div><span className="control-label">Website widget</span><small>Customize the launcher your visitors see.</small></div>
+            <label><span>Button label</span><input className="studio-input" maxLength={32} value={widgetLabel} onChange={(event) => setWidgetLabel(event.target.value)} /></label>
+            <div className="agent-widget-setting-row">
+              <label><span>Brand color</span><input className="agent-color-input" type="color" value={widgetAccent} onChange={(event) => setWidgetAccent(event.target.value)} /></label>
+              <label><span>Corner</span><select value={widgetPosition} onChange={(event) => setWidgetPosition(event.target.value as "left" | "right")}><option value="left">Bottom left</option><option value="right">Bottom right</option></select></label>
+              <label><span>Theme</span><select value={widgetTheme} onChange={(event) => setWidgetTheme(event.target.value as "light" | "dark")}><option value="light">Light</option><option value="dark">Dark</option></select></label>
+            </div>
+            {agentId ? <div className="agent-widget-snippet"><code>{widgetSnippet}</code><CopyButton value={widgetSnippet} label="Copy install snippet" /></div> : <small>Save this agent to get its one-line website snippet.</small>}
+          </div>
           <button className="generate-button" type="button" onClick={saveAgent} disabled={saving || knowledge.trim().length < 20}>{saving ? <LoaderCircle className="spin" size={17} /> : <Save size={17} />} {agentId ? "Save changes" : "Create agent"}</button>
           {notice && <p className="studio-inline-notice">{notice}</p>}
         </section>

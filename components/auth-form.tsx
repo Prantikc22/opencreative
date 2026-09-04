@@ -112,11 +112,39 @@ export function AuthForm({ mode }: { mode: Mode }) {
     else setMessage("Magic link sent. Check your inbox.");
   }
 
+  async function googleAuth() {
+    setLoading(true);
+    setError(null);
+    const desiredProduct = params.get("product") === "agents" ? "agents" : "creative";
+    const desiredPlan = params.get("plan") || (desiredProduct === "agents" ? "agent-sandbox" : "free");
+    const desiredBilling = params.get("billing") === "annual" ? "annual" : "monthly";
+    const signupNext = `/onboarding?product=${desiredProduct}&plan=${encodeURIComponent(desiredPlan)}&billing=${desiredBilling}`;
+    const next = params.get("next") || (mode === "signup" ? signupNext : "/app");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        queryParams: { access_type: "offline", prompt: "select_account" },
+      },
+    });
+    if (error) {
+      setError(authErrorMessage(error));
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="auth-card">
       <p className="eyebrow">OpenCreative Cloud</p>
       <h1>{copy[0]}</h1>
       <p className="auth-subtitle">{copy[1]}</p>
+      {(mode === "login" || mode === "signup") && <>
+        <button className="google-auth-button" type="button" onClick={googleAuth} disabled={loading}>
+          <span className="google-mark" aria-hidden="true">G</span>
+          Continue with Google
+        </button>
+        <div className="auth-divider"><span>or continue with email</span></div>
+      </>}
       <form onSubmit={submit} className="auth-form">
         {mode === "signup" && (
           <label>

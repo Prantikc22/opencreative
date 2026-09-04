@@ -11,6 +11,12 @@ const updateSchema = z.object({
   voice: z.string().trim().min(1).max(80).optional(),
   language: z.string().trim().min(2).max(10).optional(),
   status: z.enum(["draft", "active", "paused"]).optional(),
+  widget: z.object({
+    accent: z.string().regex(/^#[0-9a-f]{6}$/i),
+    launcherLabel: z.string().trim().min(1).max(32),
+    position: z.enum(["left", "right"]),
+    theme: z.enum(["light", "dark"]),
+  }).optional(),
 });
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -29,12 +35,13 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     if (input.voice !== undefined) updates.voice = input.voice;
     if (input.language !== undefined) updates.language = input.language;
     if (input.status !== undefined) updates.status = input.status;
+    if (input.widget !== undefined) updates.settings = { widget: input.widget };
     const { data, error } = await context.supabase
       .from("agents")
       .update(updates)
       .eq("id", id)
       .eq("workspace_id", context.workspaceId)
-      .select("id,name,description,knowledge_text,system_prompt,welcome_message,voice,language,status,created_at,updated_at")
+      .select("id,name,description,knowledge_text,system_prompt,welcome_message,voice,language,status,settings,created_at,updated_at")
       .single();
     if (error) throw error;
     return NextResponse.json({ agent: data });

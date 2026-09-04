@@ -63,8 +63,8 @@ export function SupportAgentWidget({ agentId }: { agentId?: string } = {}) {
             {error && <p className="support-agent-error">{error}</p>}
             <form className="support-chat-form" onSubmit={submit}>
               <button type="button" className={listening ? "is-listening" : ""} onClick={startListening} disabled={busy} aria-label={listening ? "Stop listening" : "Ask with microphone"}>{listening ? <PhoneOff size={18} /> : <Mic size={18} />}</button>
-              <input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Ask about OpenCreative" aria-label="Question for OpenCreative" disabled={busy} />
-              <button type="submit" disabled={busy} aria-label="Send question"><SendHorizontal size={18} /></button>
+              <input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={busy ? "Keep typing your next question…" : "Ask about OpenCreative"} aria-label="Question for OpenCreative" />
+              <button type="submit" disabled={busy || !draft.trim()} aria-label="Send question"><SendHorizontal size={18} /></button>
             </form>
             <div className="support-agent-scope"><small>Grounded in the OpenCreative product guide</small><button type="button" onClick={openTicket}><LifeBuoy size={14} /> Lodge a ticket</button></div>
           </> : <div className="support-ticket-view">

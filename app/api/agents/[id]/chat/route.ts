@@ -12,6 +12,7 @@ const inputSchema = z.object({
     base64: z.string().min(100).max(20_000_000),
     format: z.enum(["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac"]),
   }).optional(),
+  synthesize: z.boolean().optional().default(false),
 }).refine((value) => value.text || value.audio, "A text or voice question is required.");
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -69,6 +70,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       language: agent.language,
       voice: agent.voice,
       history,
+      synthesize: input.synthesize || Boolean(input.audio),
     });
     const { error: messageError } = await context.supabase.from("agent_messages").insert([
       { workspace_id: context.workspaceId, session_id: sessionId, role: "user", content: result.transcript, input_kind: input.audio ? "voice" : "text", model_id: input.audio ? result.models.transcription : null },

@@ -10,6 +10,12 @@ const createSchema = z.object({
   welcomeMessage: z.string().trim().min(2).max(300).default("Hello. How can I help?"),
   voice: z.string().trim().min(1).max(80).default("Kore"),
   language: z.string().trim().min(2).max(10).default("en"),
+  widget: z.object({
+    accent: z.string().regex(/^#[0-9a-f]{6}$/i).default("#ff513f"),
+    launcherLabel: z.string().trim().min(1).max(32).default("Chat with us"),
+    position: z.enum(["left", "right"]).default("left"),
+    theme: z.enum(["light", "dark"]).default("light"),
+  }).optional(),
 });
 
 export async function GET() {
@@ -17,7 +23,7 @@ export async function GET() {
     const context = await apiContext("agents");
     const { data, error } = await context.supabase
       .from("agents")
-      .select("id,name,description,knowledge_text,system_prompt,welcome_message,voice,language,status,created_at,updated_at")
+      .select("id,name,description,knowledge_text,system_prompt,welcome_message,voice,language,status,settings,created_at,updated_at")
       .eq("workspace_id", context.workspaceId)
       .order("updated_at", { ascending: false });
     if (error) throw error;
@@ -45,8 +51,9 @@ export async function POST(request: Request) {
         voice: input.voice,
         language: input.language,
         status: "active",
+        settings: { widget: input.widget },
       })
-      .select("id,name,description,knowledge_text,system_prompt,welcome_message,voice,language,status,created_at,updated_at")
+      .select("id,name,description,knowledge_text,system_prompt,welcome_message,voice,language,status,settings,created_at,updated_at")
       .single();
     if (error) throw error;
     return NextResponse.json({ agent: data }, { status: 201 });

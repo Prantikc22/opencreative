@@ -47,6 +47,7 @@ export async function runAgentTurn(input: {
   language?: string;
   voice?: string;
   history?: Array<{ role: "user" | "assistant"; content: string }>;
+  synthesize?: boolean;
 }) {
   let message = input.text?.trim() || "";
   let inputAudioSeconds = 0;
@@ -76,14 +77,15 @@ export async function runAgentTurn(input: {
     model: agentModels.reasoning,
     history: input.history,
   });
-  const speech = await synthesizeSpeech({
+  const shouldSynthesize = input.synthesize ?? Boolean(input.audio);
+  const speech = shouldSynthesize ? await synthesizeSpeech({
     model: agentModels.speech,
     text: answer.text,
     voice: legacyVoiceMap[(input.voice || "").toLowerCase()] || input.voice || "Kore",
     speed: 1,
     format: "wav",
-  });
-  const outputAudioSeconds = speech.contentType === "audio/wav"
+  }) : null;
+  const outputAudioSeconds = speech?.contentType === "audio/wav"
     ? Math.max(0, (speech.bytes.length - 44) / 48_000)
     : 0;
   const usageSeconds = Math.max(1, inputAudioSeconds + outputAudioSeconds);
@@ -91,8 +93,8 @@ export async function runAgentTurn(input: {
   return {
     transcript: message,
     text: answer.text,
-    audioBase64: speech.bytes.toString("base64"),
-    audioMimeType: speech.contentType,
+    audioBase64: speech?.bytes.toString("base64"),
+    audioMimeType: speech?.contentType,
     usageSeconds,
     usage: answer.usage || {},
     models: agentModels,

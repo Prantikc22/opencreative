@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Aperture,
   BadgeDollarSign,
@@ -10,6 +10,7 @@ import {
   Bot,
   CircleUserRound,
   Clapperboard,
+  ChevronDown,
   Coins,
   FolderOpen,
   GalleryHorizontalEnd,
@@ -78,6 +79,20 @@ export function AppSidebar({
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(pathname.startsWith("/account"));
+  const [navigating, setNavigating] = useState("");
+  const search = searchParams.toString();
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setNavigating(""));
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, search]);
+
+  function beginNavigation(href: string) {
+    const [nextPath, nextQuery = ""] = href.split("?");
+    if (nextPath !== pathname || nextQuery !== search) setNavigating(href);
+    setOpen(false);
+  }
   return (
     <>
       <button
@@ -101,6 +116,7 @@ export function AppSidebar({
           collapsed && "sidebar-collapsed",
         )}
       >
+        <span className={cn("route-progress", navigating && "is-active")} aria-hidden="true" />
         <div className="sidebar-head">
           <Link href="/app">
             <BrandMark compact={collapsed} />
@@ -118,6 +134,7 @@ export function AppSidebar({
         </div>
         <Link
           href="/app"
+          onClick={() => beginNavigation("/app")}
           className={cn("sidebar-home", pathname === "/app" && "active")}
         >
           <LayoutGrid size={17} />
@@ -139,7 +156,7 @@ export function AppSidebar({
                 <Link
                   href={href}
                   key={href}
-                  onClick={() => setOpen(false)}
+                  onClick={() => beginNavigation(href)}
                   className={cn(active && "active")}
                   title={collapsed ? label : undefined}
                 >
@@ -152,27 +169,33 @@ export function AppSidebar({
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <Link href="/account/support">
-            <Inbox size={17} />
-            <span>Support inbox</span>
-          </Link>
-          <p className="sidebar-account-label">Account</p>
-          <Link href="/account/mcp">
-            <PlugZap size={17} />
-            <span>MCP &amp; API keys</span>
-          </Link>
-          <Link href="/account/affiliate">
-            <BadgeDollarSign size={17} />
-            <span>Affiliate earnings</span>
-          </Link>
-          <Link href="/account/credits">
-            <Coins size={17} />
-            <span>Credits & billing</span>
-          </Link>
-          <Link href="/account/settings">
+          <button
+            type="button"
+            className={cn("sidebar-account-toggle", accountOpen && "is-open", pathname.startsWith("/account") && "active")}
+            onClick={() => setAccountOpen((current) => !current)}
+            aria-expanded={accountOpen}
+          >
             <Settings size={17} />
-            <span>Settings</span>
-          </Link>
+            <span>Support &amp; account</span>
+            <ChevronDown className="sidebar-account-chevron" size={15} />
+          </button>
+          <div className={cn("sidebar-account-menu", accountOpen && "is-open")}>
+            <Link href="/account/support" onClick={() => beginNavigation("/account/support")} className={pathname === "/account/support" ? "active" : ""}>
+              <Inbox size={16} /><span>Support inbox</span>
+            </Link>
+            <Link href="/account/mcp" onClick={() => beginNavigation("/account/mcp")} className={pathname === "/account/mcp" ? "active" : ""}>
+              <PlugZap size={16} /><span>MCP &amp; API keys</span>
+            </Link>
+            <Link href="/account/affiliate" onClick={() => beginNavigation("/account/affiliate")} className={pathname === "/account/affiliate" ? "active" : ""}>
+              <BadgeDollarSign size={16} /><span>Affiliate earnings</span>
+            </Link>
+            <Link href="/account/credits" onClick={() => beginNavigation("/account/credits")} className={pathname === "/account/credits" ? "active" : ""}>
+              <Coins size={16} /><span>Credits &amp; billing</span>
+            </Link>
+            <Link href="/account/settings" onClick={() => beginNavigation("/account/settings")} className={pathname === "/account/settings" ? "active" : ""}>
+              <Settings size={16} /><span>Settings</span>
+            </Link>
+          </div>
           <div className="workspace-switch">
             <span className="workspace-avatar">
               {workspaceName.slice(0, 2).toUpperCase()}
