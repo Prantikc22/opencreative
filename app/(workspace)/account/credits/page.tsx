@@ -20,6 +20,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
     .eq("workspace_id", workspaceId)
     .order("created_at", { ascending: false })
     .limit(25);
+  const checkoutConfirmed = Boolean(params.checkout === "success" && transactions?.some((transaction) => transaction.status === "settled" && transaction.amount > 0));
   return (
     <div className="billing-page">
       <header className="library-head">
@@ -40,7 +41,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
           <small>credits · {workspace?.plan || "free"} plan</small>
         </div>
       </header>
-      {params.checkout === "success" && <p className="checkout-success">Payment received. Your plan or credits will appear as soon as Paddle sends its signed confirmation.</p>}
+      {params.checkout === "success" && !checkoutConfirmed && <p className="checkout-success">Payment received. We’re waiting for Paddle’s signed confirmation. Your balance will update automatically.</p>}
       <nav className="billing-cadence" aria-label="Billing frequency">
         <Link className={cadence === "monthly" ? "active" : ""} href="/account/credits?billing=monthly">Monthly</Link>
         <Link className={cadence === "annual" ? "active" : ""} href="/account/credits?billing=annual">Annual · save 20%</Link>

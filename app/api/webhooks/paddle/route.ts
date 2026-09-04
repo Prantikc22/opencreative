@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPaddle, paddlePriceId } from "@/lib/paddle/server";
 import { pricingPlans } from "@/lib/pricing";
+import { escapeHtml, sendEmail } from "@/lib/email/resend";
 
 export const runtime = "nodejs";
 export const maxDuration = 10;
@@ -86,6 +87,7 @@ export async function POST(request: Request) {
     const userId = custom.user_id || null;
     const admin = createAdminClient();
     const providerCustomerId = String(data.customerId || data.customer_id || "");
+    let accountEmail = "";
 
     if (!workspaceId && providerCustomerId) {
       const { data: knownCustomer } = await admin
@@ -95,10 +97,15 @@ export async function POST(request: Request) {
         .maybeSingle();
       workspaceId = String(knownCustomer?.workspace_id || "");
     }
+    if (providerCustomerId && !accountEmail) {
+      const { data: knownCustomer } = await admin.from("billing_customers").select("email").eq("provider_customer_id", providerCustomerId).maybeSingle();
+      accountEmail = String(knownCustomer?.email || "");
+    }
 
     if (workspaceId && userId && (data.customerId || data.customer_id)) {
       const { data: authUser } = await admin.auth.admin.getUserById(userId);
       if (authUser.user?.email) {
+        accountEmail = authUser.user.email;
         const { error: customerError } = await admin.from("billing_customers").upsert({
           provider_customer_id: data.customerId || data.customer_id,
           workspace_id: workspaceId,
@@ -124,6 +131,7 @@ export async function POST(request: Request) {
           p_payload: { price_id: priceId, total: data.details?.totals?.total, currency_code: data.currencyCode || data.currency_code },
         });
         if (error) throw error;
+        if (accountEmail) void sendEmail({ to: accountEmail, subject: `${credits.toLocaleString()} credits added to your OpenCreative wallet`, html: `<p>Your payment was confirmed and <strong>${credits.toLocaleString()} credits</strong> were added to your OpenCreative wallet.</p><p><a href="${escapeHtml(process.env.NEXT_PUBLIC_APP_URL || "https://www.opencreativehq.com")}/account/credits">View Credits &amp; billing</a></p>` }).catch((cause) => console.error("Credit purchase email error", cause));
       } else if (workspaceId && planPrices.has(priceId) && !planPrices.get(priceId)?.startsWith("agent-")) {
         const plan = planPrices.get(priceId)!;
         const includedCredits = pricingPlans.find((item) => item.id === plan)?.credits || 0;
@@ -137,6 +145,7 @@ export async function POST(request: Request) {
           p_payload: { price_id: priceId, total: data.details?.totals?.total, currency_code: data.currencyCode || data.currency_code },
         });
         if (error) throw error;
+        if (accountEmail) void sendEmail({ to: accountEmail, subject: `Your OpenCreative ${plan} plan is active`, html: `<p>Your <strong>${escapeHtml(plan)}</strong> plan is active with ${includedCredits.toLocaleString()} monthly credits.</p><p><a href="${escapeHtml(process.env.NEXT_PUBLIC_APP_URL || "https://www.opencreativehq.com")}/account/credits">Manage your plan</a></p>` }).catch((cause) => console.error("Plan purchase email error", cause));
       } else {
         await admin.from("billing_webhook_events").upsert({ event_id: eventId, event_type: type, payload: { transaction_id: data.id, ignored: true } });
       }
@@ -185,6 +194,10 @@ export async function POST(request: Request) {
         if (!isAgent && active) {
           const { error: planError } = await admin.from("workspaces").update({ plan }).eq("id", workspaceId);
           if (planError) throw planError;
+        }
+        if (accountEmail && (type === "subscription.updated" || type === "subscription.canceled")) {
+          const canceled = !active || (data.scheduledChange?.action || data.scheduled_change?.action) === "cancel";
+          void sendEmail({ to: accountEmail, subject: canceled ? "Your OpenCreative cancellation is scheduled" : `Your OpenCreative ${plan} plan was updated`, html: canceled ? `<p>Your ${escapeHtml(plan)} plan remains available through the current billing period, then access ends automatically.</p>` : `<p>Your ${escapeHtml(plan)} plan was updated successfully.</p>` }).catch((cause) => console.error("Subscription update email error", cause));
         }
       }
       await admin.from("billing_webhook_events").upsert({ event_id: eventId, event_type: type, payload: { subscription_id: data.id, price_id: priceId } });
