@@ -21,7 +21,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  const currentPlan = syncedSubscription?.plan || workspace?.plan || "free";
+  const entitlementPlan = (workspace?.product_entitlements as { creative?: string | null } | null)?.creative;
+  const currentPlan = syncedSubscription?.plan || entitlementPlan || workspace?.plan || "free";
   const { data: transactions } = await supabase
     .from("credit_transactions")
     .select(
