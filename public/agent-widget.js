@@ -4,7 +4,7 @@
   const agentId = script.dataset.agentId;
   if (!agentId) return;
   const origin = new URL(script.src).origin;
-  const position = script.dataset.position === "right" ? "right" : "left";
+  const position = script.dataset.position === "left" ? "left" : "right";
   const color = /^#[0-9a-f]{6}$/i.test(script.dataset.color || "") ? script.dataset.color : "#ff513f";
   const label = script.dataset.label || "Chat with us";
   const root = document.createElement("div");

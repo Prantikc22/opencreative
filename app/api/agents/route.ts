@@ -13,7 +13,7 @@ const createSchema = z.object({
   widget: z.object({
     accent: z.string().regex(/^#[0-9a-f]{6}$/i).default("#ff513f"),
     launcherLabel: z.string().trim().min(1).max(32).default("Chat with us"),
-    position: z.enum(["left", "right"]).default("left"),
+    position: z.enum(["left", "right"]).default("right"),
     theme: z.enum(["light", "dark"]).default("light"),
   }).optional(),
   resources: z.array(z.object({

@@ -27,6 +27,21 @@ function cleanText(value: string) {
     .slice(0, MAX_TEXT_CHARS);
 }
 
+function pageLinks(html: string, base: URL) {
+  const links: string[] = [];
+  for (const match of html.matchAll(/<a\b[^>]*?href=["']([^"']+)["']/gi)) {
+    try {
+      const next = new URL(match[1], base);
+      next.hash = "";
+      if (next.origin !== base.origin || !["http:", "https:"].includes(next.protocol)) continue;
+      if (/\.(?:pdf|jpe?g|png|gif|webp|svg|zip|mp[34]|mov|avi)$/i.test(next.pathname)) continue;
+      if (/(?:\/|^)(?:login|logout|sign-in|signup|cart|checkout|admin)(?:\/|$)/i.test(next.pathname)) continue;
+      links.push(next.toString());
+    } catch { /* Ignore invalid links in third-party HTML. */ }
+  }
+  return [...new Set(links)];
+}
+
 async function fetchPublicPage(input: string) {
   let url = await assertPublicHttpUrl(input);
   for (let redirects = 0; redirects <= 3; redirects += 1) {
@@ -50,9 +65,32 @@ async function fetchPublicPage(input: string) {
     if (contentLength > MAX_PAGE_BYTES) throw new Error("That page is too large to import.");
     const bytes = await response.arrayBuffer();
     if (bytes.byteLength > MAX_PAGE_BYTES) throw new Error("That page is too large to import.");
-    return { url: url.toString(), text: cleanText(new TextDecoder().decode(bytes)) };
+    const body = new TextDecoder().decode(bytes);
+    return { url: url.toString(), text: cleanText(body), links: contentType.includes("text/html") ? pageLinks(body, url) : [] };
   }
   throw new Error("The website redirected too many times.");
+}
+
+async function crawlPublicSite(input: string) {
+  const seed = await assertPublicHttpUrl(input);
+  const queue = [seed.toString()];
+  const visited = new Set<string>();
+  const pages: Array<{ url: string; text: string }> = [];
+  while (queue.length && pages.length < 8) {
+    const next = queue.shift()!;
+    if (visited.has(next)) continue;
+    visited.add(next);
+    try {
+      const page = await fetchPublicPage(next);
+      if (new URL(page.url).origin !== seed.origin) continue;
+      if (page.text.length >= 40) pages.push({ url: page.url, text: page.text });
+      for (const link of page.links) if (!visited.has(link) && queue.length < 40) queue.push(link);
+    } catch (cause) {
+      if (!pages.length) throw cause;
+    }
+  }
+  const text = pages.map((page) => `Page: ${page.url}\n${page.text}`).join("\n\n").slice(0, MAX_TEXT_CHARS);
+  return { url: seed.toString(), text, pages: pages.length };
 }
 
 export async function POST(request: Request) {
@@ -78,10 +116,10 @@ export async function POST(request: Request) {
 
     const body = await request.json() as { url?: string };
     if (!body.url) throw new Error("Enter a website URL to import.");
-    const page = await fetchPublicPage(body.url);
-    if (page.text.length < 40) throw new Error("No readable text was found on that page.");
+    const page = await crawlPublicSite(body.url);
+    if (page.text.length < 40) throw new Error("No readable text was found on that website.");
     return NextResponse.json({
-      resource: { id: crypto.randomUUID(), name: new URL(page.url).hostname, type: "website", source: page.url, text: page.text },
+      resource: { id: crypto.randomUUID(), name: `${new URL(page.url).hostname} (${page.pages} pages)`, type: "website", source: page.url, text: page.text },
     });
   } catch (cause) {
     const error = apiError(cause);

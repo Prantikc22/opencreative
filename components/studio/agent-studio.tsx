@@ -48,7 +48,7 @@ export function AgentStudio() {
   const [voice, setVoice] = useState(blankAgent.voice);
   const [widgetAccent, setWidgetAccent] = useState("#ff513f");
   const [widgetLabel, setWidgetLabel] = useState("Chat with us");
-  const [widgetPosition, setWidgetPosition] = useState<"left" | "right">("left");
+  const [widgetPosition, setWidgetPosition] = useState<"left" | "right">("right");
   const [widgetTheme, setWidgetTheme] = useState<"light" | "dark">("light");
   const [resources, setResources] = useState<AgentResource[]>([]);
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -71,7 +71,7 @@ export function AgentStudio() {
     setVoice(agent.voice);
     setWidgetAccent(agent.settings?.widget?.accent || "#ff513f");
     setWidgetLabel(agent.settings?.widget?.launcherLabel || "Chat with us");
-    setWidgetPosition(agent.settings?.widget?.position || "left");
+    setWidgetPosition(agent.settings?.widget?.position || "right");
     setWidgetTheme(agent.settings?.widget?.theme || "light");
     setResources(agent.settings?.resources || []);
     setWebsiteUrl("");
@@ -101,7 +101,7 @@ export function AgentStudio() {
     setVoice(blankAgent.voice);
     setWidgetAccent("#ff513f");
     setWidgetLabel("Chat with us");
-    setWidgetPosition("left");
+    setWidgetPosition("right");
     setWidgetTheme("light");
     setResources([]);
     setWebsiteUrl("");
@@ -187,10 +187,10 @@ export function AgentStudio() {
           <div className="control-section"><label className="control-label">What this agent does</label><input className="studio-input" value={description} onChange={(event) => setDescription(event.target.value)} /></div>
           <div className="control-section"><label className="control-label">Approved knowledge</label><textarea className="studio-prompt" value={knowledge} onChange={(event) => setKnowledge(event.target.value)} /></div>
           <div className="agent-resource-settings">
-            <div><span className="control-label">Knowledge sources</span><small>Import one public webpage or a text-based PDF. The agent uses only sources you approve.</small></div>
+            <div><span className="control-label">Knowledge sources</span><small>Crawl up to 8 linked pages from a public website, or attach a text-based PDF. The agent uses only sources you approve.</small></div>
             <div className="agent-resource-import">
               <label><Globe2 size={16} /><input className="studio-input" type="url" placeholder="https://yourwebsite.com/help" value={websiteUrl} onChange={(event) => setWebsiteUrl(event.target.value)} /></label>
-              <button type="button" onClick={() => void importResource({ url: websiteUrl })} disabled={importingResource || !websiteUrl.trim()}>Import page</button>
+              <button type="button" onClick={() => void importResource({ url: websiteUrl })} disabled={importingResource || !websiteUrl.trim()}>Crawl website</button>
             </div>
             <label className="agent-pdf-upload"><Upload size={16} /><span>{importingResource ? "Importing…" : "Attach PDF (up to 8 MB)"}</span><input type="file" accept="application/pdf,.pdf" disabled={importingResource} onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; const form = new FormData(); form.append("file", file); void importResource(form); event.target.value = ""; }} /></label>
             {resources.length > 0 && <div className="agent-resource-list">{resources.map((resource) => <div key={resource.id}><span>{resource.type === "pdf" ? <FileText size={15} /> : <Globe2 size={15} />}<span><strong>{resource.name}</strong><small>{resource.type === "pdf" ? "PDF" : resource.source}</small></span></span><button type="button" aria-label={`Remove ${resource.name}`} onClick={() => setResources((current) => current.filter((item) => item.id !== resource.id))}><Trash2 size={15} /></button></div>)}</div>}
@@ -202,7 +202,7 @@ export function AgentStudio() {
             <label><span>Button label</span><input className="studio-input" maxLength={32} value={widgetLabel} onChange={(event) => setWidgetLabel(event.target.value)} /></label>
             <div className="agent-widget-setting-row">
               <label><span>Brand color</span><input className="agent-color-input" type="color" value={widgetAccent} onChange={(event) => setWidgetAccent(event.target.value)} /></label>
-              <label><span>Corner</span><select value={widgetPosition} onChange={(event) => setWidgetPosition(event.target.value as "left" | "right")}><option value="left">Bottom left</option><option value="right">Bottom right</option></select></label>
+              <label><span>Corner</span><select value={widgetPosition} onChange={(event) => setWidgetPosition(event.target.value as "left" | "right")}><option value="right">Bottom right</option><option value="left">Bottom left</option></select></label>
               <label><span>Theme</span><select value={widgetTheme} onChange={(event) => setWidgetTheme(event.target.value as "light" | "dark")}><option value="light">Light</option><option value="dark">Dark</option></select></label>
             </div>
             {agentId ? <div className="agent-widget-snippet"><code>{widgetSnippet}</code><CopyButton value={widgetSnippet} label="Copy install snippet" /></div> : <small>Save this agent to get its one-line website snippet.</small>}

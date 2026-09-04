@@ -105,6 +105,15 @@ if (!destination) {
     ],
   });
 }
+for (const candidate of destinations) {
+  if (
+    candidate.id !== destination.id &&
+    candidate.active &&
+    candidate.destination.endsWith("/api/webhooks/paddle")
+  ) {
+    await paddle.notificationSettings.update(candidate.id, { active: false });
+  }
+}
 env.PADDLE_NOTIFICATION_WEBHOOK_SECRET = destination.endpointSecretKey;
 
 env.NEXT_PUBLIC_PADDLE_ENV = "sandbox";
