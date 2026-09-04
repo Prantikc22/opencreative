@@ -417,7 +417,6 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
                           ? "Highest quality"
                           : "Choose model"}
                   </small>
-                  {quality === value && <Check size={13} />}
                 </button>
               ))}
             </div>

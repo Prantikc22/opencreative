@@ -17,6 +17,15 @@ const updateSchema = z.object({
     position: z.enum(["left", "right"]),
     theme: z.enum(["light", "dark"]),
   }).optional(),
+  resources: z.array(z.object({
+    id: z.string().uuid(),
+    name: z.string().trim().min(1).max(100),
+    type: z.enum(["website", "pdf"]),
+    source: z.string().trim().min(1).max(2000),
+    text: z.string().trim().min(40).max(12_000),
+  })).max(6).optional(),
+}).refine((value) => !value.knowledgeText || !value.resources || value.knowledgeText.length + value.resources.reduce((total, resource) => total + resource.text.length, 0) <= 24_000, {
+  message: "Approved knowledge and resources must be 24,000 characters or less.",
 });
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -35,7 +44,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     if (input.voice !== undefined) updates.voice = input.voice;
     if (input.language !== undefined) updates.language = input.language;
     if (input.status !== undefined) updates.status = input.status;
-    if (input.widget !== undefined) updates.settings = { widget: input.widget };
+    if (input.widget !== undefined || input.resources !== undefined) {
+      updates.settings = { widget: input.widget, resources: input.resources || [] };
+    }
     const { data, error } = await context.supabase
       .from("agents")
       .update(updates)

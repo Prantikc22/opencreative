@@ -1,9 +1,10 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Bot, LoaderCircle, Mic, Plus, Save, Send } from "lucide-react";
+import { Bot, FileText, Globe2, LoaderCircle, Mic, Plus, Save, Send, Trash2, Upload } from "lucide-react";
 import { useOpenCreativeAgent } from "@/components/marketing/use-opencreative-agent";
 import { CopyButton } from "@/components/copy-button";
+import type { AgentResource } from "@/lib/agents/knowledge";
 
 type WidgetSettings = {
   accent?: string;
@@ -22,7 +23,7 @@ type SavedAgent = {
   voice: string;
   language: string;
   status: "draft" | "active" | "paused";
-  settings?: { widget?: WidgetSettings };
+  settings?: { widget?: WidgetSettings; resources?: AgentResource[] };
 };
 
 const blankAgent = {
@@ -49,6 +50,9 @@ export function AgentStudio() {
   const [widgetLabel, setWidgetLabel] = useState("Chat with us");
   const [widgetPosition, setWidgetPosition] = useState<"left" | "right">("left");
   const [widgetTheme, setWidgetTheme] = useState<"light" | "dark">("light");
+  const [resources, setResources] = useState<AgentResource[]>([]);
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [importingResource, setImportingResource] = useState(false);
   const [draft, setDraft] = useState("What can you help me with?");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -69,6 +73,8 @@ export function AgentStudio() {
     setWidgetLabel(agent.settings?.widget?.launcherLabel || "Chat with us");
     setWidgetPosition(agent.settings?.widget?.position || "left");
     setWidgetTheme(agent.settings?.widget?.theme || "light");
+    setResources(agent.settings?.resources || []);
+    setWebsiteUrl("");
     setNotice("");
   }
 
@@ -97,6 +103,8 @@ export function AgentStudio() {
     setWidgetLabel("Chat with us");
     setWidgetPosition("left");
     setWidgetTheme("light");
+    setResources([]);
+    setWebsiteUrl("");
     setNotice("New agent ready to configure.");
   }
 
@@ -107,7 +115,7 @@ export function AgentStudio() {
       const response = await fetch(agentId ? `/api/agents/${agentId}` : "/api/agents", {
         method: agentId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description, knowledgeText: knowledge, systemPrompt, welcomeMessage, language, voice, widget: { accent: widgetAccent, launcherLabel: widgetLabel, position: widgetPosition, theme: widgetTheme } }),
+        body: JSON.stringify({ name, description, knowledgeText: knowledge, systemPrompt, welcomeMessage, language, voice, resources, widget: { accent: widgetAccent, launcherLabel: widgetLabel, position: widgetPosition, theme: widgetTheme } }),
       });
       const result = await response.json() as { agent?: SavedAgent; error?: string };
       if (!response.ok || !result.agent) throw new Error(result.error || "Could not save this agent.");
@@ -118,6 +126,31 @@ export function AgentStudio() {
       setNotice(cause instanceof Error ? cause.message : "Could not save this agent.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function importResource(body: FormData | { url: string }) {
+    if (resources.length >= 6) {
+      setNotice("You can attach up to 6 knowledge resources to an agent.");
+      return;
+    }
+    setImportingResource(true);
+    setNotice("");
+    try {
+      const response = await fetch("/api/agents/resources", {
+        method: "POST",
+        headers: body instanceof FormData ? undefined : { "Content-Type": "application/json" },
+        body: body instanceof FormData ? body : JSON.stringify(body),
+      });
+      const result = await response.json() as { resource?: AgentResource; error?: string };
+      if (!response.ok || !result.resource) throw new Error(result.error || "Could not import that resource.");
+      setResources((current) => [...current, result.resource!]);
+      setWebsiteUrl("");
+      setNotice(`${result.resource.name} is ready. Save changes to train this agent on it.`);
+    } catch (cause) {
+      setNotice(cause instanceof Error ? cause.message : "Could not import that resource.");
+    } finally {
+      setImportingResource(false);
     }
   }
 
@@ -153,6 +186,15 @@ export function AgentStudio() {
           <div className="control-section"><label className="control-label">Agent name</label><input className="studio-input" value={name} onChange={(event) => setName(event.target.value)} /></div>
           <div className="control-section"><label className="control-label">What this agent does</label><input className="studio-input" value={description} onChange={(event) => setDescription(event.target.value)} /></div>
           <div className="control-section"><label className="control-label">Approved knowledge</label><textarea className="studio-prompt" value={knowledge} onChange={(event) => setKnowledge(event.target.value)} /></div>
+          <div className="agent-resource-settings">
+            <div><span className="control-label">Knowledge sources</span><small>Import one public webpage or a text-based PDF. The agent uses only sources you approve.</small></div>
+            <div className="agent-resource-import">
+              <label><Globe2 size={16} /><input className="studio-input" type="url" placeholder="https://yourwebsite.com/help" value={websiteUrl} onChange={(event) => setWebsiteUrl(event.target.value)} /></label>
+              <button type="button" onClick={() => void importResource({ url: websiteUrl })} disabled={importingResource || !websiteUrl.trim()}>Import page</button>
+            </div>
+            <label className="agent-pdf-upload"><Upload size={16} /><span>{importingResource ? "Importing…" : "Attach PDF (up to 8 MB)"}</span><input type="file" accept="application/pdf,.pdf" disabled={importingResource} onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; const form = new FormData(); form.append("file", file); void importResource(form); event.target.value = ""; }} /></label>
+            {resources.length > 0 && <div className="agent-resource-list">{resources.map((resource) => <div key={resource.id}><span>{resource.type === "pdf" ? <FileText size={15} /> : <Globe2 size={15} />}<span><strong>{resource.name}</strong><small>{resource.type === "pdf" ? "PDF" : resource.source}</small></span></span><button type="button" aria-label={`Remove ${resource.name}`} onClick={() => setResources((current) => current.filter((item) => item.id !== resource.id))}><Trash2 size={15} /></button></div>)}</div>}
+          </div>
           <div className="control-section"><label className="control-label">Behaviour</label><textarea className="studio-prompt agent-system-prompt" value={systemPrompt} onChange={(event) => setSystemPrompt(event.target.value)} /></div>
           <div className="agent-compact-fields"><label><span>Language</span><select value={language} onChange={(event) => setLanguage(event.target.value)}><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="ja">Japanese</option></select></label><label><span>Voice</span><select value={voice} onChange={(event) => setVoice(event.target.value)}><option value="Kore">Kore</option><option value="Aoede">Aoede</option><option value="Orus">Orus</option><option value="Leda">Leda</option><option value="Puck">Puck</option><option value="Charon">Charon</option></select></label></div>
           <div className="agent-widget-settings">

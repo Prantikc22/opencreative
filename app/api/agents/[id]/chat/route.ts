@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiContext, apiError } from "@/lib/api/context";
 import { runAgentTurn } from "@/lib/agents/provider";
+import { agentKnowledge } from "@/lib/agents/knowledge";
 
 export const maxDuration = 60;
 
@@ -22,7 +23,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const input = inputSchema.parse(await request.json());
     const { data: agent, error: agentError } = await context.supabase
       .from("agents")
-      .select("id,name,knowledge_text,system_prompt,welcome_message,voice,language,status")
+      .select("id,name,knowledge_text,system_prompt,welcome_message,voice,language,status,settings")
       .eq("id", id)
       .eq("workspace_id", context.workspaceId)
       .eq("status", "active")
@@ -65,7 +66,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       text: input.text,
       audio: input.audio,
       name: agent.name,
-      knowledge: agent.knowledge_text,
+      knowledge: agentKnowledge(agent.knowledge_text, agent.settings),
       systemPrompt: agent.system_prompt,
       language: agent.language,
       voice: agent.voice,

@@ -16,6 +16,15 @@ const createSchema = z.object({
     position: z.enum(["left", "right"]).default("left"),
     theme: z.enum(["light", "dark"]).default("light"),
   }).optional(),
+  resources: z.array(z.object({
+    id: z.string().uuid(),
+    name: z.string().trim().min(1).max(100),
+    type: z.enum(["website", "pdf"]),
+    source: z.string().trim().min(1).max(2000),
+    text: z.string().trim().min(40).max(12_000),
+  })).max(6).default([]),
+}).refine((value) => value.knowledgeText.length + value.resources.reduce((total, resource) => total + resource.text.length, 0) <= 24_000, {
+  message: "Approved knowledge and resources must be 24,000 characters or less.",
 });
 
 export async function GET() {
@@ -51,7 +60,7 @@ export async function POST(request: Request) {
         voice: input.voice,
         language: input.language,
         status: "active",
-        settings: { widget: input.widget },
+        settings: { widget: input.widget, resources: input.resources },
       })
       .select("id,name,description,knowledge_text,system_prompt,welcome_message,voice,language,status,settings,created_at,updated_at")
       .single();

@@ -1,0 +1,90 @@
+import { NextResponse } from "next/server";
+import { extractText } from "unpdf";
+import { apiContext, apiError } from "@/lib/api/context";
+import { assertPublicHttpUrl } from "@/lib/security/guard";
+
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
+const MAX_FILE_BYTES = 8 * 1024 * 1024;
+const MAX_PAGE_BYTES = 2 * 1024 * 1024;
+const MAX_TEXT_CHARS = 12_000;
+
+function cleanText(value: string) {
+  return value
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<svg\b[^>]*>[\s\S]*?<\/svg>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, "\"")
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, MAX_TEXT_CHARS);
+}
+
+async function fetchPublicPage(input: string) {
+  let url = await assertPublicHttpUrl(input);
+  for (let redirects = 0; redirects <= 3; redirects += 1) {
+    const response = await fetch(url, {
+      redirect: "manual",
+      headers: { "User-Agent": "OpenCreative-Knowledge-Importer/1.0" },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+      if (!location) throw new Error("The website returned an invalid redirect.");
+      url = await assertPublicHttpUrl(new URL(location, url).toString());
+      continue;
+    }
+    if (!response.ok) throw new Error(`The website returned ${response.status}.`);
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("text/html") && !contentType.includes("text/plain")) {
+      throw new Error("That URL is not a readable web page.");
+    }
+    const contentLength = Number(response.headers.get("content-length") || 0);
+    if (contentLength > MAX_PAGE_BYTES) throw new Error("That page is too large to import.");
+    const bytes = await response.arrayBuffer();
+    if (bytes.byteLength > MAX_PAGE_BYTES) throw new Error("That page is too large to import.");
+    return { url: url.toString(), text: cleanText(new TextDecoder().decode(bytes)) };
+  }
+  throw new Error("The website redirected too many times.");
+}
+
+export async function POST(request: Request) {
+  try {
+    await apiContext("agents");
+    const contentType = request.headers.get("content-type") || "";
+
+    if (contentType.includes("multipart/form-data")) {
+      const form = await request.formData();
+      const file = form.get("file");
+      if (!(file instanceof File)) throw new Error("Choose a PDF to import.");
+      if (file.size > MAX_FILE_BYTES) throw new Error("PDFs must be smaller than 8 MB.");
+      if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+        throw new Error("Only PDF resources are supported.");
+      }
+      const result = await extractText(new Uint8Array(await file.arrayBuffer()), { mergePages: true });
+      const text = cleanText(Array.isArray(result.text) ? result.text.join("\n") : result.text);
+      if (text.length < 40) throw new Error("No readable text was found in that PDF.");
+      return NextResponse.json({
+        resource: { id: crypto.randomUUID(), name: file.name.slice(0, 100), type: "pdf", source: file.name.slice(0, 100), text },
+      });
+    }
+
+    const body = await request.json() as { url?: string };
+    if (!body.url) throw new Error("Enter a website URL to import.");
+    const page = await fetchPublicPage(body.url);
+    if (page.text.length < 40) throw new Error("No readable text was found on that page.");
+    return NextResponse.json({
+      resource: { id: crypto.randomUUID(), name: new URL(page.url).hostname, type: "website", source: page.url, text: page.text },
+    });
+  } catch (cause) {
+    const error = apiError(cause);
+    return NextResponse.json({ error: error.message }, { status: error.status === 500 ? 400 : error.status });
+  }
+}

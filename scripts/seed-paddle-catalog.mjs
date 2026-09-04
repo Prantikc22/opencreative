@@ -51,10 +51,15 @@ async function ensurePrice(product, key, cadence, amount, description) {
       description,
       unitPrice: { amount: String(amount), currencyCode: "USD" },
       billingCycle: cadence === "monthly" ? { interval: "month", frequency: 1 } : cadence === "annual" ? { interval: "year", frequency: 1 } : null,
-      taxMode: "account_setting",
+      taxMode: "external",
       customData: { opencreative_key: priceKey },
     });
     prices.push(price);
+  }
+  if (price.taxMode !== "external") {
+    price = await paddle.prices.update(price.id, { taxMode: "external" });
+    const index = prices.findIndex((item) => item.id === price.id);
+    if (index >= 0) prices[index] = price;
   }
   return price;
 }

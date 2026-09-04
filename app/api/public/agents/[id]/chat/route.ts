@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { runAgentTurn } from "@/lib/agents/provider";
+import { agentKnowledge } from "@/lib/agents/knowledge";
 
 export const maxDuration = 60;
 
@@ -44,7 +45,7 @@ export async function POST(request: Request, { params }: RouteContext) {
     const input = inputSchema.parse(await request.json());
     const admin = createAdminClient();
     const { data: agent, error: agentError } = await admin.from("agents")
-      .select("id,workspace_id,created_by,name,knowledge_text,system_prompt,welcome_message,voice,language,status")
+      .select("id,workspace_id,created_by,name,knowledge_text,system_prompt,welcome_message,voice,language,status,settings")
       .eq("id", id).eq("status", "active").single();
     if (agentError || !agent) return NextResponse.json({ error: "Agent not found." }, { status: 404 });
 
@@ -66,7 +67,7 @@ export async function POST(request: Request, { params }: RouteContext) {
     const history = (rows || []).filter((row) => row.role === "user" || row.role === "assistant")
       .map((row) => ({ role: row.role as "user" | "assistant", content: row.content }));
     const result = await runAgentTurn({
-      text: input.text, name: agent.name, knowledge: agent.knowledge_text,
+      text: input.text, name: agent.name, knowledge: agentKnowledge(agent.knowledge_text, agent.settings),
       systemPrompt: agent.system_prompt, language: agent.language, voice: agent.voice, history, synthesize: false,
     });
     await admin.from("agent_messages").insert([
