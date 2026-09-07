@@ -13,6 +13,42 @@ export type CreativeTool = {
   sourceVideo?: boolean;
   requiresSourceVideo?: boolean;
   requiresReferences?: boolean;
+  icon?: string;
+};
+
+export const creativeToolIcons: Record<string, string> = {
+  "text-to-video": "clapperboard",
+  "frame-to-video": "film",
+  "smart-shot": "wand",
+  "edit-video": "scissors",
+  "replace-background-video": "panels",
+  "relight-video": "sun",
+  vfx: "zap",
+  "lip-sync": "message",
+  "upscale-video": "maximize",
+  "replace-character": "userCog",
+  "extend-video": "move",
+  "generate-with-sound": "audio",
+  "restyle-video": "palette",
+  "create-image": "image",
+  "image-variations": "gallery",
+  "edit-image": "pencil",
+  "expand-image": "expand",
+  "enhance-image": "sparkle",
+  "remove-background": "eraser",
+  "change-background": "imagePlus",
+  "multi-view": "layers",
+  "camera-angle": "radar",
+  "identity-portrait": "face",
+  "voice-over": "mic",
+  "dub-video": "languages",
+  music: "music",
+  "create-world": "world",
+  "world-camera": "orbit",
+  "cast-in-scene": "users",
+  "create-character": "userPen",
+  "character-library": "library",
+  "talking-character": "video",
 };
 
 const imageTool = (id: string, name: string, description: string, promptPrefix: string, referenceHint = "Attach the image you want to transform."): CreativeTool => ({

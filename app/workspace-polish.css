@@ -259,6 +259,32 @@
 .toolbox-grid small.setup { background: #eeeae2; color: #6a655c; }
 .toolbox-grid > a > svg, .toolbox-grid > .toolbox-disabled > svg { grid-column: 3; grid-row: 2; align-self: center; }
 .toolbox-grid > .toolbox-disabled { cursor: not-allowed; opacity: .62; }
+.toolbox-summary { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; }
+.toolbox-summary strong { color: var(--coral); }
+.toolbox-grid > a, .toolbox-grid > .toolbox-disabled { animation: toolbox-reveal .45s both; animation-delay: calc(var(--tool-index, 0) * 35ms); }
+.toolbox-grid > a:nth-child(2), .toolbox-grid > .toolbox-disabled:nth-child(2) { --tool-index: 1; }
+.toolbox-grid > a:nth-child(3), .toolbox-grid > .toolbox-disabled:nth-child(3) { --tool-index: 2; }
+.toolbox-grid > a:nth-child(4), .toolbox-grid > .toolbox-disabled:nth-child(4) { --tool-index: 3; }
+.toolbox-grid > a:nth-child(5), .toolbox-grid > .toolbox-disabled:nth-child(5) { --tool-index: 4; }
+.toolbox-grid > a:nth-child(6), .toolbox-grid > .toolbox-disabled:nth-child(6) { --tool-index: 5; }
+.toolbox-grid > a:nth-child(7), .toolbox-grid > .toolbox-disabled:nth-child(7) { --tool-index: 6; }
+.toolbox-grid > a:nth-child(8), .toolbox-grid > .toolbox-disabled:nth-child(8) { --tool-index: 7; }
+.toolbox-grid > a:nth-child(9), .toolbox-grid > .toolbox-disabled:nth-child(9) { --tool-index: 8; }
+.toolbox-grid > a:nth-child(10), .toolbox-grid > .toolbox-disabled:nth-child(10) { --tool-index: 9; }
+@keyframes toolbox-reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.specialized-tool-rail { margin: -6px 0 24px; padding: 13px 14px 12px; border: 1px solid #ddd8ce; border-radius: 12px; background: linear-gradient(110deg, #faf8f3, #f3efe7); }
+.specialized-tool-rail-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; color: var(--muted); font-size: 12px; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+.specialized-tool-rail-head > span { display: inline-flex; align-items: center; gap: 7px; }
+.specialized-tool-rail-head a { display: inline-flex; align-items: center; gap: 4px; color: var(--ink); font-size: 11px; letter-spacing: 0; text-decoration: none; text-transform: none; }
+.specialized-tool-chips { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; }
+.specialized-tool-chip { flex: 0 0 auto; min-height: 34px; padding: 5px 9px 5px 6px; display: inline-flex; align-items: center; gap: 7px; border: 1px solid #d7d1c7; border-radius: 999px; background: #fff; color: var(--ink); font-size: 12px; font-weight: 700; text-decoration: none; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.specialized-tool-chip:hover { transform: translateY(-2px); border-color: var(--coral); box-shadow: 0 7px 16px rgba(30,25,20,.09); }
+.specialized-tool-chip.active { border-color: var(--coral); box-shadow: inset 0 0 0 1px var(--coral); background: #fff8f5; }
+.specialized-tool-chip.disabled { color: #817c72; cursor: not-allowed; opacity: .62; }
+.specialized-tool-chip small { color: #8d5e19; font-size: 9px; text-transform: uppercase; }
+.specialized-tool-icon { width: 23px; height: 23px; display: grid; place-items: center; border-radius: 50%; background: #f0ece3; color: var(--coral); }
+.control-help { margin: -6px 0 9px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+@media (prefers-reduced-motion: reduce) { .toolbox-grid > a, .toolbox-grid > .toolbox-disabled, .specialized-tool-chip { animation: none; transition: none; } }
 .studio-tool-context { margin-bottom: 26px; padding: 15px; display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 12px; border: 1px solid #d5d1c7; border-radius: 11px; background: #f7f4ed; }
 .studio-tool-context > span { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 9px; background: #171715; color: #fff; }
 .studio-tool-context > div { min-width: 0; display: grid; gap: 3px; }

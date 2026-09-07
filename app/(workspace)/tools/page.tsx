@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Boxes, Sparkles } from "lucide-react";
-import { creativeTools, type CreativeToolCategory } from "@/lib/creative-tools";
+import { ArrowRight, Boxes } from "lucide-react";
+import { creativeTools, creativeToolIcons, type CreativeToolCategory } from "@/lib/creative-tools";
+import { ToolIcon, type ToolIconName } from "@/components/tool-icon";
 
 export const metadata: Metadata = { title: "Creative tools" };
 
@@ -15,6 +16,7 @@ export default function ToolsPage() {
           <p className="eyebrow"><Boxes size={14} /> Creative toolbox</p>
           <h1>Every production tool.<br />One workspace.</h1>
           <p>Choose the operation you need. OpenCreative preconfigures the right studio, model family and generation direction while keeping your references, projects and credits together.</p>
+          <div className="toolbox-summary"><strong>{creativeTools.filter((tool) => tool.status === "Ready").length} live tools</strong><span>·</span><span>{creativeTools.length} total operations</span><span>·</span><span>Each tool opens with its own model-aware controls</span></div>
         </div>
       </header>
       {categories.map((category) => {
@@ -25,7 +27,7 @@ export default function ToolsPage() {
             <div className="toolbox-grid">
               {tools.map((tool) => {
                 const content = <>
-                  <span><Sparkles size={17} /></span>
+                  <span><ToolIcon name={creativeToolIcons[tool.id] as ToolIconName} size={18} /></span>
                   <div><h3>{tool.name}</h3><p>{tool.description}</p></div>
                   <small className={tool.status === "Beta" ? "beta" : tool.status === "Setup required" ? "setup" : ""}>{tool.status}</small>
                   <ArrowRight size={16} />

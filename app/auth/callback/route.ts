@@ -7,7 +7,7 @@ import { escapeHtml, sendEmail } from "@/lib/email/resend";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next")?.startsWith("/")
+  const next = url.searchParams.get("next")?.startsWith("/") && !url.searchParams.get("next")?.startsWith("//") && !url.searchParams.get("next")?.includes("\\")
     ? url.searchParams.get("next")!
     : "/app";
   if (code) {

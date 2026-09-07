@@ -19,7 +19,9 @@ npm run storage:setup
 npm run dev
 ```
 
-Apply [`supabase/migrations/20260901000000_initial.sql`](supabase/migrations/20260901000000_initial.sql) to your Supabase project before signing in. Then open [http://localhost:3000](http://localhost:3000).
+Apply every file in [`supabase/migrations`](supabase/migrations) in filename order to your Supabase project before signing in. The latest migration also installs the server-only MCP OAuth tables. Then open [http://localhost:3000](http://localhost:3000).
+
+OpenCreative exposes 31 ready creative operations plus provider-backed music when its capacity is enabled. See [`MCP.md`](MCP.md) for the hosted OAuth flow, API-key fallback, and setup examples for Codex, ChatGPT, Claude, Cursor, and other MCP clients.
 
 ## Verification
 
@@ -34,7 +36,7 @@ npm run build
 
 Import the repository into Vercel, copy every variable from `.env.example` into the project environment, set `NEXT_PUBLIC_APP_URL` and `OPENROUTER_APP_URL` to the production URL, and rerun `npm run storage:setup` with production environment values so R2 allows the production origin.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md), [SELF_HOSTING.md](SELF_HOSTING.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
+See [ARCHITECTURE.md](ARCHITECTURE.md), [SELF_HOSTING.md](SELF_HOSTING.md), [MCP.md](MCP.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Security
 

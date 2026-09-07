@@ -13,6 +13,7 @@ import {
   Sparkles,
   Upload,
 } from "lucide-react";
+import { SpecializedTools } from "@/components/studio/specialized-tools";
 
 const voices = [
   {
@@ -325,6 +326,7 @@ export function AudioStudio() {
           </button>
         ))}
       </div>
+      <SpecializedTools category="Audio" currentId={tab === "tts" ? "voice-over" : tab === "dub" ? "dub-video" : undefined} />
       {tab === "tts" && (
         <div className="audio-layout">
           <section className="voice-browser">

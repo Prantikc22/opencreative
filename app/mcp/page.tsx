@@ -22,10 +22,7 @@ const configExample = [
   "{",
   '  "mcpServers": {',
   '    "opencreative": {',
-  '      "url": "https://www.opencreativehq.com/api/mcp",',
-  '      "headers": {',
-  '        "Authorization": "Bearer YOUR_OPENCREATIVE_MCP_KEY"',
-  "      }",
+  '      "url": "https://www.opencreativehq.com/api/mcp"',
   "    }",
   "  }",
   "}",
@@ -40,7 +37,7 @@ export default function McpPage() {
         <h1>Give your agents<br /><em>a creative studio.</em></h1>
         <p>Connect compatible AI assistants to the same image, video, voice, music, avatar, and campaign workflow your team uses in OpenCreative.</p>
         <div className="mcp-actions">
-          <Link className="oc-button oc-button-coral" href="/account/mcp">Create an MCP key <ArrowRight size={16} /></Link>
+          <Link className="oc-button oc-button-coral" href="/login?next=/account/mcp">Connect with login <ArrowRight size={16} /></Link>
           <a className="oc-button oc-button-dark" href="#connect">See connection guide <ArrowRight size={16} /></a>
         </div>
       </section>
@@ -59,14 +56,14 @@ export default function McpPage() {
         <div>
           <p className="section-kicker">CONNECT</p>
           <h2>One authenticated endpoint.</h2>
-          <p>OpenCreative Cloud creates a dedicated MCP key from your signed-in account. The key is linked to your workspace, plan, creative entitlement, tenant permissions, and credit wallet—never to a raw Supabase credential.</p>
+          <p>OpenCreative supports OAuth 2.1 with PKCE. Compatible clients discover the protected-resource metadata, open a one-time OpenCreative login, and return to the calling assistant with a short-lived access token. The token is linked to your workspace, plan, creative entitlement, tenant permissions, and credit wallet—never to a raw Supabase credential.</p>
           <p>Reference inputs must be HTTPS URLs the model provider can fetch. Upload private files in OpenCreative first, then pass the resulting signed URL to the tool.</p>
-          <p>This hosted endpoint is a Cloud feature. Self-hosted installations can expose their own endpoint and authentication policy from their deployment.</p>
+          <p>OAuth endpoints: <code>/api/mcp/.well-known/oauth-protected-resource</code>, <code>/api/mcp/oauth/.well-known/oauth-authorization-server</code>, <code>/api/mcp/oauth/authorize</code>, and <code>/api/mcp/oauth/token</code>. API keys remain available for scripts and clients without OAuth.</p>
         </div>
         <div className="mcp-code-card">
           <span><Bot size={16} /> Remote MCP configuration</span>
           <pre><code>{configExample}</code></pre>
-          <small>Create and revoke keys under <code>Account → MCP &amp; API keys</code>. The account guide includes ready-to-paste Codex, Claude, Cursor, and OpenAI API configurations. Keys are stored as one-way hashes and the full value is shown only once.</small>
+          <small>For Codex, ChatGPT, Claude, Cursor, and other OAuth-capable clients, add only the remote URL and choose “Sign in with OpenCreative” when prompted. For API-key clients, create and revoke a key under <code>Account → MCP &amp; API keys</code>; keys are stored as one-way hashes and shown only once.</small>
         </div>
       </section>
 

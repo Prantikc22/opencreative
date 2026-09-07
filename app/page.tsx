@@ -26,6 +26,8 @@ import { ScrollMotion } from "@/components/marketing/scroll-motion";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
 import { VoiceDemos } from "@/components/marketing/voice-demos";
+import { creativeTools, creativeToolIcons } from "@/lib/creative-tools";
+import { ToolIcon, type ToolIconName } from "@/components/tool-icon";
 
 const customerMarks = [
   { name: "eBay", logo: "https://cdn.simpleicons.org/ebay/000000" },
@@ -58,13 +60,15 @@ const reactions = [
 ] as const;
 
 const products = [
-  { icon: ImageIcon, number: "01", title: "Image AI", copy: "Art direct campaign stills, product photography and visual concepts with your references intact.", className: "spectrum-image", href: "/studio/image", use: "Product launch" },
-  { icon: Video, number: "02", title: "Video AI", copy: "Build shots, storyboards and finished campaign films without losing the thread between scenes.", className: "spectrum-video", href: "/studio/video", use: "Campaign film" },
-  { icon: AudioLines, number: "03", title: "Voice & Translation", copy: "Create expressive speech in 80+ languages, translate dialogue, and localize uploaded video without losing the message.", className: "spectrum-voice", href: "/studio/audio", use: "Global narration" },
-  { icon: Music2, number: "04", title: "Music AI", copy: "Create original arrangements and sonic identities that land on the same creative brief.", className: "spectrum-music", href: "/studio/music", use: "Original score" },
-  { icon: ScanFace, number: "05", title: "Avatar AI", copy: "Choose a global presenter or build an authorized digital twin for repeatable production.", className: "spectrum-avatar", href: "/studio/avatar", use: "Presenter video" },
-  { icon: Bot, number: "06", title: "Agent AI", copy: "Give customers a voice-first support agent on phone, laptop, or inside your product widget.", className: "spectrum-agent", href: "/studio/agents", use: "Customer support" },
+  { icon: ImageIcon, number: "01", title: "Image", copy: "Art direct campaign stills, product photography and visual concepts with your references intact.", className: "spectrum-image", href: "/studio/image", use: "Product launch" },
+  { icon: Video, number: "02", title: "Video", copy: "Build shots, edits, extensions and finished campaign films without losing the thread between scenes.", className: "spectrum-video", href: "/studio/video", use: "Campaign film" },
+  { icon: AudioLines, number: "03", title: "Voice & translation", copy: "Create expressive speech in 80+ languages, translate dialogue, and localize uploaded video without losing the message.", className: "spectrum-voice", href: "/studio/audio", use: "Global narration" },
+  { icon: Music2, number: "04", title: "Music", copy: "Create original arrangements and sonic identities that land on the same creative brief.", className: "spectrum-music", href: "/studio/music", use: "Original score" },
+  { icon: ScanFace, number: "05", title: "Avatars", copy: "Choose a global presenter or build an authorized digital twin for repeatable production.", className: "spectrum-avatar", href: "/studio/avatar", use: "Presenter video" },
+  { icon: Bot, number: "06", title: "Agents", copy: "Give customers a voice-first support agent on phone, laptop, or inside your product widget.", className: "spectrum-agent", href: "/studio/agents", use: "Customer support" },
 ] as const;
+
+const toolboxPreview = creativeTools.filter((tool) => tool.status === "Ready").slice(0, 10);
 
 function XLogo() {
   return (
@@ -107,6 +111,14 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="home-toolbox-preview" id="toolbox">
+        <header className="home-display-heading"><p>THE TOOLBOX</p><h2>Start with the operation.<br /><em>Keep the idea intact.</em></h2><span>Video, image, audio, world and character tools are organized around the job you need to finish—not hidden behind a generic generator.</span></header>
+        <div className="home-toolbox-grid">
+          {toolboxPreview.map((tool) => <Link href={tool.href} key={tool.id}><span className="home-toolbox-icon"><ToolIcon name={creativeToolIcons[tool.id] as ToolIconName} size={19} /></span><div><small>{tool.category}</small><strong>{tool.name}</strong><p>{tool.description}</p></div><ArrowRight size={16} /></Link>)}
+        </div>
+        <Link className="oc-button oc-button-dark home-toolbox-cta" href="/tools">Explore all live tools <ArrowRight size={16} /></Link>
+      </section>
+
       <section className="workflow-2026">
         <header className="home-display-heading"><p>ONE CONTINUOUS CREATIVE LOOP</p><h2>From “we should make this”<br /><em>to ready for the world.</em></h2></header>
         <div className="workflow-board-2026">
@@ -130,7 +142,7 @@ export default function Home() {
       </section>
 
       <section className="music-section-2026">
-        <div className="music-copy-2026"><p>MUSIC AI</p><h2>Give the campaign<br /><em>its own pulse.</em></h2><span>Describe a mood, choose the duration and generate an original arrangement. Keep the music beside the campaign.</span><Link className="oc-button oc-button-dark" href="/studio/music">Make music <ArrowRight size={16} /></Link></div>
+        <div className="music-copy-2026"><p>MUSIC</p><h2>Give the campaign<br /><em>its own pulse.</em></h2><span>Describe a mood, choose the duration and generate an original arrangement. Keep the music beside the campaign.</span><Link className="oc-button oc-button-dark" href="/studio/music">Make music <ArrowRight size={16} /></Link></div>
         <MusicDemo />
       </section>
 

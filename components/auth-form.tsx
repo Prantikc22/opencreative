@@ -22,6 +22,10 @@ function authErrorMessage(cause: unknown) {
   return cause instanceof Error ? cause.message : "Could not continue.";
 }
 
+function safeNext(value: string | null) {
+  return value && value.startsWith("/") && !value.startsWith("//") && !value.includes("\\") ? value : "/app";
+}
+
 export function AuthForm({ mode }: { mode: Mode }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,7 +59,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
           password,
         });
         if (error) throw error;
-        router.push(params.get("next") || "/app");
+        router.push(safeNext(params.get("next")));
         router.refresh();
       } else if (mode === "signup") {
         const desiredProduct = params.get("product") === "agents" ? "agents" : "creative";
@@ -119,7 +123,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
     const desiredPlan = params.get("plan") || (desiredProduct === "agents" ? "agent-sandbox" : "free");
     const desiredBilling = params.get("billing") === "annual" ? "annual" : "monthly";
     const signupNext = `/onboarding?product=${desiredProduct}&plan=${encodeURIComponent(desiredPlan)}&billing=${desiredBilling}`;
-    const next = params.get("next") || (mode === "signup" ? signupNext : "/app");
+    const next = safeNext(params.get("next")) === "/app" && mode === "signup" ? signupNext : safeNext(params.get("next"));
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {

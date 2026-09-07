@@ -19,6 +19,7 @@ import {
   routeOperationModel,
 } from "@/lib/models/registry";
 import { getCreativeTool } from "@/lib/creative-tools";
+import { SpecializedTools } from "@/components/studio/specialized-tools";
 import type { QualityTier } from "@/lib/types";
 
 type Mode = "image" | "video" | "avatar";
@@ -338,6 +339,7 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
               <Link href="/tools">Change tool</Link>
             </div>
           )}
+          <SpecializedTools category={mode === "avatar" ? "Characters" : mode === "image" ? "Image" : "Video"} currentId={activeTool?.id} />
           <div className="control-section">
             <label className="control-label">
               {mode === "avatar" ? "Script or performance" : activeTool ? "Describe the result" : "Describe your creative"}
@@ -454,7 +456,8 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
             </div>
             {mode === "image" ? (
               <div className="control-section">
-                <label className="control-label">Outputs</label>
+                <label className="control-label">Results per run <span>Output 1 = one generated result</span></label>
+                <p className="control-help">Choose how many variations to generate. Each output is a separate result and uses credits.</p>
                 <div className="segmented">
                   {[1, 2, 4].filter((value) => value <= maxOutputs).map((value) => (
                     <button

@@ -5,6 +5,7 @@ import { POST as createMusic } from "@/app/api/generate/music/route";
 import { POST as createSpeech } from "@/app/api/generate/speech/route";
 import { POST as createVideo } from "@/app/api/generate/video/route";
 import { POST as createCampaignPlan } from "@/app/api/plan/route";
+import { getMcpResource } from "@/lib/mcp/oauth";
 
 export const maxDuration = 120;
 
@@ -132,12 +133,21 @@ function rpcError(id: unknown, code: number, message: string) {
   return NextResponse.json({ jsonrpc: "2.0", id, error: { code, message } });
 }
 
+function authChallenge(request: Request) {
+  const metadata = `${new URL(getMcpResource(request)).origin}/.well-known/oauth-protected-resource`;
+  return `Bearer resource_metadata="${metadata}", scope="creative"`;
+}
+
 export async function GET(request: Request) {
   return NextResponse.json({
     name: "OpenCreative MCP",
     protocolVersion,
     endpoint: new URL("/api/mcp", request.url).toString(),
-    authentication: "Authorization: Bearer <OpenCreative Cloud MCP key>",
+    authentication: "OAuth 2.1 (PKCE S256) or Authorization: Bearer <OpenCreative MCP key>",
+    oauth: {
+      protectedResourceMetadata: `${new URL(getMcpResource(request)).origin}/.well-known/oauth-protected-resource`,
+      authorizationServer: new URL("/api/mcp/oauth", getMcpResource(request)).toString(),
+    },
     tools: tools.map(({ name, description }) => ({ name, description })),
   });
 }
@@ -163,7 +173,7 @@ export async function POST(request: Request) {
   if (body.method !== "tools/call") return rpcError(body.id, -32601, "Method not found");
 
   if (!request.headers.get("authorization")?.match(/^Bearer\s+\S+/i)) {
-    return rpcError(body.id, -32001, "An OpenCreative Cloud MCP key is required.");
+    return new NextResponse(null, { status: 401, headers: { "WWW-Authenticate": authChallenge(request) } });
   }
 
   const name = typeof body.params?.name === "string" ? body.params.name : "";
@@ -181,6 +191,7 @@ export async function POST(request: Request) {
     body: JSON.stringify(args),
   });
   const response = await handler(toolRequest);
+  if (response.status === 401) return new NextResponse(null, { status: 401, headers: { "WWW-Authenticate": authChallenge(request) } });
   const payload = await response.json().catch(() => ({ error: "The tool returned an unreadable response." }));
   return rpcResult(body.id, {
     content: [{ type: "text", text: JSON.stringify(payload) }],
