@@ -105,8 +105,8 @@ export default async function DashboardPage() {
       <section className="quick-actions">
         <div className="section-head">
           <h2>Start with an outcome</h2>
-          <Link href="/create">
-            See all <ArrowRight size={15} />
+          <Link href="/tools">
+            All tools <ArrowRight size={15} />
           </Link>
         </div>
         <div className="action-grid">

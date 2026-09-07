@@ -13,6 +13,7 @@ import { uploadBuffer, createDownloadUrl } from "@/lib/storage/r2";
 export const maxDuration = 60;
 const schema = z.object({
   prompt: z.string().trim().min(3).max(8000),
+  operation: z.string().trim().min(2).max(80).optional(),
   projectId: z.string().uuid().optional(),
   aspectRatio: z.enum(["1:1", "16:9", "9:16", "4:3", "3:4"]).default("1:1"),
   count: z.number().int().min(1).max(4).default(1),
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
         aspectRatio: input.aspectRatio,
         count: input.count,
         quality: input.quality,
+        operation: input.operation,
       },
       idempotencyKey: input.idempotencyKey,
     });

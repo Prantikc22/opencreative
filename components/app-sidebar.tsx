@@ -8,6 +8,7 @@ import {
   BadgeDollarSign,
   AudioLines,
   Bot,
+  Boxes,
   CircleUserRound,
   Clapperboard,
   ChevronDown,
@@ -37,6 +38,7 @@ const groups = [
   {
     label: "Create",
     items: [
+      ["All tools", "/tools", Boxes],
       ["Ad", "/create/ad", WandSparkles],
       ["UGC", "/create/ugc", UserRound],
       ["Product video", "/create/product-video", Clapperboard],

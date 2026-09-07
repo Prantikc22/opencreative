@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowRight,
+  Boxes,
   Check,
   Coins,
   Download,
@@ -16,6 +18,7 @@ import {
   estimateCredits,
   routeModel,
 } from "@/lib/models/registry";
+import { getCreativeTool } from "@/lib/creative-tools";
 import type { QualityTier } from "@/lib/types";
 
 type Mode = "image" | "video" | "avatar";
@@ -74,7 +77,9 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
   const [status, setStatus] = useState("");
   const [generationId, setGenerationId] = useState("");
   const [projectId, setProjectId] = useState("");
+  const [toolId, setToolId] = useState("");
   const [assets, setAssets] = useState<ResultAsset[]>([]);
+  const activeTool = useMemo(() => getCreativeTool(toolId), [toolId]);
   const model = useMemo(
     () => routeModel(mode, quality, advancedModel),
     [mode, quality, advancedModel],
@@ -85,6 +90,9 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
   useEffect(() => {
     const timeout = setTimeout(() => {
       try {
+        const query = new URLSearchParams(window.location.search);
+        const requestedTool = getCreativeTool(query.get("tool"));
+        if (requestedTool?.mode === mode) setToolId(requestedTool.id);
         const raw = sessionStorage.getItem("opencreative.command");
         if (raw) {
           const data = JSON.parse(raw);
@@ -94,7 +102,6 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
           if (data.duration) setDuration(Math.min(10, data.duration));
           sessionStorage.removeItem("opencreative.command");
         } else {
-          const query = new URLSearchParams(window.location.search);
           setPrompt(query.get("prompt") || "");
           setProjectId(query.get("projectId") || "");
           const requestedPresenter = query.get("presenter");
@@ -139,6 +146,9 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
   }, [generationId, loading, mode]);
   async function generate() {
     if (prompt.trim().length < 3) return;
+    const generationPrompt = activeTool?.promptPrefix
+      ? `${activeTool.promptPrefix}\n${prompt.trim()}`
+      : prompt.trim();
     setLoading(true);
     setError("");
     setAssets([]);
@@ -149,7 +159,8 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
       const body =
         mode === "image"
           ? {
-              prompt,
+              prompt: generationPrompt,
+              operation: activeTool?.id,
               quality,
               advancedModel: quality === "advanced" ? advancedModel : undefined,
               aspectRatio: aspect,
@@ -160,7 +171,8 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
             }
           : mode === "video"
             ? {
-                prompt,
+                prompt: generationPrompt,
+                operation: activeTool?.id,
                 quality,
                 advancedModel:
                   quality === "advanced" ? advancedModel : undefined,
@@ -173,7 +185,8 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
                 idempotencyKey: crypto.randomUUID(),
               }
             : {
-                script: prompt,
+                script: generationPrompt,
+                operation: activeTool?.id,
                 referenceImage: reference,
                 aspectRatio: aspect,
                 duration: Math.max(5, duration),
@@ -256,23 +269,33 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
         <div>
           <p className="eyebrow">
             <Sparkles size={13} />
-            {c.eyebrow}
+            {activeTool ? `${activeTool.category} tool` : c.eyebrow}
           </p>
-          <h1>{c.title}</h1>
-          <p>{c.copy}</p>
+          <h1>{activeTool?.name || c.title}</h1>
+          <p>{activeTool?.description || c.copy}</p>
         </div>
       </header>
       <div className="studio-layout">
         <section className="studio-controls">
+          {activeTool && (
+            <div className="studio-tool-context">
+              <span><Boxes size={17} /></span>
+              <div>
+                <strong>{activeTool.name} preset</strong>
+                <small>{activeTool.referenceHint || "The studio is configured for this operation."}</small>
+              </div>
+              <Link href="/tools">Change tool</Link>
+            </div>
+          )}
           <div className="control-section">
             <label className="control-label">
-              {mode === "avatar" ? "Script" : "Describe your creative"}
+              {mode === "avatar" ? "Script or performance" : activeTool ? "Describe the result" : "Describe your creative"}
             </label>
             <textarea
               className="studio-prompt"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder={c.placeholder}
+              placeholder={activeTool ? `Tell OpenCreative exactly how ${activeTool.name.toLowerCase()} should look or feel…` : c.placeholder}
             />
             <div className="prompt-foot">
               <span>{prompt.length} / 8,000</span>

@@ -6,6 +6,7 @@ import { createGeneration, failGeneration } from "@/lib/generations/service";
 import { submitVideo } from "@/lib/openrouter/client";
 const schema = z.object({
   prompt: z.string().trim().min(3).max(8000),
+  operation: z.string().trim().min(2).max(80).optional(),
   projectId: z.string().uuid().optional(),
   sceneId: z.string().uuid().optional(),
   aspectRatio: z.enum(["16:9", "9:16", "1:1"]).default("16:9"),
@@ -50,6 +51,7 @@ export async function POST(request: Request) {
         resolution: input.resolution,
         generateAudio: input.generateAudio,
         quality: input.quality,
+        operation: input.operation,
       },
       idempotencyKey: input.idempotencyKey,
     });

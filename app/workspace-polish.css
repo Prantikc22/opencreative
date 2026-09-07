@@ -236,3 +236,37 @@
 .payment-link-page h1 { margin: 15px 0; font-size: clamp(42px,6vw,70px); line-height: .95; letter-spacing: -.06em; }
 .payment-link-page p:last-child { display: flex; align-items: center; justify-content: center; gap: 9px; color: var(--muted); }
 .payment-link-page a { min-height: 46px; margin-top: 20px; padding: 0 18px; display: inline-flex; align-items: center; background: #171715; color: #fff; }
+
+/* A complete, searchable-feeling toolbox without turning the sidebar into a catalogue. */
+.toolbox-page { width: min(1260px,calc(100% - 60px)); margin: 0 auto; padding: 54px 0 96px; }
+.toolbox-page .library-head { margin-bottom: 48px; }
+.toolbox-page .library-head h1 { max-width: 820px; }
+.toolbox-page .library-head > div > p:last-child { max-width: 760px; }
+.toolbox-category { margin-top: 42px; }
+.toolbox-category > .section-head { min-height: 44px; margin-bottom: 12px; align-items: end; }
+.toolbox-category > .section-head h2 { font-size: clamp(25px,3vw,36px); letter-spacing: -.04em; }
+.toolbox-category > .section-head span { color: var(--muted); font-size: 13px; }
+.toolbox-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.toolbox-grid > a { min-height: 150px; padding: 22px; display: grid; grid-template-columns: 38px 1fr auto; grid-template-rows: 1fr auto; gap: 13px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fff; color: var(--ink); }
+.toolbox-grid > a:hover { z-index: 1; background: #f7f4ed; box-shadow: 0 16px 34px rgba(22,22,19,.08); transform: translateY(-2px); }
+.toolbox-grid > a:active { transform: scale(.985); }
+.toolbox-grid > a > span { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; background: #f0ede6; color: var(--coral); }
+.toolbox-grid > a > div { min-width: 0; }
+.toolbox-grid h3 { margin: 1px 0 7px; font-size: 17px; letter-spacing: -.02em; }
+.toolbox-grid p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.52; }
+.toolbox-grid small { grid-column: 2; width: max-content; padding: 4px 8px; border-radius: 999px; background: #edf5e8; color: #37662a; font-size: 11px; font-weight: 750; }
+.toolbox-grid small.beta { background: #fff0d7; color: #8b5b13; }
+.toolbox-grid > a > svg { grid-column: 3; grid-row: 2; align-self: center; }
+.studio-tool-context { margin-bottom: 26px; padding: 15px; display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 12px; border: 1px solid #d5d1c7; border-radius: 11px; background: #f7f4ed; }
+.studio-tool-context > span { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 9px; background: #171715; color: #fff; }
+.studio-tool-context > div { min-width: 0; display: grid; gap: 3px; }
+.studio-tool-context strong { font-size: 14px; }
+.studio-tool-context small { color: var(--muted); font-size: 13px; line-height: 1.42; }
+.studio-tool-context > a { min-height: 36px; padding: 0 11px; display: inline-flex; align-items: center; border: 1px solid #c6c1b7; border-radius: 8px; background: #fff; font-size: 12px; font-weight: 750; white-space: nowrap; }
+@media (max-width: 1000px) { .toolbox-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 700px) {
+  .toolbox-page { width: calc(100% - 30px); padding-top: 34px; }
+  .toolbox-grid { grid-template-columns: 1fr; }
+  .studio-tool-context { grid-template-columns: 40px 1fr; }
+  .studio-tool-context > a { grid-column: 2; width: max-content; }
+}

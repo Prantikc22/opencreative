@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
+  Boxes,
   CircleUserRound,
   Clapperboard,
   ImageIcon,
@@ -43,12 +44,18 @@ const choices = [
     "/studio/image",
     ImageIcon,
   ],
-  ["AI Voice", "Speech, transcription and dubbing", "/studio/audio", Mic2],
+  ["Audio", "Speech, transcription and dubbing", "/studio/audio", Mic2],
   [
     "Avatar",
     "Consent-safe reusable presenters",
     "/studio/avatar",
     CircleUserRound,
+  ],
+  [
+    "All tools",
+    "Editing, restyling, lip-sync, worlds and production utilities",
+    "/tools",
+    Boxes,
   ],
   [
     "Start from scratch",
