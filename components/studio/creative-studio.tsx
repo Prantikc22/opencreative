@@ -2,9 +2,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   ArrowRight,
-  Boxes,
   Check,
   Coins,
   Download,
@@ -18,8 +18,9 @@ import {
   estimateCredits,
   routeOperationModel,
 } from "@/lib/models/registry";
-import { getCreativeTool } from "@/lib/creative-tools";
+import { creativeToolIcons, getCreativeTool } from "@/lib/creative-tools";
 import { SpecializedTools } from "@/components/studio/specialized-tools";
+import { ToolIcon, type ToolIconName } from "@/components/tool-icon";
 import type { QualityTier } from "@/lib/types";
 
 type Mode = "image" | "video" | "avatar";
@@ -60,6 +61,8 @@ const builtInAvatars = [
 
 export function CreativeStudio({ mode }: { mode: Mode }) {
   const c = config[mode];
+  const searchParams = useSearchParams();
+  const requestedToolId = searchParams.get("tool");
   const [prompt, setPrompt] = useState("");
   const [quality, setQuality] = useState<QualityTier>(
     mode === "avatar" ? "premium" : "standard",
@@ -79,9 +82,11 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
   const [status, setStatus] = useState("");
   const [generationId, setGenerationId] = useState("");
   const [projectId, setProjectId] = useState("");
-  const [toolId, setToolId] = useState("");
   const [assets, setAssets] = useState<ResultAsset[]>([]);
-  const activeTool = useMemo(() => getCreativeTool(toolId), [toolId]);
+  const activeTool = useMemo(() => {
+    const requestedTool = getCreativeTool(requestedToolId);
+    return requestedTool?.mode === mode ? requestedTool : undefined;
+  }, [mode, requestedToolId]);
   const model = useMemo(
     () => routeOperationModel(mode, activeTool?.id, quality, advancedModel),
     [mode, activeTool?.id, quality, advancedModel],
@@ -111,8 +116,6 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
     const timeout = setTimeout(() => {
       try {
         const query = new URLSearchParams(window.location.search);
-        const requestedTool = getCreativeTool(query.get("tool"));
-        if (requestedTool?.mode === mode) setToolId(requestedTool.id);
         const raw = sessionStorage.getItem("opencreative.command");
         if (raw) {
           const data = JSON.parse(raw);
@@ -331,9 +334,10 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
         <section className="studio-controls">
           {activeTool && (
             <div className="studio-tool-context">
-              <span><Boxes size={17} /></span>
+              <span><ToolIcon name={creativeToolIcons[activeTool.id] as ToolIconName} size={19} /></span>
               <div>
-                <strong>{activeTool.name} preset</strong>
+                <small className="studio-tool-context-label">Selected tool</small>
+                <strong>{activeTool.name}</strong>
                 <small>{activeTool.referenceHint || "The studio is configured for this operation."}</small>
               </div>
               <Link href="/tools">Change tool</Link>
