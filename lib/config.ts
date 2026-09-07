@@ -8,7 +8,8 @@ export const productConfig = {
     process.env.NEXT_PUBLIC_GITHUB_URL ||
     "https://github.com/Prantikc22/opencreative",
   supportEmail:
-    process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "hello@opencreative.ai",
-  supportPhone: process.env.NEXT_PUBLIC_SUPPORT_PHONE || "",
+    process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "engineering@resolutexhq.com",
+  supportPhone:
+    process.env.NEXT_PUBLIC_SUPPORT_PHONE || "+91 820 899 0366",
   legalName: process.env.NEXT_PUBLIC_LEGAL_NAME || "ResoluteX HQ",
 } as const;

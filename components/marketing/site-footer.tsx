@@ -64,6 +64,7 @@ export function SiteFooter() {
       <div className="site-footer-bottom">
         <small>© {new Date().getFullYear()} OpenCreative · A ResoluteX HQ product</small>
         <div>
+          <a href={`mailto:${productConfig.supportEmail}`}>{productConfig.supportEmail}</a>
           <a href="https://resolutexhq.com/" target="_blank" rel="noreferrer">Built by ResoluteX HQ <ArrowUpRight size={13} /></a>
           <a href="https://www.resolutexhq.com/about" target="_blank" rel="noreferrer">About</a>
           <a href="https://www.resolutexhq.com/careers" target="_blank" rel="noreferrer">Careers</a>

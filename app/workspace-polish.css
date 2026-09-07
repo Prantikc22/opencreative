@@ -327,3 +327,46 @@
   .studio-tool-context { grid-template-columns: 40px 1fr; }
   .studio-tool-context > a { grid-column: 2; width: max-content; }
 }
+
+/* Launch typography: supporting information stays readable throughout the workspace. */
+.app-content .library-head > div > p:last-child,
+.app-content .identity-form-page > header > p:last-child { font-size: 16px; line-height: 1.65; }
+.app-content .settings-grid h2 { margin: 0; font-size: 18px; line-height: 1.35; }
+.app-content .settings-grid > section { gap: 18px; padding: 28px; }
+.app-content .settings-grid > section > p { margin: 0; color: #6f6b64; font-size: 14px; line-height: 1.65; }
+.app-content .settings-grid > section > a,
+.app-content .settings-grid > section > button,
+.app-content .settings-grid form button { min-height: 44px; padding: 0 14px; font-size: 14px; font-weight: 680; }
+.app-content .settings-grid dl > div { min-height: 44px; padding: 11px 0; gap: 18px; font-size: 13px; line-height: 1.4; }
+.app-content .settings-grid dt { color: #706c65; }
+.app-content .settings-grid dd { margin: 0; color: #252522; font-weight: 650; text-align: right; }
+.app-content .identity-card > div > p { font-size: 11px; }
+.app-content .identity-card h2 { font-size: 20px; }
+.app-content .identity-card small { font-size: 13px; line-height: 1.55; }
+.app-content .project-card-copy strong { font-size: 14px; }
+.app-content .project-card-copy small,
+.app-content .project-card-copy time { font-size: 12px; line-height: 1.45; }
+.app-content .generation-table > header { font-size: 11px; }
+.app-content .generation-table strong { font-size: 14px; line-height: 1.35; }
+.app-content .generation-table small,
+.app-content .generation-table > a > span:not(:first-child) { font-size: 12px; line-height: 1.45; }
+.app-content .ledger-table strong { font-size: 14px; }
+.app-content .ledger-table small { font-size: 12px; line-height: 1.5; }
+.app-content .asset-results small,
+.app-content .voice-library-grid small,
+.app-content .voice-library-grid p,
+.app-content .voice-library-grid span { font-size: 13px; line-height: 1.5; }
+.app-content .mcp-key-list article code,
+.app-content .mcp-key-list article small { font-size: 13px; line-height: 1.5; }
+
+@media (max-width: 800px) {
+  .app-content .library-page,
+  .app-content .billing-page,
+  .app-content .settings-page,
+  .app-content .identity-form-page,
+  .app-content .identity-detail-page { width: calc(100% - 30px); padding-top: 34px; }
+  .app-content .library-head h1 { font-size: clamp(38px, 12vw, 54px); }
+  .app-content .settings-grid > section { padding: 22px 18px; }
+  .app-content .settings-grid dl > div { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .app-content .settings-grid dd { text-align: left; overflow-wrap: anywhere; }
+}

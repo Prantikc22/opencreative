@@ -19,6 +19,7 @@ export default function TermsPage() {
           These are the core conditions for using the hosted OpenCreative
           service.
         </p>
+        <small>Effective September 7, 2026 · Last updated September 7, 2026</small>
       </header>
       <section className="legal-copy">
         <h2>Agreement</h2>
@@ -27,6 +28,13 @@ export default function TermsPage() {
           the company operating OpenCreative. By creating an account or purchasing
           a plan, you agree to these terms, the Privacy Policy, Acceptable Use
           Policy and Refund Policy.
+        </p>
+        <h2>Service and accounts</h2>
+        <p>
+          OpenCreative provides hosted tools for generating and organizing video,
+          image, audio, avatar, advertising and agent-based creative work. You must
+          provide accurate account information, keep credentials secure and be at
+          least 18 years old or otherwise legally able to enter this agreement.
         </p>
         <h2>Your rights and permissions</h2>
         <p>
@@ -50,15 +58,25 @@ export default function TermsPage() {
         <h2>Plans, renewals and cancellation</h2>
         <p>
           Subscriptions renew at the billing interval shown at checkout until
-          cancelled. Creative and Agent plans are separate product entitlements.
-          Cancelling stops the next renewal and access continues through the paid
-          period unless the checkout terms state otherwise.
+          cancelled. Prices, included credits, billing frequency, taxes and the
+          exact charge are shown before payment. Creative and Agent plans are
+          separate product entitlements. Cancelling stops the next renewal and
+          access normally continues through the paid period. Cancellation does not
+          automatically create a refund; our <Link href="/refund-policy">Refund Policy</Link> applies.
         </p>
         <h2>Payment processing</h2>
         <p>
           Our order process is conducted by our online reseller Paddle.com.
-          Paddle.com is the Merchant of Record for all our orders. Paddle provides
-          all customer service inquiries and handles returns.
+          Paddle.com is the Merchant of Record for paid orders and processes
+          payment, tax, invoices, subscription management and approved refunds.
+          You may manage a purchase from the receipt or at <a href="https://paddle.net" target="_blank" rel="noreferrer">paddle.net</a>.
+        </p>
+        <h2>Suspension and termination</h2>
+        <p>
+          We may restrict or terminate access for non-payment, unlawful activity,
+          security risk or a material breach of these terms or our Acceptable Use
+          Policy. You may stop using the service at any time; amounts already paid
+          remain subject to the Refund Policy and mandatory consumer rights.
         </p>
         <h2>Service changes and liability</h2>
         <p>
@@ -72,7 +90,7 @@ export default function TermsPage() {
         <p>
           Contact{" "}
           <a href={`mailto:${productConfig.supportEmail}`}>{productConfig.supportEmail}</a> about
-          these terms.
+          these terms, or call <a href={`tel:${productConfig.supportPhone.replace(/[^+\d]/g, "")}`}>{productConfig.supportPhone}</a>.
         </p>
       </section>
     </main>

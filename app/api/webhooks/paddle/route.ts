@@ -200,7 +200,7 @@ export async function POST(request: Request) {
         }
         if (accountEmail && (type === "subscription.updated" || type === "subscription.canceled")) {
           const canceled = !active || (data.scheduledChange?.action || data.scheduled_change?.action) === "cancel";
-          void sendEmail({ to: accountEmail, subject: canceled ? "Your OpenCreative cancellation is scheduled" : `Your OpenCreative ${plan} plan was updated`, html: canceled ? `<p>Your ${escapeHtml(plan)} plan remains available through the current billing period, then access ends automatically.</p>` : `<p>Your ${escapeHtml(plan)} plan was updated successfully.</p>` }).catch((cause) => console.error("Subscription update email error", cause));
+          void sendEmail({ to: accountEmail, subject: canceled ? "Your OpenCreative subscription was canceled" : `Your OpenCreative ${plan} plan was updated`, html: canceled ? `<p>Your ${escapeHtml(plan)} subscription has been canceled. Your Paddle receipt or buyer portal shows the effective date and any remaining access.</p>` : `<p>Your ${escapeHtml(plan)} plan was updated successfully.</p>` }).catch((cause) => console.error("Subscription update email error", cause));
         }
       }
       await admin.from("billing_webhook_events").upsert({ event_id: eventId, event_type: type, payload: { subscription_id: data.id, price_id: priceId } });
