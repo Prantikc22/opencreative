@@ -280,25 +280,33 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
           </div>
           {mode === "avatar" && (
             <div className="control-section">
-              <label className="control-label">Choose a presenter</label>
-              <div className="studio-avatar-picker">
+              <fieldset className="avatar-character-fieldset">
+              <legend className="control-label">Choose a character</legend>
+              <p className="avatar-character-help">Characters are reusable OpenCreative avatars. Pick one, or upload an authorized identity below.</p>
+              <div className="studio-avatar-picker" role="radiogroup" aria-label="Avatar character">
                 {builtInAvatars.map((item) => (
-                  <button
-                    type="button"
+                  <label
                     key={item.name}
                     className={selectedAvatar === item.name ? "selected" : ""}
-                    onClick={() => {
-                      setSelectedAvatar(item.name);
-                      setReference(`${window.location.origin}${item.src}`);
-                      setConsent(true);
-                    }}
                   >
+                    <input
+                      type="radio"
+                      name="avatar-character"
+                      value={item.name}
+                      checked={selectedAvatar === item.name}
+                      onChange={() => {
+                        setSelectedAvatar(item.name);
+                        setReference(`${window.location.origin}${item.src}`);
+                        setConsent(true);
+                      }}
+                    />
                     <Image src={item.src} alt={item.name} fill sizes="90px" />
                     <span>{item.name}</span>
                     {selectedAvatar === item.name && <Check size={13} />}
-                  </button>
+                  </label>
                 ))}
               </div>
+              </fieldset>
               <label className="control-label custom-reference-label">
                 Or use an authorized reference URL
               </label>

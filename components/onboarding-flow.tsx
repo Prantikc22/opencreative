@@ -22,9 +22,9 @@ const intents = [
   ["ugc", "UGC Ad", "Creator-led ads", CircleUserRound],
   ["product_ad", "Product Ad", "Polished campaigns", PackageOpen],
   ["marketing_video", "Marketing Video", "Multi-shot stories", Clapperboard],
-  ["ai_video", "AI Video", "Any scene, from text", Sparkles],
-  ["ai_images", "AI Images", "Photos, art and design", ImageIcon],
-  ["avatar", "AI Avatar", "Reusable AI creators", CircleUserRound],
+  ["ai_video", "Video", "Any scene, from text", Sparkles],
+  ["ai_images", "Images", "Photos, art and design", ImageIcon],
+  ["avatar", "Avatars", "Reusable characters", CircleUserRound],
   ["voice", "AI Voice", "Speech and dubbing", Mic2],
   ["explore", "Explore Everything", "See the full studio", Layers3],
 ] as const;

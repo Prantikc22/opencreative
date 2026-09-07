@@ -11,7 +11,7 @@ const footerGroups = [
       ["Video", "/studio/video"],
       ["Avatars", "/studio/avatar"],
       ["Voices", "/studio/audio"],
-      ["Music AI", "/studio/music"],
+      ["Music", "/studio/music"],
       ["Agents", "/studio/agents"],
     ],
   },

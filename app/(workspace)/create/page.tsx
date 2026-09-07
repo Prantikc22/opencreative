@@ -14,7 +14,7 @@ import {
 export const metadata: Metadata = { title: "Create" };
 const choices = [
   [
-    "AI Ad",
+    "Ad",
     "From idea, URL or product to a finished campaign",
     "/create/ad",
     WandSparkles,
@@ -32,20 +32,20 @@ const choices = [
     Package,
   ],
   [
-    "AI Video",
+    "Video",
     "Text, image or reference to motion",
     "/studio/video",
     Clapperboard,
   ],
   [
-    "AI Image",
+    "Image",
     "Product photos, posters, edits and more",
     "/studio/image",
     ImageIcon,
   ],
   ["AI Voice", "Speech, transcription and dubbing", "/studio/audio", Mic2],
   [
-    "AI Avatar",
+    "Avatar",
     "Consent-safe reusable presenters",
     "/studio/avatar",
     CircleUserRound,

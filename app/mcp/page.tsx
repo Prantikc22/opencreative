@@ -22,7 +22,7 @@ const configExample = [
   "{",
   '  "mcpServers": {',
   '    "opencreative": {',
-  '      "url": "https://opencreative.vercel.app/api/mcp",',
+  '      "url": "https://www.opencreativehq.com/api/mcp",',
   '      "headers": {',
   '        "Authorization": "Bearer YOUR_OPENCREATIVE_MCP_KEY"',
   "      }",
@@ -66,7 +66,7 @@ export default function McpPage() {
         <div className="mcp-code-card">
           <span><Bot size={16} /> Remote MCP configuration</span>
           <pre><code>{configExample}</code></pre>
-          <small>Create and revoke keys under <code>Account → MCP &amp; API keys</code>. Keys are stored as one-way hashes and the full value is shown only once.</small>
+          <small>Create and revoke keys under <code>Account → MCP &amp; API keys</code>. The account guide includes ready-to-paste Codex, Claude, Cursor, and OpenAI API configurations. Keys are stored as one-way hashes and the full value is shown only once.</small>
         </div>
       </section>
 

@@ -13,8 +13,9 @@ export default async function McpKeysPage() {
     .eq("workspace_id", workspaceId)
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
-  const endpoint = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/mcp`;
-  const config = JSON.stringify({
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://www.opencreativehq.com").replace(/\/$/, "");
+  const endpoint = `${appUrl}/api/mcp`;
+  const jsonConfig = JSON.stringify({
     mcpServers: {
       opencreative: {
         url: endpoint,
@@ -22,6 +23,7 @@ export default async function McpKeysPage() {
       },
     },
   }, null, 2);
+  const codexConfig = `[mcp_servers.opencreative]\nurl = "${endpoint}"\nhttp_headers = { Authorization = "Bearer YOUR_OPENCREATIVE_MCP_KEY" }`;
   return (
     <div className="settings-page mcp-account-page">
       <header className="library-head"><div><p className="eyebrow"><PlugZap size={13} /> MCP & API keys</p><h1>Connect your creative agents.</h1><p>Secure keys for OpenCreative Cloud. Calls stay inside this workspace and use this workspace&apos;s creative credits.</p></div></header>
@@ -45,7 +47,16 @@ export default async function McpKeysPage() {
           <li><CheckCircle2 size={18} /><span><strong>2. Add the server URL</strong><code>{endpoint}</code></span></li>
           <li><CheckCircle2 size={18} /><span><strong>3. Authenticate requests</strong><code>Authorization: Bearer oc_live_…</code><small>Calls inherit your tenant permissions and consume this workspace&apos;s credits.</small></span></li>
         </ol>
-        <div className="mcp-config-example"><strong>Remote MCP configuration</strong><pre><code>{config}</code></pre><p>Replace the placeholder with the key shown after you create it. In Claude Desktop, Codex, Cursor, or another remote-MCP client, paste this into its MCP server configuration and restart or refresh the client.</p></div>
+        <div className="mcp-config-example">
+          <strong>Choose your assistant</strong>
+          <div className="mcp-client-grid">
+            <article><h3>Codex</h3><p>Add this to <code>~/.codex/config.toml</code>, then restart Codex.</p><pre><code>{codexConfig}</code></pre></article>
+            <article><h3>Claude or Cursor</h3><p>Open MCP settings, add a remote HTTP server, and paste this JSON.</p><pre><code>{jsonConfig}</code></pre></article>
+            <article><h3>ChatGPT / OpenAI API</h3><p>For the Responses API, use this endpoint as a remote MCP server and pass your key in the Authorization header. ChatGPT custom connectors that require interactive sign-in need OAuth, so a workspace key cannot be pasted into that UI.</p><pre><code>{`server_url: "${endpoint}"\nheaders: { Authorization: "Bearer YOUR_OPENCREATIVE_MCP_KEY" }`}</code></pre></article>
+            <article><h3>Any MCP client</h3><p>Transport: Streamable HTTP. URL: the endpoint above. Header: <code>Authorization: Bearer oc_live_…</code>. Refresh the client, list tools, then approve the first creative call.</p></article>
+          </div>
+          <p>Replace the placeholder with the key shown after you create it. Keep the key private: generations consume this workspace&apos;s credits.</p>
+        </div>
       </section>
     </div>
   );

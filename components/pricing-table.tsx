@@ -28,7 +28,7 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
         </button>
       </div>
       <p className="billing-helper">
-        Creative plans unlock image, video, voice, music and avatar tools. OpenCreative Agents are available in the adjacent tab.
+        Starter focuses on image and audio. Creator and above add video, avatars and complete campaign workflows.
       </p>
       <div className="pricing-grid-public">
         {selfServePlans.map((plan) => {

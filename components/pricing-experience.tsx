@@ -52,7 +52,8 @@ export function PricingExperience() {
 function CreativeRows() {
   return <>{[
     ["Monthly credits", "50 welcome", "250", "750", "1,900", "4,000", "Custom"],
-    ["Image, video, voice, music and avatars", true, true, true, true, true, true],
+    ["Image and audio generation", true, true, true, true, true, true],
+    ["Video, avatars and campaign workflows", false, false, true, true, true, true],
     ["Projects and asset library", true, true, true, true, true, true],
     ["Watermark-free commercial exports", false, true, true, true, true, true],
     ["Brand, product and avatar identities", false, false, true, true, true, true],

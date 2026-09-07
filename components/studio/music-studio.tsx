@@ -10,7 +10,7 @@ export function MusicStudio() {
   const [instrumental, setInstrumental] = useState(true);
   return (
     <div className="studio-page music-studio-page">
-      <header className="studio-intro"><div><p className="eyebrow"><Music2 size={13} /> Music AI · Beta</p><h1>Give the idea a pulse.</h1><p>Music generation is in beta. OpenRouter provider access is temporarily paused while we harden reliable delivery.</p></div></header>
+      <header className="studio-intro"><div><p className="eyebrow"><Music2 size={13} /> Music · Beta</p><h1>Give the idea a pulse.</h1><p>Music generation is in beta. OpenRouter provider access is temporarily paused while we harden reliable delivery.</p></div></header>
       <div className="studio-layout">
         <section className="studio-controls">
           <div className="control-section"><label className="control-label">Describe the track</label><textarea className="studio-prompt" value={brief} onChange={(event) => setBrief(event.target.value)} /></div>

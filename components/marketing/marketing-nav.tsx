@@ -11,7 +11,7 @@ const products = [
   ["Video Studio", "Shots, storyboards, and finished film", "/studio/video", Clapperboard],
   ["Voice Studio", "Speech, dubbing, and localization", "/studio/audio", AudioLines],
   ["Avatar Studio", "Presenters and digital twins", "/studio/avatar", CircleUserRound],
-  ["Music AI", "Original tracks from a creative brief", "/studio/music", Music2],
+  ["Music", "Original tracks from a creative brief", "/studio/music", Music2],
   ["OpenCreative Agents", "Voice-first support for any device", "/studio/agents", Bot],
 ] as const;
 
