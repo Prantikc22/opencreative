@@ -35,7 +35,10 @@ export interface ModelDefinition {
   supportsMusic?: boolean;
   supportedDurations?: number[];
   supportedAspectRatios?: string[];
+  maxOutputs?: number;
+  maxReferenceImages?: number;
   enabled: boolean;
+  studioSelectable?: boolean;
   fallbackModel?: string;
 }
 

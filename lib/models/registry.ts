@@ -50,6 +50,8 @@ export const curatedModels: ModelDefinition[] = [
     approximateCostUsd: 0.03,
     creditBase: 6,
     supportsReferenceImages: true,
+    maxOutputs: 1,
+    maxReferenceImages: 14,
     supportedAspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
     enabled: true,
     fallbackModel: "openai/gpt-image-1-mini",
@@ -63,6 +65,8 @@ export const curatedModels: ModelDefinition[] = [
     approximateCostUsd: 0.06,
     creditBase: 12,
     supportsReferenceImages: true,
+    maxOutputs: 1,
+    maxReferenceImages: 14,
     supportedAspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
     enabled: true,
     fallbackModel: "bytedance-seed/seedream-5-0-lite",
@@ -76,9 +80,26 @@ export const curatedModels: ModelDefinition[] = [
     approximateCostUsd: 0.12,
     creditBase: 24,
     supportsReferenceImages: true,
+    maxOutputs: 1,
+    maxReferenceImages: 14,
     supportedAspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
     enabled: true,
     fallbackModel: "openai/gpt-image-2",
+  },
+  {
+    id: "openai/gpt-image-1-mini",
+    provider: "OpenAI",
+    capability: "image",
+    displayName: "Transparent Background Studio",
+    qualityTier: "advanced",
+    approximateCostUsd: 0.02,
+    creditBase: 6,
+    supportsReferenceImages: true,
+    maxOutputs: 10,
+    maxReferenceImages: 16,
+    supportedAspectRatios: ["1:1"],
+    enabled: true,
+    studioSelectable: false,
   },
   {
     id: "recraft/recraft-v4.1-pro",
@@ -89,6 +110,8 @@ export const curatedModels: ModelDefinition[] = [
     approximateCostUsd: 0.21,
     creditBase: 35,
     supportsReferenceImages: true,
+    maxOutputs: 6,
+    maxReferenceImages: 1,
     supportedAspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
     enabled: true,
   },
@@ -101,6 +124,8 @@ export const curatedModels: ModelDefinition[] = [
     approximateCostUsd: 0.2,
     creditBase: 34,
     supportsReferenceImages: true,
+    maxOutputs: 10,
+    maxReferenceImages: 16,
     supportedAspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
     enabled: true,
     fallbackModel: "google/gemini-3.1-flash-image",
@@ -114,6 +139,8 @@ export const curatedModels: ModelDefinition[] = [
     approximateCostUsd: 0.18,
     creditBase: 30,
     supportsReferenceImages: true,
+    maxOutputs: 6,
+    maxReferenceImages: 4,
     supportedAspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
     enabled: true,
     fallbackModel: "google/gemini-3.1-flash-image",
@@ -127,11 +154,41 @@ export const curatedModels: ModelDefinition[] = [
     approximateCostUsd: 0.18,
     creditBase: 30,
     supportsReferenceImages: true,
+    maxOutputs: 1,
+    maxReferenceImages: 3,
     supportedAspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
     enabled: true,
     fallbackModel: "google/gemini-3.1-flash-image",
   },
 
+  {
+    id: "runway/aleph-2",
+    provider: "Runway",
+    capability: "video",
+    displayName: "Aleph 2 Video Editor",
+    qualityTier: "advanced",
+    approximateCostUsd: 1.4,
+    creditBase: 240,
+    supportsReferenceImages: true,
+    supportsReferenceVideo: true,
+    supportedDurations: [4, 5, 6, 8, 10],
+    supportedAspectRatios: ["16:9", "9:16", "1:1"],
+    enabled: true,
+    studioSelectable: false,
+  },
+  {
+    id: "black-forest-labs/flux-video-upscale",
+    provider: "Black Forest Labs",
+    capability: "video",
+    displayName: "FLUX Video Upscale",
+    qualityTier: "advanced",
+    approximateCostUsd: 0.95,
+    creditBase: 165,
+    supportsReferenceVideo: true,
+    supportedDurations: [4, 5, 6, 8, 10],
+    enabled: true,
+    studioSelectable: false,
+  },
   {
     id: "bytedance/seedance-2.0-mini",
     provider: "bytedance",
@@ -184,7 +241,7 @@ export const curatedModels: ModelDefinition[] = [
     supportsImageToVideo: true,
     supportsTextToVideo: true,
     supportedDurations: [4, 6, 8],
-    supportedAspectRatios: ["16:9", "9:16", "1:1"],
+    supportedAspectRatios: ["16:9", "9:16"],
     enabled: true,
     fallbackModel: "google/veo-3.1-fast",
   },
@@ -273,15 +330,14 @@ export const curatedModels: ModelDefinition[] = [
     fallbackModel: "bytedance/seedance-2.5",
   },
   {
-    id: "kwaivgi/kling-v3.0-std",
-    provider: "kwaivgi",
+    id: "heygen/avatar-iv",
+    provider: "HeyGen",
     capability: "avatar",
-    displayName: "Presenter Studio",
+    displayName: "Avatar IV Presenter",
     qualityTier: "premium",
-    // Five seconds at 720p with native audio.
-    approximateCostUsd: 0.63,
-    creditBase: 105,
-    supportsAudio: true,
+    // Five seconds at $0.05/second, normalized to the product credit margin.
+    approximateCostUsd: 0.25,
+    creditBase: 45,
     supportsReferenceImages: true,
     supportsAvatar: true,
     supportedDurations: [5, 10],
@@ -411,6 +467,37 @@ export function routeModel(
     ) ||
     null
   );
+}
+
+const operationModelIds: Record<string, string> = {
+  "edit-video": "runway/aleph-2",
+  "replace-background-video": "runway/aleph-2",
+  "relight-video": "runway/aleph-2",
+  vfx: "runway/aleph-2",
+  "replace-character": "runway/aleph-2",
+  "restyle-video": "runway/aleph-2",
+  "extend-video": "bytedance/seedance-2.5",
+  "upscale-video": "black-forest-labs/flux-video-upscale",
+  "remove-background": "openai/gpt-image-1-mini",
+};
+
+export function routeOperationModel(
+  capability: GenerationCapability,
+  operation?: string,
+  quality: QualityTier = "standard",
+  advancedModel?: string,
+) {
+  const operationModelId = operation ? operationModelIds[operation] : undefined;
+  if (operationModelId) {
+    const operationModel = curatedModels.find(
+      (model) =>
+        model.id === operationModelId &&
+        model.capability === capability &&
+        model.enabled,
+    );
+    if (operationModel) return operationModel;
+  }
+  return routeModel(capability, quality, advancedModel);
 }
 
 export function estimateCredits(

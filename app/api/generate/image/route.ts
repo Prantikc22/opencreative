@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { z } from "zod";
 import { apiContext, apiError } from "@/lib/api/context";
-import { routeModel } from "@/lib/models/registry";
+import { routeOperationModel } from "@/lib/models/registry";
 import {
   createGeneration,
   completeGeneration,
   failGeneration,
 } from "@/lib/generations/service";
 import { generateImage } from "@/lib/openrouter/client";
+import { getCreativeTool } from "@/lib/creative-tools";
 import { uploadBuffer, createDownloadUrl } from "@/lib/storage/r2";
 export const maxDuration = 60;
 const schema = z.object({
@@ -31,8 +32,13 @@ export async function POST(request: Request) {
     const context = await apiContext("creative", request);
     userId = context.user.id;
     const input = schema.parse(await request.json());
-    const model = routeModel("image", input.quality, input.advancedModel);
+    const operation = getCreativeTool(input.operation);
+    if (input.operation && operation?.mode !== "image") throw new Error("That image operation is not available.");
+    if (operation?.requiresReferences && !input.references?.length) throw new Error(`${operation.name} requires at least one reference image.`);
+    const model = routeOperationModel("image", input.operation, input.quality, input.advancedModel);
     if (!model) throw new Error("No image model is available.");
+    const count = Math.min(input.count, model.maxOutputs || 4);
+    const references = input.references?.slice(0, model.maxReferenceImages || 5);
     const created = await createGeneration({
       supabase: context.supabase,
       workspaceId: context.workspaceId,
@@ -42,7 +48,7 @@ export async function POST(request: Request) {
       prompt: input.prompt,
       parameters: {
         aspectRatio: input.aspectRatio,
-        count: input.count,
+        count,
         quality: input.quality,
         operation: input.operation,
       },
@@ -59,9 +65,10 @@ export async function POST(request: Request) {
       model: model.id,
       prompt: input.prompt,
       aspectRatio: input.aspectRatio,
-      count: input.count,
+      count,
       quality: input.quality,
-      references: input.references,
+      references,
+      background: input.operation === "remove-background" ? "transparent" : "auto",
     });
     const assets = [];
     for (let i = 0; i < result.data.length; i++) {

@@ -32,4 +32,16 @@ describe("creative toolbox", () => {
     expect(getCreativeTool("frame-to-video")?.mode).toBe("video");
     expect(getCreativeTool("edit-image")?.mode).toBe("image");
   });
+
+  it("requires real source footage for video transformations", () => {
+    const sourceTools = creativeTools.filter((tool) => tool.sourceVideo);
+    expect(sourceTools.length).toBeGreaterThanOrEqual(7);
+    expect(sourceTools.every((tool) => tool.requiresSourceVideo)).toBe(true);
+    expect(getCreativeTool("edit-video")?.sourceVideo).toBe(true);
+    expect(getCreativeTool("upscale-video")?.sourceVideo).toBe(true);
+  });
+
+  it("does not advertise unavailable provider tools as ready", () => {
+    expect(getCreativeTool("music")?.status).toBe("Setup required");
+  });
 });

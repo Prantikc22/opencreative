@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiContext, apiError } from "@/lib/api/context";
-import { routeModel } from "@/lib/models/registry";
+import { routeOperationModel } from "@/lib/models/registry";
 import { createGeneration, failGeneration } from "@/lib/generations/service";
 import { submitVideo } from "@/lib/openrouter/client";
+import { getCreativeTool } from "@/lib/creative-tools";
 const schema = z.object({
   script: z.string().trim().min(3).max(5000),
   operation: z.string().trim().min(2).max(80).optional(),
@@ -21,7 +22,9 @@ export async function POST(request: Request) {
   try {
     context = await apiContext("creative", request);
     const input = schema.parse(await request.json());
-    const model = routeModel("avatar", "premium");
+    const operation = getCreativeTool(input.operation);
+    if (input.operation && operation?.mode !== "avatar") throw new Error("That avatar operation is not available.");
+    const model = routeOperationModel("avatar", input.operation, "premium");
     if (!model)
       throw new Error("Avatar generation is not currently available.");
     const created = await createGeneration({
@@ -56,7 +59,9 @@ export async function POST(request: Request) {
       aspectRatio: input.aspectRatio,
       duration: input.duration,
       resolution: "720p",
-      generateAudio: true,
+      // Avatar IV synthesizes/lip-syncs speech from the script itself; the
+      // generic video `generate_audio` switch is not its audio contract.
+      generateAudio: false,
       references: [
         input.referenceImage,
         ...(input.voiceAudio ? [input.voiceAudio] : []),

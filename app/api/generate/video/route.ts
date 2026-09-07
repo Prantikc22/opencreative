@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiContext, apiError } from "@/lib/api/context";
-import { routeModel } from "@/lib/models/registry";
+import { routeOperationModel } from "@/lib/models/registry";
 import { createGeneration, failGeneration } from "@/lib/generations/service";
 import { submitVideo } from "@/lib/openrouter/client";
+import { getCreativeTool } from "@/lib/creative-tools";
 const schema = z.object({
   prompt: z.string().trim().min(3).max(8000),
   operation: z.string().trim().min(2).max(80).optional(),
@@ -18,6 +19,7 @@ const schema = z.object({
     .default("standard"),
   advancedModel: z.string().max(200).optional(),
   firstFrame: z.string().url().optional(),
+  sourceVideo: z.string().url().optional(),
   references: z.array(z.string().url()).max(5).optional(),
   idempotencyKey: z.string().uuid().optional(),
 });
@@ -28,7 +30,13 @@ export async function POST(request: Request) {
     const context = await apiContext("creative", request);
     userId = context.user.id;
     const input = schema.parse(await request.json());
-    const model = routeModel("video", input.quality, input.advancedModel);
+    const operation = getCreativeTool(input.operation);
+    if (input.operation && operation?.mode !== "video") throw new Error("That video operation is not available.");
+    if (operation?.requiresSourceVideo && !input.sourceVideo) throw new Error(`${operation.name} requires a source video.`);
+    if (operation?.requiresReferences && !input.references?.length) throw new Error(`${operation.name} requires at least one reference image.`);
+    const firstFrame = input.firstFrame || (input.operation === "frame-to-video" ? input.references?.[0] : undefined);
+    const references = input.operation === "frame-to-video" ? input.references?.slice(1) : input.references;
+    const model = routeOperationModel("video", input.operation, input.quality, input.advancedModel);
     if (!model) throw new Error("No video model is available.");
     if (
       model.supportedDurations &&
@@ -52,6 +60,7 @@ export async function POST(request: Request) {
         generateAudio: input.generateAudio,
         quality: input.quality,
         operation: input.operation,
+        sourceVideo: input.sourceVideo,
       },
       idempotencyKey: input.idempotencyKey,
     });
@@ -72,8 +81,9 @@ export async function POST(request: Request) {
       duration: input.duration,
       resolution: input.resolution,
       generateAudio: input.generateAudio,
-      firstFrame: input.firstFrame,
-      references: input.references,
+      firstFrame,
+      sourceVideo: input.sourceVideo,
+      references,
       callbackUrl:
         process.env.GENERATION_WEBHOOK_SECRET &&
         process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://")

@@ -23,14 +23,20 @@ export default function ToolsPage() {
           <section className="toolbox-category" key={category}>
             <div className="section-head"><h2>{category}</h2><span>{tools.length} tools</span></div>
             <div className="toolbox-grid">
-              {tools.map((tool) => (
-                <Link href={tool.href} key={tool.id}>
+              {tools.map((tool) => {
+                const content = <>
                   <span><Sparkles size={17} /></span>
                   <div><h3>{tool.name}</h3><p>{tool.description}</p></div>
-                  <small className={tool.status === "Beta" ? "beta" : ""}>{tool.status}</small>
+                  <small className={tool.status === "Beta" ? "beta" : tool.status === "Setup required" ? "setup" : ""}>{tool.status}</small>
                   <ArrowRight size={16} />
-                </Link>
-              ))}
+                </>;
+
+                return tool.status === "Setup required" ? (
+                  <div className="toolbox-disabled" key={tool.id} aria-disabled="true">{content}</div>
+                ) : (
+                  <Link href={tool.href} key={tool.id}>{content}</Link>
+                );
+              })}
             </div>
           </section>
         );

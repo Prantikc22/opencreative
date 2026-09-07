@@ -1,4 +1,5 @@
 import "server-only";
+import { buildVideoGenerationPayload, type VideoGenerationInput } from "@/lib/openrouter/video-payload";
 
 const API_BASE = "https://openrouter.ai/api/v1";
 
@@ -199,6 +200,7 @@ export async function generateImage(input: {
   count: number;
   quality?: string;
   references?: string[];
+  background?: "auto" | "transparent" | "opaque";
 }) {
   const providerQuality =
     input.quality === "fast"
@@ -217,7 +219,8 @@ export async function generateImage(input: {
       aspect_ratio: input.aspectRatio,
       n: input.count,
       quality: providerQuality,
-      output_format: "webp",
+      output_format: input.background === "transparent" ? "png" : "webp",
+      ...(input.background ? { background: input.background } : {}),
       ...(input.references?.length
         ? {
             input_references: input.references.map((url) => ({
@@ -241,50 +244,10 @@ export interface VideoJob {
   usage?: { cost?: number; is_byok?: boolean };
 }
 
-export async function submitVideo(input: {
-  model: string;
-  prompt: string;
-  aspectRatio: string;
-  duration: number;
-  resolution: string;
-  generateAudio: boolean;
-  firstFrame?: string;
-  references?: string[];
-  callbackUrl?: string;
-}) {
+export async function submitVideo(input: VideoGenerationInput) {
   return apiJson<VideoJob>("/videos", {
     method: "POST",
-    body: JSON.stringify({
-      model: input.model,
-      prompt: input.prompt,
-      aspect_ratio: input.aspectRatio,
-      duration: input.duration,
-      resolution: input.resolution,
-      generate_audio: input.generateAudio,
-      ...(input.firstFrame
-        ? {
-            frame_images: [
-              {
-                type: "image_url",
-                image_url: { url: input.firstFrame },
-                frame_type: "first_frame",
-              },
-            ],
-          }
-        : {}),
-      ...(input.references?.length
-        ? {
-            input_references: input.references.map((url) => ({
-              type: "image_url",
-              image_url: { url },
-            })),
-          }
-        : {}),
-      ...(input.callbackUrl?.startsWith("https://")
-        ? { callback_url: input.callbackUrl }
-        : {}),
-      provider: { allow_fallbacks: true, data_collection: "deny" },
-    }),
+    body: JSON.stringify(buildVideoGenerationPayload(input)),
   });
 }
 
