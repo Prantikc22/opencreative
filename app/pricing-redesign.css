@@ -219,6 +219,74 @@ body .pricing-public .pricing-grid-public .annual-note {
   font-size: 13px;
 }
 
+.pricing-public .plan-capacity-control {
+  margin: -4px 0 22px;
+  padding: 13px 0 10px;
+  border-top: 1px solid color-mix(in srgb, var(--plan-accent) 38%, #ddd7cd);
+  border-bottom: 1px solid color-mix(in srgb, var(--plan-accent) 24%, #ddd7cd);
+}
+
+.pricing-public .plan-capacity-control > div:first-child {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pricing-public .plan-capacity-control > div:first-child span {
+  color: #777169;
+  font: 720 9px/1 var(--font-geist-mono);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.pricing-public .plan-capacity-control > div:first-child strong { font-size: 14px; }
+
+.pricing-public .plan-capacity-control input[type="range"] {
+  width: 100%;
+  height: 3px;
+  margin: 15px 0 8px;
+  display: block;
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(90deg, var(--plan-accent), color-mix(in srgb, var(--plan-accent) 35%, #d9d4ca));
+  accent-color: var(--plan-accent);
+  cursor: pointer;
+}
+
+.pricing-public .plan-capacity-control input[type="range"]::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  appearance: none;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--plan-accent);
+  box-shadow: 0 0 0 1px var(--plan-accent);
+}
+
+.pricing-public .plan-capacity-marks {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pricing-public .plan-capacity-marks button {
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: #918b82;
+  font: 650 9px/1 var(--font-geist-mono);
+  cursor: pointer;
+}
+
+.pricing-public .plan-capacity-marks button.active { color: var(--plan-accent); }
+.pricing-public article.featured .plan-capacity-control { border-color: rgba(255,255,255,.12); }
+.pricing-public article.featured .plan-capacity-control > div:first-child span,
+.pricing-public article.featured .plan-capacity-marks button { color: rgba(255,255,255,.52); }
+.pricing-public article.featured .plan-capacity-control > div:first-child strong,
+.pricing-public article.featured .plan-capacity-marks button.active { color: #fff; }
+
 .pricing-public .plan-output {
   margin: 0 0 24px;
   padding: 0;

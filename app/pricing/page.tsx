@@ -44,8 +44,9 @@ export default function Page() {
             ["Do failed generations use my credits?", "No. Credits are reserved when a job starts and returned automatically when the provider fails."],
             ["Can I start without a card?", "Yes. The Free plan includes 50 welcome credits and does not require a card."],
             ["Can I add credits without changing plans?", "Yes. One-off 250, 500 and 1,000-credit bundles are available from Credits & billing in the workspace."],
-            ["How does annual billing work?", "Annual plans reduce the effective monthly price by 20%. The yearly total is shown directly on each plan before you choose it."],
-            ["What is included in the $99 Studio plan?", "Studio includes 4,000 monthly credits, five workspace seats, shared brand systems, usage analytics and faster support for teams running multiple campaigns."],
+            ["How does annual billing work?", "Creator, Pro and Studio reduce the effective monthly price by 20% when billed yearly. Starter stays at $9 monthly and receives no annual discount."],
+            ["Can I increase monthly credits without changing tiers?", "Yes. Pro scales from 1,900 to 3,500 monthly credits, while Studio offers 4,000, 8,000 or 16,000. The plan price and approximate output update before you continue."],
+            ["What is included in the $99 Studio plan?", "Studio starts with 4,000 monthly credits and can scale to 16,000. It also includes five workspace seats, shared brand systems, usage analytics and faster support for teams running multiple campaigns."],
             ["When should I choose Enterprise?", "Enterprise is for custom credit volumes, seat counts, SSO, advanced access controls, tailored provider policies and dedicated support."],
             ["Can I use my own provider accounts?", "Yes. OpenCreative supports bringing your own OpenRouter, Supabase and Cloudflare R2 accounts when you self-host the open-source core."],
           ].map(([question, answer], index) => (

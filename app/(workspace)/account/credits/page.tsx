@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, Coins, CreditCard, Sparkles } from "lucide-react";
 import { getWorkspaceContext } from "@/lib/workspace";
-import { agentPricingPlans, annualTotal, creditBundles, monthlyEquivalent, pricingPlans } from "@/lib/pricing";
+import { agentPricingPlans, annualTotal, capacityOptionFor, capacityOptionsFor, creditBundles, monthlyEquivalent, pricingPlans } from "@/lib/pricing";
 import { PaddleCheckoutButton } from "@/components/paddle-checkout-button";
 import { paddlePriceId } from "@/lib/paddle/server";
 import { ManageBillingButton } from "@/components/manage-billing-button";
 export const metadata: Metadata = { title: "Credits & billing" };
-export default async function Page({ searchParams }: { searchParams: Promise<{ billing?: string; checkout?: string }> }) {
+export default async function Page({ searchParams }: { searchParams: Promise<{ billing?: string; checkout?: string; plan?: string }> }) {
   const params = await searchParams;
   const cadence = params.billing === "annual" ? "annual" : "monthly";
   const { user, supabase, workspaceId, wallet, workspace } =
@@ -55,11 +55,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
       {params.checkout === "success" && !checkoutConfirmed && <p className="checkout-success">Payment received. We’re waiting for Paddle’s signed confirmation. Your balance will update automatically.</p>}
       <nav className="billing-cadence" aria-label="Billing frequency">
         <Link className={cadence === "monthly" ? "active" : ""} href="/account/credits?billing=monthly">Monthly</Link>
-        <Link className={cadence === "annual" ? "active" : ""} href="/account/credits?billing=annual">Annual · save 20%</Link>
+        <Link className={cadence === "annual" ? "active" : ""} href="/account/credits?billing=annual">Annual · save 20% except Starter</Link>
       </nav>
       <ManageBillingButton />
       <section className="plan-grid">
-        {pricingPlans.filter((plan) => !plan.custom).map((plan) => (
+        {pricingPlans.filter((plan) => !plan.custom).map((plan) => {
+          const options = capacityOptionsFor(plan);
+          const selectedOption = capacityOptionFor(plan, params.plan);
+          const effectiveCadence = cadence === "annual" && plan.supportsAnnual !== false ? "annual" : "monthly";
+          return (
           <article
             className={
               String(currentPlan).toLowerCase() === plan.id
@@ -70,13 +74,17 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
           >
             <span>{plan.name}</span>
             <div className="plan-price compact">
-              <h2>${cadence === "annual" ? monthlyEquivalent(plan.monthlyPrice).toFixed(2) : plan.monthlyPrice}</h2>
+              <h2>${effectiveCadence === "annual" ? monthlyEquivalent(selectedOption.monthlyPrice).toFixed(2) : selectedOption.monthlyPrice}</h2>
               <span>per month</span>
             </div>
-            {cadence === "annual" && plan.monthlyPrice > 0 && <small>${annualTotal(plan.monthlyPrice).toFixed(2)} billed yearly</small>}
+            {effectiveCadence === "annual" && selectedOption.monthlyPrice > 0 && <small>${annualTotal(selectedOption.monthlyPrice).toFixed(2)} billed yearly</small>}
+            {cadence === "annual" && plan.supportsAnnual === false && <small>Monthly only · no annual discount</small>}
+            {plan.capacityOptions && <div className="billing-capacity-options" aria-label={`${plan.name} credit allowance`}>
+              {options.map((option) => <Link className={option.id === selectedOption.id ? "active" : ""} key={option.id} href={`/account/credits?billing=${cadence}&plan=${option.id}`}>{option.credits.toLocaleString()}</Link>)}
+            </div>}
             <strong>
               <Sparkles size={14} />
-              {plan.credits.toLocaleString()} credits
+              {selectedOption.credits.toLocaleString()} credits
             </strong>
             <ul>
               {plan.features.slice(0, 3).map((feature) => (
@@ -89,14 +97,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
             {plan.id === currentPlan ? (
               <span className="plan-state">Current plan</span>
             ) : plan.monthlyPrice > 0 ? (
-              <PaddleCheckoutButton priceId={paddlePriceId(plan.id, cadence)} label={`Choose ${plan.name}`} workspaceId={workspaceId} userId={user.id} purchaseType="subscription" itemId={plan.id} />
+              <PaddleCheckoutButton priceId={paddlePriceId(selectedOption.id, effectiveCadence)} label={`Choose ${plan.name}`} workspaceId={workspaceId} userId={user.id} purchaseType="subscription" itemId={selectedOption.id} />
             ) : (
               <Link className="plan-state plan-action" href={`/pricing#${plan.id}`}>
                 View plan <ArrowRight size={14} />
               </Link>
             )}
           </article>
-        ))}
+        );})}
       </section>
       <section className="agent-billing-section">
         <div className="section-head"><div><p className="eyebrow">Customer agents</p><h2>Voice and text agents are built in.</h2></div><p>Choose the capacity you need inside the same OpenCreative account, workspace, support inbox, and billing history.</p></div>

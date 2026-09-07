@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPaddle, paddlePriceId } from "@/lib/paddle/server";
-import { pricingPlans } from "@/lib/pricing";
+import { creativePurchaseOptions } from "@/lib/pricing";
 import { escapeHtml, sendEmail } from "@/lib/email/resend";
 
 export const runtime = "nodejs";
@@ -33,17 +33,18 @@ const creditPrices = new Map([
   [paddlePriceId("credits-1000", "one-time"), 1000],
 ].filter(([id]) => Boolean(id)) as [string, number][]);
 
-const planPrices = new Map<string, string>();
-for (const plan of pricingPlans.filter((item) => item.monthlyPrice > 0 && !item.custom)) {
+const planPrices = new Map<string, { planId: string; credits: number }>();
+for (const option of creativePurchaseOptions()) {
   for (const cadence of ["monthly", "annual"] as const) {
-    const id = paddlePriceId(plan.id, cadence);
-    if (id) planPrices.set(id, plan.id);
+    if (cadence === "annual" && !option.supportsAnnual) continue;
+    const id = paddlePriceId(option.id, cadence);
+    if (id) planPrices.set(id, { planId: option.planId, credits: option.credits });
   }
 }
 for (const plan of ["agent-launch", "agent-growth", "agent-scale"]) {
   for (const cadence of ["monthly", "annual"] as const) {
     const id = paddlePriceId(plan, cadence);
-    if (id) planPrices.set(id, plan);
+    if (id) planPrices.set(id, { planId: plan, credits: 0 });
   }
 }
 
@@ -132,9 +133,10 @@ export async function POST(request: Request) {
         });
         if (error) throw error;
         if (accountEmail) void sendEmail({ to: accountEmail, subject: `${credits.toLocaleString()} credits added to your OpenCreative wallet`, html: `<p>Your payment was confirmed and <strong>${credits.toLocaleString()} credits</strong> were added to your OpenCreative wallet.</p><p><a href="${escapeHtml(process.env.NEXT_PUBLIC_APP_URL || "https://www.opencreativehq.com")}/account/credits">View Credits &amp; billing</a></p>` }).catch((cause) => console.error("Credit purchase email error", cause));
-      } else if (workspaceId && planPrices.has(priceId) && !planPrices.get(priceId)?.startsWith("agent-")) {
-        const plan = planPrices.get(priceId)!;
-        const includedCredits = pricingPlans.find((item) => item.id === plan)?.credits || 0;
+      } else if (workspaceId && planPrices.has(priceId) && !planPrices.get(priceId)?.planId.startsWith("agent-")) {
+        const purchase = planPrices.get(priceId)!;
+        const plan = purchase.planId;
+        const includedCredits = purchase.credits;
         const { error } = await admin.rpc("apply_paddle_subscription_payment", {
           p_event_id: eventId,
           p_workspace_id: workspaceId,
@@ -166,8 +168,9 @@ export async function POST(request: Request) {
 
     if (type.startsWith("subscription.")) {
       const priceId = itemPriceId(data);
-      const plan = planPrices.get(priceId);
-      if (workspaceId && plan) {
+      const purchase = planPrices.get(priceId);
+      if (workspaceId && purchase) {
+        const plan = purchase.planId;
         const isAgent = plan.startsWith("agent-");
         const payload = {
           workspace_id: workspaceId,

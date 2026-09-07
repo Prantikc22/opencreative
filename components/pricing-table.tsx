@@ -7,6 +7,9 @@ import {
   agentPricingPlans,
   annualDiscount,
   annualTotal,
+  capacityOptionFor,
+  capacityOptionsFor,
+  creativeOutputExamples,
   monthlyEquivalent,
   pricingPlans,
 } from "@/lib/pricing";
@@ -20,6 +23,7 @@ const outputIcons = {
 
 export function PricingTable({ family = "creative" }: { family?: "creative" | "agents" }) {
   const [annual, setAnnual] = useState(false);
+  const [capacityByPlan, setCapacityByPlan] = useState<Record<string, string>>({});
   if (family === "agents") return <AgentPricingTable annual={annual} setAnnual={setAnnual} />;
   const selfServePlans = pricingPlans.filter((plan) => !plan.custom);
   const enterprise = pricingPlans.find((plan) => plan.custom)!;
@@ -35,40 +39,72 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
         </button>
       </div>
       <p className="billing-helper">
-        Starter focuses on image and audio. Creator at $19 adds video, avatars, Kling 3.0, Seedance 2.5, Veo 3.1 and Sora 2 Pro.
+        Starter is always $9 monthly. Creator at $19 adds video, avatars, Kling 3.0, Seedance 2.5, Veo 3.1 and Sora 2 Pro. Pro and Studio let you scale monthly credits.
       </p>
       <div className="pricing-grid-public">
         {selfServePlans.map((plan) => {
-          const price = annual && !plan.custom
-            ? monthlyEquivalent(plan.monthlyPrice)
-            : plan.monthlyPrice;
-          const priceLabel = annual && plan.monthlyPrice > 0
+          const options = capacityOptionsFor(plan);
+          const selectedOption = capacityOptionFor(plan, capacityByPlan[plan.id]);
+          const optionIndex = options.findIndex((option) => option.id === selectedOption.id);
+          const annualForPlan = annual && plan.supportsAnnual !== false;
+          const price = annualForPlan ? monthlyEquivalent(selectedOption.monthlyPrice) : selectedOption.monthlyPrice;
+          const priceLabel = annualForPlan && selectedOption.monthlyPrice > 0
             ? price.toFixed(2)
             : String(price);
-          const yearlyLabel = annualTotal(plan.monthlyPrice).toLocaleString(
+          const yearlyLabel = annualTotal(selectedOption.monthlyPrice).toLocaleString(
             "en-US",
             { minimumFractionDigits: 2, maximumFractionDigits: 2 },
           );
+          const outputExamples = plan.capacityOptions
+            ? creativeOutputExamples(selectedOption.credits, true)
+            : plan.outputExamples;
           return (
             <article id={plan.id} data-plan={plan.id} className={plan.featured ? "featured" : ""} key={plan.id}>
               {plan.featured && <em>Most popular</em>}
               <div className="plan-heading">
                 <span>{plan.name}</span>
-                <small>{plan.custom ? "Custom scale" : `${plan.credits.toLocaleString()} credits`}</small>
+                <small>{selectedOption.credits.toLocaleString()} credits</small>
               </div>
               <p className="plan-description">{plan.description}</p>
               <div className={`plan-price ${plan.custom ? "custom-price" : ""}`}>
                 <h2>{plan.custom ? "Let’s talk" : `$${priceLabel}`}</h2>
                 {!plan.custom && <span>/ month</span>}
               </div>
-              {annual && plan.monthlyPrice > 0 && !plan.custom ? (
+              {annualForPlan && selectedOption.monthlyPrice > 0 ? (
                 <small className="annual-note">
                   ${yearlyLabel} billed yearly
                 </small>
               ) : (
                 <small className="annual-note">
-                  {plan.custom ? "A plan built around your organization" : plan.monthlyPrice > 0 ? "Billed monthly" : "No card required"}
+                  {plan.monthlyPrice > 0 ? plan.supportsAnnual === false && annual ? "Monthly only · no annual discount" : "Billed monthly" : "No card required"}
                 </small>
+              )}
+              {plan.capacityOptions && (
+                <div className="plan-capacity-control">
+                  <div><span>Monthly credits</span><strong>{selectedOption.credits.toLocaleString()}</strong></div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={options.length - 1}
+                    step={1}
+                    value={optionIndex}
+                    aria-label={`${plan.name} monthly credits`}
+                    aria-valuetext={`${selectedOption.credits.toLocaleString()} credits for $${selectedOption.monthlyPrice} per month`}
+                    onChange={(event) => setCapacityByPlan((current) => ({ ...current, [plan.id]: options[Number(event.target.value)].id }))}
+                  />
+                  <div className="plan-capacity-marks">
+                    {options.map((option, index) => (
+                      <button
+                        type="button"
+                        className={index === optionIndex ? "active" : ""}
+                        key={option.id}
+                        onClick={() => setCapacityByPlan((current) => ({ ...current, [plan.id]: option.id }))}
+                      >
+                        {option.credits >= 1000 ? `${option.credits / 1000}k` : option.credits}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
               <div className="plan-output" aria-label={`Approximate ${plan.name} plan output`}>
                 <div className="plan-output-heading">
@@ -76,7 +112,7 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
                   <small>Spend all credits on one type</small>
                 </div>
                 <dl>
-                  {plan.outputExamples.map((example) => {
+                  {outputExamples.map((example) => {
                     const Icon = outputIcons[example.kind];
                     return (
                       <div key={`${example.kind}-${example.label}`}>
@@ -91,14 +127,15 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
               </div>
               <strong><Sparkles size={15} /> What you get</strong>
               <ul>
-                {plan.features.map((feature) => (
-                  <li key={feature}>
+                {plan.features.map((feature, index) => {
+                  const label = plan.capacityOptions && index === 0 ? `${selectedOption.credits.toLocaleString()} managed credits monthly` : feature;
+                  return <li key={feature}>
                     <Check size={16} />
-                    {feature}
-                  </li>
-                ))}
+                    {label}
+                  </li>;
+                })}
               </ul>
-              <Link href={plan.id === "free" ? "/signup?product=creative" : `/signup?product=creative&plan=${plan.id}&billing=${annual ? "annual" : "monthly"}`}>
+              <Link href={plan.id === "free" ? "/signup?product=creative" : `/signup?product=creative&plan=${selectedOption.id}&billing=${annualForPlan ? "annual" : "monthly"}`}>
                 {plan.custom ? "Request a custom quote" : plan.id === "free" ? "Start creating free" : `Choose ${plan.name}`}
                 <ArrowRight size={16} />
               </Link>

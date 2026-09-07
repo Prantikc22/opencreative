@@ -24,6 +24,25 @@
 .billing-cadence a + a { border-left: 1px solid var(--border-strong); }
 .billing-cadence a.active { background: var(--ink); color: #fff; }
 .checkout-success { margin: 24px 0 0; padding: 16px 18px; border: 1px solid #4a8e37; background: #f0f8ea; color: #2f6223; }
+
+.billing-capacity-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid #d9d4cb;
+}
+
+.billing-capacity-options a {
+  padding: 8px 5px;
+  border-right: 1px solid #d9d4cb;
+  color: #787269;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.billing-capacity-options a:last-child { border-right: 0; }
+.billing-capacity-options a.active { background: #171715; color: #fff; }
 .manage-billing-wrap { margin: 18px 0 0; display: flex; align-items: center; gap: 12px; }
 .manage-billing-wrap button { min-height: 42px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-strong); background: #fff; font-weight: 700; cursor: pointer; }
 .manage-billing-wrap small { color: #b52e23; }

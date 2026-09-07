@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, Calculator, Check, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { pricingPlans } from "@/lib/pricing";
+import { creativePurchaseOptions, pricingPlans } from "@/lib/pricing";
 
 type SliderRowProps = {
   label: string;
@@ -62,9 +62,14 @@ export function PricingCalculator() {
     [avatarClips, images, videoSeconds, voiceMinutes],
   );
 
-  const recommendation =
-    pricingPlans.find((plan) => estimatedCredits <= plan.credits) ??
-    pricingPlans[pricingPlans.length - 1];
+  const purchaseOptions = creativePurchaseOptions();
+  const recommendedOption = purchaseOptions.find((option) => estimatedCredits <= option.credits);
+  const recommendation = recommendedOption
+    ? pricingPlans.find((plan) => plan.id === recommendedOption.planId)!
+    : pricingPlans[pricingPlans.length - 1];
+  const recommendedCredits = recommendedOption?.credits || recommendation.credits;
+  const recommendedPrice = recommendedOption?.monthlyPrice || recommendation.monthlyPrice;
+  const recommendedId = recommendedOption?.id || recommendation.id;
 
   return (
     <section className="pricing-calculator" id="calculator">
@@ -129,7 +134,7 @@ export function PricingCalculator() {
           <span>Recommended plan</span>
           <strong>{recommendation.name}</strong>
           <div>
-            <b>{recommendation.custom ? "Custom" : `$${recommendation.monthlyPrice}`}</b>
+            <b>{recommendation.custom ? "Custom" : `$${recommendedPrice}`}</b>
             <small>{recommendation.custom ? "quote" : "per month"}</small>
           </div>
           <p>
@@ -137,11 +142,11 @@ export function PricingCalculator() {
             for this monthly mix.
           </p>
           <ul>
-            <li><Check size={16} /> {recommendation.custom ? "Credits sized to your usage" : `${recommendation.credits.toLocaleString()} included credits`}</li>
+            <li><Check size={16} /> {recommendation.custom ? "Credits sized to your usage" : `${recommendedCredits.toLocaleString()} included credits`}</li>
             <li><Check size={16} /> Costs visible before generation</li>
             <li><Check size={16} /> Failed requests return reserved credits</li>
           </ul>
-          <Link href={`/signup?product=creative&plan=${recommendation.id}`}>
+          <Link href={`/signup?product=creative&plan=${recommendedId}`}>
             {recommendation.custom ? "Request a quote" : `Choose ${recommendation.name}`} <ArrowRight size={17} />
           </Link>
         </aside>

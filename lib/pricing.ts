@@ -1,3 +1,9 @@
+export type PricingCapacityOption = {
+  id: string;
+  credits: number;
+  monthlyPrice: number;
+};
+
 export type PricingPlan = {
   id: string;
   name: string;
@@ -11,10 +17,40 @@ export type PricingPlan = {
     detail: string;
   }>;
   modelAccess?: string;
+  capacityOptions?: PricingCapacityOption[];
+  supportsAnnual?: boolean;
   features: string[];
   featured: boolean;
   custom: boolean;
 };
+
+export function creativeOutputExamples(credits: number, includesVideo: boolean): PricingPlan["outputExamples"] {
+  const base = [
+    { kind: "image" as const, amount: `~${Math.floor(credits / 12).toLocaleString()}`, label: "images", detail: "standard generation" },
+    { kind: "audio" as const, amount: `~${Math.floor(credits / 4).toLocaleString()}`, label: "voice minutes", detail: "standard speech" },
+  ];
+  if (!includesVideo) return base;
+  return [
+    { kind: "video", amount: `~${Math.floor(credits / 340)}–${Math.floor(credits / 65)}`, label: "videos", detail: "5-sec clips · premium to fast" },
+    base[0],
+    base[1],
+    { kind: "avatar", amount: `~${Math.floor(credits / 105)}`, label: "avatar clips", detail: "5-sec clips" },
+  ];
+}
+
+export function capacityOptionsFor(plan: PricingPlan) {
+  return plan.capacityOptions || [{ id: plan.id, credits: plan.credits, monthlyPrice: plan.monthlyPrice }];
+}
+
+export function capacityOptionFor(plan: PricingPlan, optionId?: string | null) {
+  return capacityOptionsFor(plan).find((option) => option.id === optionId) || capacityOptionsFor(plan)[0];
+}
+
+export function creativePurchaseOptions() {
+  return pricingPlans
+    .filter((plan) => plan.monthlyPrice > 0 && !plan.custom)
+    .flatMap((plan) => capacityOptionsFor(plan).map((option) => ({ ...option, planId: plan.id, supportsAnnual: plan.supportsAnnual !== false })));
+}
 
 export type AgentPricingPlan = {
   id: string;
@@ -31,11 +67,11 @@ export type AgentPricingPlan = {
 };
 
 export const pricingPlans: PricingPlan[] = [
-  { id: "free", name: "Free", monthlyPrice: 0, credits: 50, description: "Explore image and audio creation before you pay.", outputExamples: [{ kind: "image", amount: "~4", label: "images", detail: "standard generation" }, { kind: "audio", amount: "~12", label: "voice minutes", detail: "standard speech" }], featured: false, custom: false, features: ["50 welcome credits", "Image and audio generation", "Projects and organized asset library", "Bring your own provider key"] },
-  { id: "starter", name: "Starter", monthlyPrice: 9, credits: 250, description: "A focused visual and voice toolkit for everyday creation.", outputExamples: [{ kind: "image", amount: "~20", label: "images", detail: "standard generation" }, { kind: "audio", amount: "~62", label: "voice minutes", detail: "standard speech" }], featured: false, custom: false, features: ["250 managed credits monthly", "Image and audio generation", "Watermark-free commercial exports", "Projects and asset library", "One-off credit top-ups"] },
-  { id: "creator", name: "Creator", monthlyPrice: 19, credits: 750, description: "Build complete social campaigns with motion, voice and reusable identities.", outputExamples: [{ kind: "video", amount: "~2–11", label: "videos", detail: "5-sec clips · premium to fast" }, { kind: "image", amount: "~62", label: "images", detail: "standard generation" }, { kind: "audio", amount: "~187", label: "voice minutes", detail: "standard speech" }, { kind: "avatar", amount: "~7", label: "avatar clips", detail: "5-sec clips" }], modelAccess: "Kling 3.0 · Seedance 2.5 · Veo 3.1 · Sora 2 Pro", featured: true, custom: false, features: ["750 managed credits monthly", "Everything in Starter", "All premium video models", "Video, avatars and campaign workflows", "Brand, product and avatar identities", "Voice, transcription and translation"] },
-  { id: "pro", name: "Pro", monthlyPrice: 49, credits: 1900, description: "Run a serious weekly production cadence with premium routing and support.", outputExamples: [{ kind: "video", amount: "~5–29", label: "videos", detail: "5-sec clips · premium to fast" }, { kind: "image", amount: "~158", label: "images", detail: "standard generation" }, { kind: "audio", amount: "~475", label: "voice minutes", detail: "standard speech" }, { kind: "avatar", amount: "~18", label: "avatar clips", detail: "5-sec clips" }], modelAccess: "Kling 3.0 · Seedance 2.5 · Veo 3.1 · Sora 2 Pro", featured: false, custom: false, features: ["1,900 managed credits monthly", "Everything in Creator", "All premium video models", "Priority generation routing", "Priority email support"] },
-  { id: "studio", name: "Studio", monthlyPrice: 99, credits: 4000, description: "Give a small team the capacity to operate several brands and campaigns.", outputExamples: [{ kind: "video", amount: "~11–61", label: "videos", detail: "5-sec clips · premium to fast" }, { kind: "image", amount: "~333", label: "images", detail: "standard generation" }, { kind: "audio", amount: "~1,000", label: "voice minutes", detail: "standard speech" }, { kind: "avatar", amount: "~38", label: "avatar clips", detail: "5-sec clips" }], modelAccess: "Kling 3.0 · Seedance 2.5 · Veo 3.1 · Sora 2 Pro", featured: false, custom: false, features: ["4,000 managed credits monthly", "Everything in Pro", "All premium video models", "5 workspace seats", "Shared brand systems", "Usage analytics and faster support"] },
+  { id: "free", name: "Free", monthlyPrice: 0, credits: 50, description: "Explore image and audio creation before you pay.", outputExamples: creativeOutputExamples(50, false), featured: false, custom: false, features: ["50 welcome credits", "Image and audio generation", "Projects and organized asset library", "Bring your own provider key"] },
+  { id: "starter", name: "Starter", monthlyPrice: 9, credits: 250, description: "A focused visual and voice toolkit for everyday creation.", outputExamples: creativeOutputExamples(250, false), supportsAnnual: false, featured: false, custom: false, features: ["250 managed credits monthly", "Image and audio generation", "Watermark-free commercial exports", "Projects and asset library", "One-off credit top-ups"] },
+  { id: "creator", name: "Creator", monthlyPrice: 19, credits: 750, description: "Build complete social campaigns with motion, voice and reusable identities.", outputExamples: creativeOutputExamples(750, true), modelAccess: "Kling 3.0 · Seedance 2.5 · Veo 3.1 · Sora 2 Pro", featured: true, custom: false, features: ["750 managed credits monthly", "Everything in Starter", "All premium video models", "Video, avatars and campaign workflows", "Brand, product and avatar identities", "Voice, transcription and translation"] },
+  { id: "pro", name: "Pro", monthlyPrice: 49, credits: 1900, description: "Run a serious weekly production cadence with premium routing and support.", outputExamples: creativeOutputExamples(1900, true), capacityOptions: [{ id: "pro", credits: 1900, monthlyPrice: 49 }, { id: "pro-2700", credits: 2700, monthlyPrice: 69 }, { id: "pro-3500", credits: 3500, monthlyPrice: 89 }], modelAccess: "Kling 3.0 · Seedance 2.5 · Veo 3.1 · Sora 2 Pro", featured: false, custom: false, features: ["1,900 managed credits monthly", "Everything in Creator", "All premium video models", "Priority generation routing", "Priority email support"] },
+  { id: "studio", name: "Studio", monthlyPrice: 99, credits: 4000, description: "Give a small team the capacity to operate several brands and campaigns.", outputExamples: creativeOutputExamples(4000, true), capacityOptions: [{ id: "studio", credits: 4000, monthlyPrice: 99 }, { id: "studio-8000", credits: 8000, monthlyPrice: 189 }, { id: "studio-16000", credits: 16000, monthlyPrice: 349 }], modelAccess: "Kling 3.0 · Seedance 2.5 · Veo 3.1 · Sora 2 Pro", featured: false, custom: false, features: ["4,000 managed credits monthly", "Everything in Pro", "All premium video models", "5 workspace seats", "Shared brand systems", "Usage analytics and faster support"] },
   { id: "enterprise", name: "Enterprise", monthlyPrice: 0, credits: 100000, description: "For organizations that need custom scale, controls and support.", outputExamples: [], featured: false, custom: true, features: ["Custom credit and seat packages", "Everything in Studio", "SSO and advanced access controls", "Custom data and provider policies", "Dedicated success and support"] },
 ];
 
