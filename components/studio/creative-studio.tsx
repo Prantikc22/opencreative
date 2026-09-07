@@ -621,8 +621,9 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
                   <figcaption>
                     <span>Version {index + 1}</span>
                     <div>
-                      <a href={asset.url} download title="Download">
+                      <a className="result-download-button" href={asset.url} download title="Download">
                         <Download size={16} />
+                        <span>Download</span>
                       </a>
                       <button title="Regenerate" onClick={generate}>
                         <RefreshCw size={15} />

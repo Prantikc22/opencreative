@@ -5,7 +5,8 @@ import { POST as createMusic } from "@/app/api/generate/music/route";
 import { POST as createSpeech } from "@/app/api/generate/speech/route";
 import { POST as createVideo } from "@/app/api/generate/video/route";
 import { POST as createCampaignPlan } from "@/app/api/plan/route";
-import { getMcpResource } from "@/lib/mcp/oauth";
+import { getMcpIssuer, getMcpResource } from "@/lib/mcp/oauth";
+import { apiContext } from "@/lib/api/context";
 
 export const maxDuration = 120;
 
@@ -146,7 +147,7 @@ export async function GET(request: Request) {
     authentication: "OAuth 2.1 (PKCE S256) or Authorization: Bearer <OpenCreative MCP key>",
     oauth: {
       protectedResourceMetadata: `${new URL(getMcpResource(request)).origin}/.well-known/oauth-protected-resource`,
-      authorizationServer: new URL("/api/mcp/oauth", getMcpResource(request)).toString(),
+      authorizationServer: getMcpIssuer(request),
     },
     tools: tools.map(({ name, description }) => ({ name, description })),
   });
@@ -160,6 +161,16 @@ export async function POST(request: Request) {
     return rpcError(null, -32700, "Parse error");
   }
 
+  const authorization = request.headers.get("authorization");
+  if (!authorization?.match(/^Bearer\s+\S+/i)) {
+    return new NextResponse(null, { status: 401, headers: { "WWW-Authenticate": authChallenge(request) } });
+  }
+  try {
+    await apiContext("creative", request);
+  } catch {
+    return new NextResponse(null, { status: 401, headers: { "WWW-Authenticate": `${authChallenge(request)}, error="invalid_token"` } });
+  }
+
   if (body.method === "notifications/initialized") return new Response(null, { status: 204 });
   if (body.method === "initialize") {
     return rpcResult(body.id, {
@@ -171,10 +182,6 @@ export async function POST(request: Request) {
   if (body.method === "ping") return rpcResult(body.id, {});
   if (body.method === "tools/list") return rpcResult(body.id, { tools });
   if (body.method !== "tools/call") return rpcError(body.id, -32601, "Method not found");
-
-  if (!request.headers.get("authorization")?.match(/^Bearer\s+\S+/i)) {
-    return new NextResponse(null, { status: 401, headers: { "WWW-Authenticate": authChallenge(request) } });
-  }
 
   const name = typeof body.params?.name === "string" ? body.params.name : "";
   const handler = handlers[name];

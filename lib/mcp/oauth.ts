@@ -30,7 +30,7 @@ export function getMcpResource(request: Request) {
 
 export function getMcpIssuer(request: Request) {
   const resource = new URL(getMcpResource(request));
-  return `${resource.origin}/api/mcp/oauth`;
+  return resource.origin;
 }
 
 export function isAllowedRedirectUri(value: string) {

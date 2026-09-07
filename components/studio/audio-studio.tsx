@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   AudioWaveform,
   Check,
+  Download,
   FileAudio,
   Languages,
   LoaderCircle,
@@ -152,7 +154,11 @@ const voices = [
 type Tab = "tts" | "stt" | "dub";
 
 export function AudioStudio() {
-  const [tab, setTab] = useState<Tab>("tts");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const requestedMode = searchParams.get("mode");
+  const tab: Tab = requestedMode === "dub" ? "dub" : requestedMode === "stt" ? "stt" : "tts";
   const [voice, setVoice] = useState(voices[0]);
   const [text, setText] = useState(
     "Create without limits. OpenCreative turns your idea into finished creative.",
@@ -175,26 +181,33 @@ export function AudioStudio() {
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      const requested = new URLSearchParams(window.location.search).get(
-        "voice",
-      );
-      const requestedMode = new URLSearchParams(window.location.search).get(
-        "mode",
-      );
-      if (requestedMode === "dub") setTab("dub");
+      const requested = searchParams.get("voice");
       const selected = voices.find(
         (item) => item.name.toLowerCase() === requested,
       );
       if (selected) setVoice(selected);
     }, 0);
     return () => window.clearTimeout(timeout);
-  }, []);
+  }, [searchParams]);
+
+  function selectTab(nextTab: Tab) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (nextTab === "tts") params.delete("mode");
+    else params.set("mode", nextTab);
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }
 
   function preview(selectedVoice = voice) {
     setVoice(selectedVoice);
     setError("");
+    if (audioUrl === selectedVoice.sample && audioRef.current) {
+      if (audioRef.current.paused) void audioRef.current.play();
+      else audioRef.current.pause();
+      return;
+    }
     setAudioUrl(selectedVoice.sample);
-    window.setTimeout(() => audioRef.current?.play(), 50);
+    window.setTimeout(() => void audioRef.current?.play(), 50);
   }
 
   async function speak(sample = false, selectedVoice = voice) {
@@ -319,7 +332,7 @@ export function AudioStudio() {
           <button
             key={id}
             className={tab === id ? "active" : ""}
-            onClick={() => setTab(id)}
+            onClick={() => selectTab(id)}
           >
             <Icon size={17} />
             {label}
@@ -366,13 +379,23 @@ export function AudioStudio() {
                     <small>{item.language} · {item.gender}</small>
                   </span>
                   <i
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${playing && audioUrl === item.sample ? "Pause" : "Preview"} ${item.name}`}
                     onClick={(event) => {
                       event.stopPropagation();
                       setVoice(item);
                       preview(item);
                     }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        preview(item);
+                      }
+                    }}
                   >
-                    <Play size={14} />
+                    {playing && audioUrl === item.sample ? <Pause size={14} /> : <Play size={14} />}
                   </i>
                   <p>{item.style}</p>
                   <em>{item.use}</em>
@@ -437,12 +460,15 @@ export function AudioStudio() {
             {audioUrl && (
               <div className="audio-player">
                 <button
+                  className="audio-play-toggle"
+                  aria-label={playing ? "Pause audio" : "Play audio"}
                   onClick={() => {
-                    if (audioRef.current?.paused) audioRef.current.play();
+                    if (audioRef.current?.paused) void audioRef.current.play();
                     else audioRef.current?.pause();
                   }}
                 >
                   {playing ? <Pause size={16} /> : <Play size={16} />}
+                  <span>{playing ? "Pause" : "Play"}</span>
                 </button>
                 <div className="wave-bars">
                   {Array.from({ length: 28 }, (_, index) => (
@@ -452,14 +478,15 @@ export function AudioStudio() {
                     />
                   ))}
                 </div>
-                <a href={audioUrl} download>
-                  Download
+                <a className="audio-download-button" href={audioUrl} download>
+                  <Download size={17} /> Download audio
                 </a>
                 <audio
                   ref={audioRef}
                   src={audioUrl}
                   onPlay={() => setPlaying(true)}
                   onPause={() => setPlaying(false)}
+                  onEnded={() => setPlaying(false)}
                 />
               </div>
             )}
@@ -538,7 +565,7 @@ export function AudioStudio() {
                   <p>{translated}</p>
                   <button
                     className="button button-dark"
-                    onClick={() => setTab("tts")}
+                    onClick={() => selectTab("tts")}
                   >
                     Continue with replacement voice <Play size={15} />
                   </button>

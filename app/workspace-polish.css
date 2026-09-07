@@ -278,7 +278,7 @@
 .specialized-tool-rail-head a { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; color: var(--ink); font-size: 11px; letter-spacing: 0; text-decoration: none; text-transform: none; }
 .specialized-tool-selection { color: var(--ink); font-size: 11px; letter-spacing: 0; text-transform: none; }
 .specialized-tool-selection svg { color: var(--coral); }
-.specialized-tool-chips { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; }
+.specialized-tool-chips { display: flex; gap: 7px; overflow-x: auto; padding: 8px 3px 9px; margin: -8px -3px -9px; scrollbar-width: thin; }
 .specialized-tool-chip { flex: 0 0 auto; min-height: 34px; padding: 5px 9px 5px 6px; display: inline-flex; align-items: center; gap: 7px; border: 1px solid #d7d1c7; border-radius: 999px; background: #fff; color: var(--ink); font-size: 12px; font-weight: 700; text-decoration: none; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
 .specialized-tool-chip:hover { transform: translateY(-2px); border-color: var(--coral); box-shadow: 0 7px 16px rgba(30,25,20,.09); }
 .specialized-tool-chip.active { border-color: var(--coral); box-shadow: inset 0 0 0 2px var(--coral), 0 5px 14px rgba(255,92,75,.18); background: var(--coral); color: #fff; transform: translateY(-1px); }

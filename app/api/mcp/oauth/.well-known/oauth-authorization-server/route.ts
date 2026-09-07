@@ -5,9 +5,9 @@ export async function GET(request: Request) {
   const issuer = getMcpIssuer(request);
   return NextResponse.json({
     issuer,
-    authorization_endpoint: `${issuer}/authorize`,
-    token_endpoint: `${issuer}/token`,
-    registration_endpoint: `${issuer}/register`,
+    authorization_endpoint: `${issuer}/api/mcp/oauth/authorize`,
+    token_endpoint: `${issuer}/api/mcp/oauth/token`,
+    registration_endpoint: `${issuer}/api/mcp/oauth/register`,
     response_types_supported: ["code"],
     grant_types_supported: ["authorization_code"],
     code_challenge_methods_supported: ["S256"],

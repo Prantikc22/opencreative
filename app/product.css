@@ -1336,9 +1336,21 @@
   font-size: 8px;
 }
 .generation-output figcaption a {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--coral);
   display: flex;
   align-items: center;
   gap: 5px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.generation-output figcaption a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
 }
 .generation-detail-grid > aside {
   background: #faf8f3;
