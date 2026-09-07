@@ -35,7 +35,7 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
         </button>
       </div>
       <p className="billing-helper">
-        Starter focuses on image and audio. Creator and above add video, avatars and complete campaign workflows.
+        Starter focuses on image and audio. Creator at $19 adds video, avatars, Kling 3.0, Seedance 2.5, Veo 3.1 and Sora 2 Pro.
       </p>
       <div className="pricing-grid-public">
         {selfServePlans.map((plan) => {
@@ -71,14 +71,23 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
                 </small>
               )}
               <div className="plan-output" aria-label={`Approximate ${plan.name} plan output`}>
-                <span>What you can make</span>
-                <div>
+                <div className="plan-output-heading">
+                  <span>Approximate monthly capacity</span>
+                  <small>Spend all credits on one type</small>
+                </div>
+                <dl>
                   {plan.outputExamples.map((example) => {
                     const Icon = outputIcons[example.kind];
-                    return <p key={`${example.kind}-${example.label}`}><Icon size={15} /><strong>{example.amount}</strong><small>{example.label}</small></p>;
+                    return (
+                      <div key={`${example.kind}-${example.label}`}>
+                        <dt><Icon size={16} /><strong>{example.amount}</strong><span>{example.label}</span></dt>
+                        <dd>{example.detail}</dd>
+                      </div>
+                    );
                   })}
-                </div>
-                <small>At standard rates when used for one output type. Mix them however you like.</small>
+                </dl>
+                {plan.modelAccess && <div className="plan-model-access"><Sparkles size={14} /><p><strong>Every top video model</strong><small>{plan.modelAccess}</small></p></div>}
+                <small>Estimates vary by model, duration, resolution and audio. Your exact credit cost appears before generation.</small>
               </div>
               <strong><Sparkles size={15} /> What you get</strong>
               <ul>

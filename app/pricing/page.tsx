@@ -37,6 +37,8 @@ export default function Page() {
         <div>
           {[
             ["Why start at $9?", "Most creators do not need a huge monthly generation allowance on day one. Starter covers regular image and voice work, while Creator adds video, avatars and complete campaign workflows."],
+            ["How many videos can I make?", "Creator makes about 2–11 five-second videos, Pro about 5–29, and Studio about 11–61 when all monthly credits are used for video. The range changes by model, duration, resolution and audio, so OpenCreative shows the exact estimate before every generation."],
+            ["Which video models are included?", "Creator at $19 and every higher creative plan can use Kling 3.0, Seedance 2.5, Veo 3.1 and Sora 2 Pro. Premium routes use more credits than fast routes."],
             ["What does one creative credit buy?", "Credits are model-weighted. Standard images start at 12 credits, five seconds of standard 720p video is about 200 credits, and premium models use more. OpenCreative shows the exact estimate before you generate."],
             ["Why are Agents separate?", "Agent conversations combine transcription, reasoning and speech synthesis continuously. Separate minute-based plans keep that cost transparent and stop agent traffic from draining a creative team’s generation credits."],
             ["Do failed generations use my credits?", "No. Credits are reserved when a job starts and returned automatically when the provider fails."],

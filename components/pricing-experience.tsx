@@ -57,7 +57,7 @@ function CreativeRows() {
     ["Projects and asset library", true, true, true, true, true, true],
     ["Watermark-free commercial exports", false, true, true, true, true, true],
     ["Brand, product and avatar identities", false, false, true, true, true, true],
-    ["Premium quality tiers", false, false, false, true, true, true],
+    ["Premium models: Kling 3.0, Seedance 2.5, Veo 3.1, Sora 2 Pro", false, false, true, true, true, true],
     ["Workspace seats", "1", "1", "1", "2", "5", "Custom"],
     ["Agent Studio access", false, false, false, false, false, "Separate contract"],
   ].map(([label, ...values]) => <ComparisonRow key={String(label)} label={String(label)} values={values} />)}</>;
