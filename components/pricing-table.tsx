@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { ArrowRight, AudioLines, Check, CircleUserRound, Clapperboard, ImageIcon, Sparkles } from "lucide-react";
 import {
   agentPricingPlans,
   annualDiscount,
@@ -10,6 +10,13 @@ import {
   monthlyEquivalent,
   pricingPlans,
 } from "@/lib/pricing";
+
+const outputIcons = {
+  image: ImageIcon,
+  video: Clapperboard,
+  audio: AudioLines,
+  avatar: CircleUserRound,
+};
 
 export function PricingTable({ family = "creative" }: { family?: "creative" | "agents" }) {
   const [annual, setAnnual] = useState(false);
@@ -43,7 +50,7 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
             { minimumFractionDigits: 2, maximumFractionDigits: 2 },
           );
           return (
-            <article id={plan.id} className={plan.featured ? "featured" : ""} key={plan.id}>
+            <article id={plan.id} data-plan={plan.id} className={plan.featured ? "featured" : ""} key={plan.id}>
               {plan.featured && <em>Most popular</em>}
               <div className="plan-heading">
                 <span>{plan.name}</span>
@@ -63,6 +70,16 @@ export function PricingTable({ family = "creative" }: { family?: "creative" | "a
                   {plan.custom ? "A plan built around your organization" : plan.monthlyPrice > 0 ? "Billed monthly" : "No card required"}
                 </small>
               )}
+              <div className="plan-output" aria-label={`Approximate ${plan.name} plan output`}>
+                <span>What you can make</span>
+                <div>
+                  {plan.outputExamples.map((example) => {
+                    const Icon = outputIcons[example.kind];
+                    return <p key={`${example.kind}-${example.label}`}><Icon size={15} /><strong>{example.amount}</strong><small>{example.label}</small></p>;
+                  })}
+                </div>
+                <small>At standard rates when used for one output type. Mix them however you like.</small>
+              </div>
               <strong><Sparkles size={15} /> What you get</strong>
               <ul>
                 {plan.features.map((feature) => (

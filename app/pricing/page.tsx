@@ -36,7 +36,7 @@ export default function Page() {
         </header>
         <div>
           {[
-            ["Why start at $9?", "Most creators do not need a huge monthly generation allowance on day one. Starter covers regular image, voice and short-form video work, while top-ups handle unusually busy months."],
+            ["Why start at $9?", "Most creators do not need a huge monthly generation allowance on day one. Starter covers regular image and voice work, while Creator adds video, avatars and complete campaign workflows."],
             ["What does one creative credit buy?", "Credits are model-weighted. Standard images start at 12 credits, five seconds of standard 720p video is about 200 credits, and premium models use more. OpenCreative shows the exact estimate before you generate."],
             ["Why are Agents separate?", "Agent conversations combine transcription, reasoning and speech synthesis continuously. Separate minute-based plans keep that cost transparent and stop agent traffic from draining a creative team’s generation credits."],
             ["Do failed generations use my credits?", "No. Credits are reserved when a job starts and returned automatically when the provider fails."],

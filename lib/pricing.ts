@@ -4,6 +4,11 @@ export type PricingPlan = {
   monthlyPrice: number;
   credits: number;
   description: string;
+  outputExamples: Array<{
+    kind: "image" | "video" | "audio" | "avatar";
+    amount: string;
+    label: string;
+  }>;
   features: string[];
   featured: boolean;
   custom: boolean;
@@ -24,12 +29,12 @@ export type AgentPricingPlan = {
 };
 
 export const pricingPlans: PricingPlan[] = [
-  { id: "free", name: "Free", monthlyPrice: 0, credits: 50, description: "Try image and audio creation before you pay.", featured: false, custom: false, features: ["50 welcome credits", "Image and audio generation", "Projects and organized asset library", "Bring your own provider key"] },
-  { id: "starter", name: "Starter", monthlyPrice: 9, credits: 250, description: "For regular image and audio creation.", featured: false, custom: false, features: ["250 managed credits monthly", "Image and audio generation", "Watermark-free commercial exports", "Projects and asset library", "One-off credit top-ups"] },
-  { id: "creator", name: "Creator", monthlyPrice: 19, credits: 750, description: "For creators shipping campaigns every week.", featured: true, custom: false, features: ["750 managed credits monthly", "Everything in Starter", "Video, avatars and campaign workflows", "Brand, product and avatar identities", "Voice, transcription and translation"] },
-  { id: "pro", name: "Pro", monthlyPrice: 49, credits: 1900, description: "For small teams producing at a serious cadence.", featured: false, custom: false, features: ["1,900 managed credits monthly", "Everything in Creator", "Premium quality tiers", "Priority generation routing", "Priority email support"] },
-  { id: "studio", name: "Studio", monthlyPrice: 99, credits: 4000, description: "For studios running multiple brands and campaigns.", featured: false, custom: false, features: ["4,000 managed credits monthly", "Everything in Pro", "5 workspace seats", "Shared brand systems", "Usage analytics and faster support"] },
-  { id: "enterprise", name: "Enterprise", monthlyPrice: 0, credits: 100000, description: "For organizations that need custom scale, controls and support.", featured: false, custom: true, features: ["Custom credit and seat packages", "Everything in Studio", "SSO and advanced access controls", "Custom data and provider policies", "Dedicated success and support"] },
+  { id: "free", name: "Free", monthlyPrice: 0, credits: 50, description: "Explore image and audio creation before you pay.", outputExamples: [{ kind: "image", amount: "~4", label: "standard images" }, { kind: "audio", amount: "~12 min", label: "generated voice" }], featured: false, custom: false, features: ["50 welcome credits", "Image and audio generation", "Projects and organized asset library", "Bring your own provider key"] },
+  { id: "starter", name: "Starter", monthlyPrice: 9, credits: 250, description: "A focused visual and voice toolkit for everyday creation.", outputExamples: [{ kind: "image", amount: "~20", label: "standard images" }, { kind: "audio", amount: "~62 min", label: "generated voice" }], featured: false, custom: false, features: ["250 managed credits monthly", "Image and audio generation", "Watermark-free commercial exports", "Projects and asset library", "One-off credit top-ups"] },
+  { id: "creator", name: "Creator", monthlyPrice: 19, credits: 750, description: "Build complete social campaigns with motion, voice and reusable identities.", outputExamples: [{ kind: "image", amount: "~62", label: "standard images" }, { kind: "video", amount: "~15 sec", label: "standard video" }, { kind: "audio", amount: "~187 min", label: "generated voice" }, { kind: "avatar", amount: "~7", label: "avatar clips" }], featured: true, custom: false, features: ["750 managed credits monthly", "Everything in Starter", "Video, avatars and campaign workflows", "Brand, product and avatar identities", "Voice, transcription and translation"] },
+  { id: "pro", name: "Pro", monthlyPrice: 49, credits: 1900, description: "Run a serious weekly production cadence with premium routing and support.", outputExamples: [{ kind: "image", amount: "~158", label: "standard images" }, { kind: "video", amount: "~45 sec", label: "standard video" }, { kind: "audio", amount: "~475 min", label: "generated voice" }, { kind: "avatar", amount: "~18", label: "avatar clips" }], featured: false, custom: false, features: ["1,900 managed credits monthly", "Everything in Creator", "Premium quality tiers", "Priority generation routing", "Priority email support"] },
+  { id: "studio", name: "Studio", monthlyPrice: 99, credits: 4000, description: "Give a small team the capacity to operate several brands and campaigns.", outputExamples: [{ kind: "image", amount: "~333", label: "standard images" }, { kind: "video", amount: "~100 sec", label: "standard video" }, { kind: "audio", amount: "~1,000 min", label: "generated voice" }, { kind: "avatar", amount: "~38", label: "avatar clips" }], featured: false, custom: false, features: ["4,000 managed credits monthly", "Everything in Pro", "5 workspace seats", "Shared brand systems", "Usage analytics and faster support"] },
+  { id: "enterprise", name: "Enterprise", monthlyPrice: 0, credits: 100000, description: "For organizations that need custom scale, controls and support.", outputExamples: [], featured: false, custom: true, features: ["Custom credit and seat packages", "Everything in Studio", "SSO and advanced access controls", "Custom data and provider policies", "Dedicated success and support"] },
 ];
 
 export const agentPricingPlans: AgentPricingPlan[] = [
