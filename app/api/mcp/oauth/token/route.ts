@@ -18,9 +18,13 @@ export async function POST(request: Request) {
       verifier: body.get("code_verifier") || "",
       resource: body.get("resource") || getMcpResource(request),
     });
-    return NextResponse.json({ access_token: result.accessToken, token_type: "Bearer", expires_in: result.expiresIn, scope: result.scope });
+    return NextResponse.json(
+      { access_token: result.accessToken, token_type: "Bearer", expires_in: result.expiresIn, scope: result.scope },
+      { headers: { "Cache-Control": "no-store", Pragma: "no-cache" } },
+    );
   } catch (cause) {
     const message = cause instanceof Error ? cause.message : "invalid_grant";
+    console.error("MCP OAuth token exchange failed", message);
     return NextResponse.json({ error: message === "MCP OAuth database migration required" ? "server_error" : "invalid_grant", error_description: message }, { status: message === "MCP OAuth database migration required" ? 503 : 400 });
   }
 }

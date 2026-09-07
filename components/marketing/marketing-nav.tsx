@@ -4,7 +4,22 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, AudioLines, Bot, ChevronDown, CircleUserRound, Clapperboard, ImageIcon, Menu, Music2, X } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
+import { ToolIcon, type ToolIconName } from "@/components/tool-icon";
 import { productConfig } from "@/lib/config";
+import { creativeTools, creativeToolIcons } from "@/lib/creative-tools";
+
+const toolCategories = (["Video", "Image", "Audio", "World", "Characters"] as const).map((category) => ({
+  category,
+  tools: creativeTools.filter((tool) => tool.category === category),
+}));
+
+const toolCategoryHrefs = {
+  Video: "/studio/video",
+  Image: "/studio/image",
+  Audio: "/studio/audio",
+  World: "/studio/image?tool=create-world",
+  Characters: "/identities/avatars",
+} as const;
 
 const products = [
   ["Image Studio", "Campaign stills and product photography", "/studio/image", ImageIcon],
@@ -35,7 +50,7 @@ const resources = [
 ] as const;
 
 export function MarketingNav() {
-  const [open, setOpen] = useState<"products" | "solutions" | "resources" | null>(null);
+  const [open, setOpen] = useState<"products" | "tools" | "solutions" | "resources" | null>(null);
   const [mobile, setMobile] = useState(false);
 
   function toggle(menu: typeof open) {
@@ -47,12 +62,14 @@ export function MarketingNav() {
       <Link href="/" aria-label={`${productConfig.name} home`}><BrandMark /></Link>
       <nav aria-label="Primary navigation" className={mobile ? "mobile-open" : ""}>
         <button type="button" onClick={() => toggle("products")} aria-expanded={open === "products"}>Products <ChevronDown size={14} /></button>
+        <button type="button" onClick={() => toggle("tools")} aria-expanded={open === "tools"}>Tools <ChevronDown size={14} /></button>
         <button type="button" onClick={() => toggle("solutions")} aria-expanded={open === "solutions"}>Solutions <ChevronDown size={14} /></button>
         <button type="button" onClick={() => toggle("resources")} aria-expanded={open === "resources"}>Resources <ChevronDown size={14} /></button>
         <Link href="/#showcase">Showcase</Link>
         <Link href="/pricing">Pricing</Link>
         <div className="mobile-nav-directory">
           <span>Products</span>{products.map(([name, , href]) => <Link href={href} key={name}>{name}</Link>)}
+          <span>Tools</span>{toolCategories.map(({ category }) => <Link href={toolCategoryHrefs[category]} key={category}>{category} tools</Link>)}<Link href="/tools">All 32 tools</Link>
           <span>Solutions</span>{solutions.slice(0, 4).map(([name, , href]) => <Link href={href} key={name}>{name}</Link>)}
           <span>Resources</span><Link href="/compare">Compare</Link><Link href="/affiliates">Affiliates</Link><Link href="/mcp">MCP</Link><Link href="/open-source">Open source</Link>
           <span>Company</span><a href="https://www.resolutexhq.com/about" target="_blank" rel="noreferrer">About</a><a href="https://www.resolutexhq.com/careers" target="_blank" rel="noreferrer">Careers</a>
@@ -61,6 +78,7 @@ export function MarketingNav() {
       <div className="home-header-actions"><Link className="header-signin" href="/login">Sign in</Link><Link className="oc-button oc-button-coral" href="/signup">Start free <ArrowRight size={15} /></Link><button className="nav-mobile-toggle" type="button" onClick={() => setMobile((current) => !current)} aria-label="Toggle menu">{mobile ? <X size={20} /> : <Menu size={20} />}</button></div>
 
       {open === "products" && <div className="mega-menu mega-menu-products"><div className="mega-kicker"><span>THE COMPLETE STUDIO</span><strong>One brief across every medium.</strong><Link href="/#platform">See all products <ArrowRight size={14} /></Link></div><div className="mega-grid">{products.map(([name, copy, href, Icon]) => <Link href={href} key={name}><Icon size={20} /><span><strong>{name}</strong><small>{copy}</small></span><ArrowRight size={14} /></Link>)}</div></div>}
+      {open === "tools" && <div className="mega-menu mega-menu-tools"><div className="mega-kicker"><span>32 PURPOSE-BUILT TOOLS</span><strong>Open the exact operation you need.</strong><Link href="/tools">Explore the full toolbox <ArrowRight size={14} /></Link></div><div className="mega-tool-directory">{toolCategories.map(({ category, tools }) => <section key={category}><header><span>{category}</span><small>{tools.length}</small></header>{tools.map((tool) => <Link href={tool.href} key={tool.id}><ToolIcon name={creativeToolIcons[tool.id] as ToolIconName} size={14} />{tool.name}</Link>)}</section>)}</div></div>}
       {open === "solutions" && <div className="mega-menu"><div className="mega-kicker"><span>BUILT AROUND THE OUTCOME</span><strong>Choose the work, not the model.</strong><Link href="/#platform">Explore the platform <ArrowRight size={14} /></Link></div><div className="mega-link-grid">{solutions.map(([name, copy, href]) => <Link href={href} key={name}><strong>{name}</strong><small>{copy}</small></Link>)}</div></div>}
       {open === "resources" && <div className="mega-menu"><div className="mega-kicker"><span>LEARN AND BUILD</span><strong>From first brief to full control.</strong><a href="https://www.resolutexhq.com/about" target="_blank" rel="noreferrer">About ResoluteX HQ <ArrowRight size={14} /></a></div><div className="mega-link-grid">{resources.map(([name, copy, href]) => <Link href={href} key={name}><strong>{name}</strong><small>{copy}</small></Link>)}<a href="https://www.resolutexhq.com/careers" target="_blank" rel="noreferrer"><strong>Careers</strong><small>Build the next creative operating system</small></a><a href="https://www.resolutexhq.com/about" target="_blank" rel="noreferrer"><strong>About</strong><small>Meet the company behind OpenCreative</small></a></div></div>}
     </header>

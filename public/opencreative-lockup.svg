@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 120" role="img" aria-labelledby="title desc">
+  <title id="title">OpenCreative</title>
+  <desc id="desc">OpenCreative brand mark and wordmark</desc>
+  <defs>
+    <linearGradient id="coral" x1="9" y1="8" x2="102" y2="107" gradientUnits="userSpaceOnUse"><stop stop-color="#ff7669"/><stop offset=".55" stop-color="#ff5a49"/><stop offset="1" stop-color="#d9362a"/></linearGradient>
+    <linearGradient id="shadow" x1="8" y1="22" x2="52" y2="94" gradientUnits="userSpaceOnUse"><stop stop-color="#a52f26"/><stop offset="1" stop-color="#40100d"/></linearGradient>
+  </defs>
+  <g transform="translate(4 2) scale(1.75)">
+    <path d="M9 20.8 25 16v32L9 43.2a4 4 0 0 1-2.8-3.8V24.6A4 4 0 0 1 9 20.8Z" fill="url(#shadow)"/>
+    <path d="M19 12.8 49.8 21a3 3 0 0 1 2.2 2.9v5.2L28 24v16l24-5.1v5.2a3 3 0 0 1-2.2 2.9L19 51.2a4 4 0 0 1-5-3.9V16.7a4 4 0 0 1 5-3.9Z" fill="url(#coral)"/>
+    <path d="M38 27.8 52 31v2l-14 3.2a2 2 0 0 1-2.4-2v-4.4a2 2 0 0 1 2.4-2Z" fill="#ff5a49"/>
+  </g>
+  <text x="114" y="74" fill="#f4f4f2" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="700" letter-spacing="-3">Open<tspan fill="#ff5a49">Creative</tspan></text>
+  <text x="118" y="102" fill="#a3a3a3" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" letter-spacing="8">IDEAS IN MOTION</text>
+</svg>

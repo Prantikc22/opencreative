@@ -13,6 +13,7 @@ export async function POST(request: Request) {
       token_endpoint_auth_method: "none",
       grant_types: ["authorization_code"],
       response_types: ["code"],
+      client_id_issued_at: Math.floor(Date.now() / 1000),
       client_secret_expires_at: 0,
     }, { status: 201 });
   } catch (cause) {

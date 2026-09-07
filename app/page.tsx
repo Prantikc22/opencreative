@@ -68,7 +68,10 @@ const products = [
   { icon: Bot, number: "06", title: "Agents", copy: "Give customers a voice-first support agent on phone, laptop, or inside your product widget.", className: "spectrum-agent", href: "/studio/agents", use: "Customer support" },
 ] as const;
 
-const toolboxPreview = creativeTools.filter((tool) => tool.status === "Ready").slice(0, 10);
+const toolboxCategories = (["Video", "Image", "Audio", "World", "Characters"] as const).map((category) => ({
+  category,
+  tools: creativeTools.filter((tool) => tool.category === category),
+}));
 
 function XLogo() {
   return (
@@ -112,11 +115,20 @@ export default function Home() {
       </section>
 
       <section className="home-toolbox-preview" id="toolbox">
-        <header className="home-display-heading"><p>THE TOOLBOX</p><h2>Start with the operation.<br /><em>Keep the idea intact.</em></h2><span>Video, image, audio, world and character tools are organized around the job you need to finish—not hidden behind a generic generator.</span></header>
-        <div className="home-toolbox-grid">
-          {toolboxPreview.map((tool) => <Link href={tool.href} key={tool.id}><span className="home-toolbox-icon"><ToolIcon name={creativeToolIcons[tool.id] as ToolIconName} size={19} /></span><div><small>{tool.category}</small><strong>{tool.name}</strong><p>{tool.description}</p></div><ArrowRight size={16} /></Link>)}
+        <header className="home-toolbox-heading">
+          <div><p>32 PURPOSE-BUILT TOOLS</p><h2>Choose the move.<br /><em>Keep the idea.</em></h2></div>
+          <div><span>Every tool opens with the right workflow, references, and model routing already prepared.</span><Link href="/tools">Browse the full toolbox <ArrowRight size={15} /></Link></div>
+        </header>
+        <div className="home-toolbox-directory">
+          {toolboxCategories.map(({ category, tools }) => (
+            <section key={category}>
+              <header><span>{category}</span><small>{tools.length}</small></header>
+              <nav aria-label={`${category} tools`}>
+                {tools.map((tool) => <Link href={tool.href} key={tool.id}><ToolIcon name={creativeToolIcons[tool.id] as ToolIconName} size={16} /><span>{tool.name}</span>{tool.status !== "Ready" && <small>{tool.status === "Setup required" ? "Setup" : tool.status}</small>}</Link>)}
+              </nav>
+            </section>
+          ))}
         </div>
-        <Link className="oc-button oc-button-dark home-toolbox-cta" href="/tools">Explore all live tools <ArrowRight size={16} /></Link>
       </section>
 
       <section className="workflow-2026">

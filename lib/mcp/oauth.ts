@@ -95,8 +95,17 @@ export async function exchangeAuthorizationCode(input: { code: string; clientId:
   if (usedError) throw new Error("invalid_grant");
   const accessToken = randomToken("oc_mcp_");
   const expiresIn = 60 * 60;
-  const { data: membership } = await admin.from("workspace_members").select("workspace_id").eq("user_id", row.user_id).order("created_at", { ascending: true }).limit(1).maybeSingle();
-  if (!membership?.workspace_id) throw new Error("invalid_grant");
+  const { data: membership, error: membershipError } = await admin
+    .from("workspace_members")
+    .select("workspace_id")
+    .eq("user_id", row.user_id)
+    .order("joined_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (membershipError || !membership?.workspace_id) {
+    console.error("MCP OAuth workspace lookup failed", membershipError?.message || "No workspace membership");
+    throw new Error("invalid_grant");
+  }
   const { error: tokenError } = await admin.from("mcp_oauth_access_tokens").insert({
     token_hash: sha256(accessToken),
     client_id: input.clientId,

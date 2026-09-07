@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1734" height="907" viewBox="0 0 1734 907">
+  <defs>
+    <radialGradient id="glow" cx="72%" cy="48%" r="55%"><stop stop-color="#5a1712" stop-opacity=".7"/><stop offset="1" stop-color="#0b0b0c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="coral" x1="150" y1="190" x2="570" y2="690" gradientUnits="userSpaceOnUse"><stop stop-color="#ff7669"/><stop offset=".55" stop-color="#ff5a49"/><stop offset="1" stop-color="#d9362a"/></linearGradient>
+    <linearGradient id="shadow" x1="145" y1="280" x2="315" y2="610" gradientUnits="userSpaceOnUse"><stop stop-color="#a52f26"/><stop offset="1" stop-color="#40100d"/></linearGradient>
+  </defs>
+  <rect width="1734" height="907" fill="#0b0b0c"/>
+  <rect width="1734" height="907" fill="url(#glow)"/>
+  <g transform="translate(110 120) scale(8.8)">
+    <path d="M9 20.8 25 16v32L9 43.2a4 4 0 0 1-2.8-3.8V24.6A4 4 0 0 1 9 20.8Z" fill="url(#shadow)"/>
+    <path d="M19 12.8 49.8 21a3 3 0 0 1 2.2 2.9v5.2L28 24v16l24-5.1v5.2a3 3 0 0 1-2.2 2.9L19 51.2a4 4 0 0 1-5-3.9V16.7a4 4 0 0 1 5-3.9Z" fill="url(#coral)"/>
+    <path d="M38 27.8 52 31v2l-14 3.2a2 2 0 0 1-2.4-2v-4.4a2 2 0 0 1 2.4-2Z" fill="#ff5a49"/>
+  </g>
+  <text x="650" y="422" fill="#f4f4f2" font-family="Arial, Helvetica, sans-serif" font-size="135" font-weight="700" letter-spacing="-8">Open<tspan fill="#ff5a49">Creative</tspan></text>
+  <text x="663" y="500" fill="#a3a3a3" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" letter-spacing="19">IDEAS IN MOTION</text>
+  <line x1="650" y1="566" x2="1574" y2="566" stroke="#3b2522"/>
+  <text x="652" y="642" fill="#f4f4f2" font-family="Arial, Helvetica, sans-serif" font-size="38">One idea. <tspan fill="#ff5a49" font-family="Georgia, serif" font-style="italic">Every way it can move.</tspan></text>
+</svg>

@@ -78,27 +78,24 @@ a {
 .brand-mark {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: 17px;
-  font-weight: 650;
-  letter-spacing: -0.03em;
+  gap: 9px;
+  font-size: 18px;
+  font-weight: 720;
+  letter-spacing: -0.055em;
+  line-height: 1;
 }
 .brand-glyph {
-  width: 27px;
-  height: 27px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2px;
-  transform: rotate(8deg);
-}
-.brand-glyph i {
+  width: 31px;
+  height: 31px;
   display: block;
-  background: currentColor;
-  border-radius: 1px;
+  flex: none;
 }
-.brand-glyph i:nth-child(2),
-.brand-glyph i:nth-child(3) {
-  background: var(--coral);
+.brand-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+}
+.brand-wordmark > span:last-child {
+  color: #ff5a49;
 }
 .site-nav {
   display: flex;

@@ -2,19 +2,14 @@ import Link from "next/link";
 import { ArrowUpRight, Code2 } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { productConfig } from "@/lib/config";
+import { creativeTools } from "@/lib/creative-tools";
 
-const footerGroups = [
-  {
-    label: "Create",
-    links: [
-      ["Images", "/studio/image"],
-      ["Video", "/studio/video"],
-      ["Avatars", "/studio/avatar"],
-      ["Voices", "/studio/audio"],
-      ["Music", "/studio/music"],
-      ["Agents", "/studio/agents"],
-    ],
-  },
+const toolGroups = (["Video", "Image", "Audio", "World", "Characters"] as const).map((category) => ({
+  label: category,
+  links: creativeTools.filter((tool) => tool.category === category).map((tool) => [tool.name, tool.href] as const),
+}));
+
+const utilityGroups = [
   {
     label: "Solutions",
     links: [
@@ -46,10 +41,11 @@ export function SiteFooter() {
           <Link href="/" aria-label={`${productConfig.name} home`}><BrandMark /></Link>
           <span><i /> Open-source core</span>
           <p>{productConfig.tagline}</p>
+          <Link className="site-footer-all-tools" href="/tools">Explore all 32 tools <ArrowUpRight size={13} /></Link>
         </div>
-        {footerGroups.map((group) => (
+        {toolGroups.map((group) => (
           <nav key={group.label} aria-label={`${group.label} links`}>
-            <span>{group.label}</span>
+            <span>{group.label} tools</span>
             {group.links.map(([label, href]) => (
               <Link href={href} key={label}>{label}</Link>
             ))}
@@ -57,8 +53,12 @@ export function SiteFooter() {
         ))}
       </div>
 
+      <div className="site-footer-utility">
+        {utilityGroups.map((group) => <nav key={group.label} aria-label={`${group.label} links`}><span>{group.label}</span><div>{group.links.map(([label, href]) => <Link href={href} key={label}>{label}</Link>)}</div></nav>)}
+      </div>
+
       <div className="site-footer-wordmark" aria-hidden="true">
-        OpenCreative
+        Open<span>Creative</span>
       </div>
 
       <div className="site-footer-bottom">
