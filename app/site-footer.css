@@ -96,7 +96,8 @@
   box-shadow: 0 0 0 5px rgba(201, 245, 108, 0.1);
 }
 
-.site-footer-note > a .brand-mark { font-size: 18px; }
+.site-footer-note > a .brand-mark { font-size: 21px; }
+.site-footer-note > a .brand-glyph { width: 37px; height: 37px; }
 
 .site-footer-note p {
   max-width: 280px;

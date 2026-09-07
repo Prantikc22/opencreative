@@ -97,6 +97,13 @@ a {
 .brand-wordmark > span:last-child {
   color: #ff5a49;
 }
+.site-header .brand-mark {
+  font-size: 20px;
+}
+.site-header .brand-glyph {
+  width: 35px;
+  height: 35px;
+}
 .site-nav {
   display: flex;
   align-items: center;

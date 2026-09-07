@@ -15,7 +15,8 @@
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
   border-bottom: 1px solid rgba(255,255,255,.28); background: transparent; color: #fff;
 }
-.home-header .brand-mark { color: #fff; }
+.home-header .brand-mark { color: #fff; font-size: 20px; }
+.home-header .brand-glyph { width: 35px; height: 35px; }
 .home-header nav { display: flex; gap: 20px; }
 .home-header nav a, .home-header nav button, .home-header .header-signin { color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; }
 .home-header nav button { padding: 0; display: inline-flex; align-items: center; gap: 5px; border: 0; background: none; cursor: pointer; font: inherit; }
