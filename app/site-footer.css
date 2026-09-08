@@ -224,6 +224,7 @@
   .site-footer-directory { grid-template-columns: 1fr 1fr; padding-block: 50px 60px; }
   .site-footer-note { grid-column: 1/-1; margin-bottom: 22px; }
   .site-footer-utility nav { grid-template-columns: 1fr; gap: 12px; }
-  .site-footer-wordmark { padding-bottom: 24px; font-size: clamp(66px, 20vw, 118px); }
+  .site-footer-wordmark { width: 100%; margin-inline: 0; padding: 18px 0 30px; overflow: visible; font-size: 16.2vw; letter-spacing: -.09em; }
+  .site-footer-wordmark::after { right: 0; left: 0; }
   .site-footer-bottom { align-items: flex-start; flex-direction: column; padding-block: 26px; }
 }
