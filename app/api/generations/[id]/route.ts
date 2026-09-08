@@ -7,12 +7,12 @@ import { uploadBuffer, createDownloadUrl } from "@/lib/storage/r2";
 import { completeGeneration, failGeneration } from "@/lib/generations/service";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = z.object({ id: z.string().uuid() }).parse(await params);
-    const context = await apiContext();
+    const context = await apiContext(undefined, request);
     const { data: generationData, error } = await context.supabase
       .from("generations")
       .select("*")

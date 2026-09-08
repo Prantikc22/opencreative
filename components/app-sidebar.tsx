@@ -184,7 +184,7 @@ export function AppSidebar({
               <Inbox size={16} /><span>Support inbox</span>
             </Link>
             <Link href="/account/mcp" onClick={() => beginNavigation("/account/mcp")} className={pathname === "/account/mcp" ? "active" : ""}>
-              <PlugZap size={16} /><span>MCP &amp; API keys</span>
+              <PlugZap size={16} /><span>Developer API &amp; MCP</span>
             </Link>
             <Link href="/account/affiliate" onClick={() => beginNavigation("/account/affiliate")} className={pathname === "/account/affiliate" ? "active" : ""}>
               <BadgeDollarSign size={16} /><span>Affiliate earnings</span>

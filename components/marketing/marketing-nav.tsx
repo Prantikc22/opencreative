@@ -41,6 +41,7 @@ const solutions = [
 ] as const;
 
 const resources = [
+  ["Developer API", "Build with image, video, voice, music, and avatar endpoints", "/developers"],
   ["Showcase", "Work made across all six products", "/#showcase"],
   ["Pricing", "Plans, comparison, and calculator", "/pricing"],
   ["Compare", "OpenCreative alongside specialist tools", "/compare"],
@@ -55,6 +56,7 @@ export function MarketingNav() {
   const [mobile, setMobile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const overlaysDarkHero = pathname === "/" || pathname === "/developers";
 
   useEffect(() => {
     const updateHeader = () => setScrolled(window.scrollY > 28);
@@ -68,7 +70,7 @@ export function MarketingNav() {
   }
 
   return (
-    <header className={`site-header home-header ${pathname !== "/" || scrolled ? "nav-scrolled" : ""} ${open || mobile ? "menu-active" : ""}`} onMouseLeave={() => setOpen(null)}>
+    <header className={`site-header home-header ${!overlaysDarkHero || scrolled ? "nav-scrolled" : ""} ${open || mobile ? "menu-active" : ""}`} onMouseLeave={() => setOpen(null)}>
       <Link href="/" aria-label={`${productConfig.name} home`}><BrandMark /></Link>
       <nav aria-label="Primary navigation" className={mobile ? "mobile-open" : ""}>
         <button type="button" onClick={() => toggle("products")} aria-expanded={open === "products"}>Products <ChevronDown size={14} /></button>
@@ -83,7 +85,7 @@ export function MarketingNav() {
           <details><summary>Products <ChevronDown size={16} /></summary><div>{products.map(([name, , href]) => <Link href={href} key={name}>{name}</Link>)}</div></details>
           <details><summary>Tools <ChevronDown size={16} /></summary><div>{toolCategories.map(({ category }) => <Link href={toolCategoryHrefs[category]} key={category}>{category} tools</Link>)}<Link href="/tools">All 32 tools</Link></div></details>
           <details><summary>Solutions <ChevronDown size={16} /></summary><div>{solutions.slice(0, 4).map(([name, , href]) => <Link href={href} key={name}>{name}</Link>)}</div></details>
-          <details><summary>Resources <ChevronDown size={16} /></summary><div><Link href="/compare">Compare</Link><Link href="/affiliates">Affiliates</Link><Link href="/mcp">MCP</Link><Link href="/open-source">Open source</Link></div></details>
+          <details><summary>Resources <ChevronDown size={16} /></summary><div><Link href="/developers">Developer API</Link><Link href="/compare">Compare</Link><Link href="/affiliates">Affiliates</Link><Link href="/mcp">MCP</Link><Link href="/open-source">Open source</Link></div></details>
           <details><summary>Company <ChevronDown size={16} /></summary><div><a href="https://www.resolutexhq.com/about" target="_blank" rel="noreferrer">About</a><a href="https://www.resolutexhq.com/careers" target="_blank" rel="noreferrer">Careers</a></div></details>
           <div className="mobile-nav-footer"><Link href="/login">Sign in</Link><Link className="mobile-nav-start" href="/signup">Start creating free <ArrowRight size={15} /></Link></div>
         </div>

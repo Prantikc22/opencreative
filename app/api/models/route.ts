@@ -7,7 +7,7 @@ import { discoverModels } from "@/lib/openrouter/client";
 const capabilitySchema = z.enum(["image", "video", "speech", "transcription"]);
 export async function GET(request: Request) {
   try {
-    await apiContext();
+    await apiContext(undefined, request);
     const capability = capabilitySchema.parse(
       new URL(request.url).searchParams.get("capability") || "image",
     );

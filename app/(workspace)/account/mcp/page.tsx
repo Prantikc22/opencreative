@@ -3,7 +3,7 @@ import { getWorkspaceContext } from "@/lib/workspace";
 import { McpKeyManager } from "@/components/mcp-key-manager";
 import { revokeMcpKeyAction } from "./actions";
 
-export const metadata = { title: "MCP & API keys" };
+export const metadata = { title: "Developer API & MCP" };
 
 export default async function McpKeysPage() {
   const { user, supabase, workspaceId } = await getWorkspaceContext();
@@ -18,12 +18,12 @@ export default async function McpKeysPage() {
   const codexConfig = `[mcp_servers.opencreative]\nurl = "${endpoint}"\n# OAuth sign-in is requested by Codex`;
   return (
     <div className="settings-page mcp-account-page">
-      <header className="library-head"><div><p className="eyebrow"><PlugZap size={13} /> MCP & API keys</p><h1>Connect your creative agents.</h1><p>Secure keys for OpenCreative Cloud. Calls stay inside this workspace and use this workspace&apos;s creative credits.</p></div></header>
+      <header className="library-head"><div><p className="eyebrow"><PlugZap size={13} /> Developer API &amp; MCP</p><h1>Build on your creative stack.</h1><p>Secure keys for OpenCreative Cloud. REST and MCP calls stay inside this workspace and use this workspace&apos;s creative credits.</p></div><a className="button button-dark" href="/developers">View API reference</a></header>
       <div className="mcp-account-grid">
         <McpKeyManager />
         <section className="mcp-key-list">
-          <h2><KeyRound size={18} /> Your keys</h2>
-          {!keys?.length && <p>No keys yet. Create one for a compatible MCP client.</p>}
+          <h2><KeyRound size={18} /> Your developer keys</h2>
+          {!keys?.length && <p>No keys yet. Create one for your backend or a compatible MCP client.</p>}
           {keys?.map((key) => (
             <article key={key.id} className={key.revoked_at ? "revoked" : ""}>
               <div><strong>{key.name}</strong><code>{key.token_prefix}••••••••</code><small>{key.revoked_at ? "Revoked" : key.last_used_at ? `Last used ${new Date(key.last_used_at).toLocaleDateString()}` : "Never used"}</small></div>
@@ -32,6 +32,7 @@ export default async function McpKeysPage() {
           ))}
         </section>
       </div>
+      <section className="mcp-connect-guide"><div><p className="eyebrow">REST API quickstart</p><h2>One key. Six media APIs.</h2><p>Send the key as a Bearer token from your server. Create images, videos, speech, music, transcriptions, and consented avatars at <code>/api/v1</code>. Every create request supports an idempotency UUID, and asynchronous renders can be polled by generation ID.</p></div><ol><li><CheckCircle2 size={18} /><span><strong>1. Create and copy a key</strong><small>It is shown once and stored only as a one-way hash.</small></span></li><li><CheckCircle2 size={18} /><span><strong>2. Call a versioned endpoint</strong><code>Authorization: Bearer oc_live_…</code></span></li><li><CheckCircle2 size={18} /><span><strong>3. Add credits as needed</strong><small>Subscriptions and one-time Paddle top-ups use the same wallet.</small></span></li></ol></section>
       <section className="mcp-connect-guide">
         <div><p className="eyebrow">Connection guide</p><h2>Connect in three minutes.</h2><p>OAuth is the recommended path: add the remote URL, choose “Sign in with OpenCreative” in your assistant, sign in once, and the assistant returns here with a short-lived token. The token inherits this workspace&apos;s credits and permissions.</p></div>
         <ol>
