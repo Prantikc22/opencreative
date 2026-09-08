@@ -8,6 +8,7 @@ import {
   BadgeDollarSign,
   AudioLines,
   Bot,
+  BookOpen,
   Boxes,
   CircleUserRound,
   Clapperboard,
@@ -185,6 +186,9 @@ export function AppSidebar({
             </Link>
             <Link href="/account/mcp" onClick={() => beginNavigation("/account/mcp")} className={pathname === "/account/mcp" ? "active" : ""}>
               <PlugZap size={16} /><span>Developer API &amp; MCP</span>
+            </Link>
+            <Link href="/docs/api" onClick={() => beginNavigation("/docs/api")}>
+              <BookOpen size={16} /><span>API documentation</span>
             </Link>
             <Link href="/account/affiliate" onClick={() => beginNavigation("/account/affiliate")} className={pathname === "/account/affiliate" ? "active" : ""}>
               <BadgeDollarSign size={16} /><span>Affiliate earnings</span>

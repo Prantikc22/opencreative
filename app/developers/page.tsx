@@ -31,7 +31,7 @@ export default function DevelopersPage() {
           <p>Build image, video, voice, music, avatar, and transcription workflows with one server-side key, one model router, and one workspace credit wallet.</p>
           <div className="developer-actions">
             <Link className="oc-button oc-button-coral" href="/login?next=/account/mcp">Get an API key <ArrowRight size={16} /></Link>
-            <a className="oc-button oc-button-outline-light" href="/api/v1/openapi.json">OpenAPI JSON <FileJson size={16} /></a>
+            <Link className="oc-button oc-button-outline-light" href="/docs/api">Read API docs <FileJson size={16} /></Link>
           </div>
         </div>
         <DeveloperApiConsole />
@@ -59,7 +59,7 @@ export default function DevelopersPage() {
       </section>
 
       <section className="developer-final">
-        <p className="section-kicker">START BUILDING</p><h2>From first request<br /><em>to production output.</em></h2><div><Link className="oc-button oc-button-coral" href="/login?next=/account/mcp">Create a key <ArrowRight size={16} /></Link><Link className="oc-button oc-button-dark" href="/mcp">Need MCP instead?</Link></div>
+        <p className="section-kicker">START BUILDING</p><h2>From first request<br /><em>to production output.</em></h2><div><Link className="oc-button oc-button-coral" href="/login?next=/account/mcp">Create a key <ArrowRight size={16} /></Link><Link className="oc-button oc-button-dark" href="/docs/api">Read the docs</Link><Link className="oc-button oc-button-dark" href="/mcp">Need MCP instead?</Link></div>
       </section>
       <SiteFooter />
       <SupportAgentWidget />

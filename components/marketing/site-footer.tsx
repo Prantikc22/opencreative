@@ -22,6 +22,7 @@ const utilityGroups = [
   {
     label: "Resources",
     links: [
+      ["API documentation", "/docs/api"],
       ["Developer API", "/developers"],
       ["Self-hosting", "/open-source#self-hosting"],
       ["Pricing", "/pricing"],

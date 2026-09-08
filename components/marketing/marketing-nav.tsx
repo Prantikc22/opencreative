@@ -41,6 +41,7 @@ const solutions = [
 ] as const;
 
 const resources = [
+  ["API documentation", "Quickstarts, examples, endpoints, errors, and billing", "/docs/api"],
   ["Developer API", "Build with image, video, voice, music, and avatar endpoints", "/developers"],
   ["Showcase", "Work made across all six products", "/#showcase"],
   ["Pricing", "Plans, comparison, and calculator", "/pricing"],
@@ -56,7 +57,7 @@ export function MarketingNav() {
   const [mobile, setMobile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const overlaysDarkHero = pathname === "/" || pathname === "/developers";
+  const overlaysDarkHero = pathname === "/" || pathname === "/developers" || pathname === "/docs/api";
 
   useEffect(() => {
     const updateHeader = () => setScrolled(window.scrollY > 28);
@@ -85,7 +86,7 @@ export function MarketingNav() {
           <details><summary>Products <ChevronDown size={16} /></summary><div>{products.map(([name, , href]) => <Link href={href} key={name}>{name}</Link>)}</div></details>
           <details><summary>Tools <ChevronDown size={16} /></summary><div>{toolCategories.map(({ category }) => <Link href={toolCategoryHrefs[category]} key={category}>{category} tools</Link>)}<Link href="/tools">All 32 tools</Link></div></details>
           <details><summary>Solutions <ChevronDown size={16} /></summary><div>{solutions.slice(0, 4).map(([name, , href]) => <Link href={href} key={name}>{name}</Link>)}</div></details>
-          <details><summary>Resources <ChevronDown size={16} /></summary><div><Link href="/developers">Developer API</Link><Link href="/compare">Compare</Link><Link href="/affiliates">Affiliates</Link><Link href="/mcp">MCP</Link><Link href="/open-source">Open source</Link></div></details>
+          <details><summary>Resources <ChevronDown size={16} /></summary><div><Link href="/docs/api">API documentation</Link><Link href="/developers">Developer API</Link><Link href="/compare">Compare</Link><Link href="/affiliates">Affiliates</Link><Link href="/mcp">MCP</Link><Link href="/open-source">Open source</Link></div></details>
           <details><summary>Company <ChevronDown size={16} /></summary><div><a href="https://www.resolutexhq.com/about" target="_blank" rel="noreferrer">About</a><a href="https://www.resolutexhq.com/careers" target="_blank" rel="noreferrer">Careers</a></div></details>
           <div className="mobile-nav-footer"><Link href="/login">Sign in</Link><Link className="mobile-nav-start" href="/signup">Start creating free <ArrowRight size={15} /></Link></div>
         </div>

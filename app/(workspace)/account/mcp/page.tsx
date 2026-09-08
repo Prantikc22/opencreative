@@ -18,7 +18,7 @@ export default async function McpKeysPage() {
   const codexConfig = `[mcp_servers.opencreative]\nurl = "${endpoint}"\n# OAuth sign-in is requested by Codex`;
   return (
     <div className="settings-page mcp-account-page">
-      <header className="library-head"><div><p className="eyebrow"><PlugZap size={13} /> Developer API &amp; MCP</p><h1>Build on your creative stack.</h1><p>Secure keys for OpenCreative Cloud. REST and MCP calls stay inside this workspace and use this workspace&apos;s creative credits.</p></div><a className="button button-dark" href="/developers">View API reference</a></header>
+      <header className="library-head"><div><p className="eyebrow"><PlugZap size={13} /> Developer API &amp; MCP</p><h1>Build on your creative stack.</h1><p>Secure keys for OpenCreative Cloud. REST and MCP calls stay inside this workspace and use this workspace&apos;s creative credits.</p></div><a className="button button-dark" href="/docs/api">Read API documentation</a></header>
       <div className="mcp-account-grid">
         <McpKeyManager />
         <section className="mcp-key-list">
