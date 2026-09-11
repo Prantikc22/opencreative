@@ -4,9 +4,10 @@ import { ArrowRight, Check, Coins, CreditCard, Sparkles } from "lucide-react";
 import { getWorkspaceContext } from "@/lib/workspace";
 import { agentPricingPlans, annualTotal, capacityOptionFor, capacityOptionsFor, creditBundles, monthlyEquivalent, pricingPlans } from "@/lib/pricing";
 import { DodoCheckoutButton } from "@/components/dodo-checkout-button";
+import { DodoCheckoutReconciler } from "@/components/dodo-checkout-reconciler";
 import { ManageBillingButton } from "@/components/manage-billing-button";
 export const metadata: Metadata = { title: "Credits & billing" };
-export default async function Page({ searchParams }: { searchParams: Promise<{ billing?: string; checkout?: string; plan?: string }> }) {
+export default async function Page({ searchParams }: { searchParams: Promise<{ billing?: string; checkout?: string; plan?: string; subscription_id?: string }> }) {
   const params = await searchParams;
   const cadence = params.billing === "annual" ? "annual" : "monthly";
   const { supabase, workspaceId, wallet, workspace } =
@@ -51,6 +52,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
           <small>credits · {currentPlan} plan</small>
         </div>
       </header>
+      {params.checkout === "success" && params.subscription_id && <DodoCheckoutReconciler subscriptionId={params.subscription_id} />}
       {params.checkout === "success" && !checkoutConfirmed && <p className="checkout-success">Payment received. We’re waiting for Dodo Payments&apos; signed confirmation. Your balance will update automatically.</p>}
       {params.checkout === "cancelled" && <p className="checkout-success">Checkout was cancelled. You have not been charged.</p>}
       <nav className="billing-cadence" aria-label="Billing frequency">

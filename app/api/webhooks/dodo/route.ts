@@ -65,6 +65,16 @@ async function setProductEntitlement(
   if (error) throw error;
 }
 
+async function activateCreativePlan(
+  admin: ReturnType<typeof createAdminClient>,
+  workspaceId: string,
+  plan: string,
+) {
+  await setProductEntitlement(admin, workspaceId, "creative", plan);
+  const { error } = await admin.from("workspaces").update({ plan }).eq("id", workspaceId);
+  if (error) throw error;
+}
+
 async function eventIdentity(admin: ReturnType<typeof createAdminClient>, data: DodoData) {
   const providerCustomerId = String(data.customer?.customer_id || "");
   let workspaceId = metadataValue(data.metadata, "workspace_id");
@@ -166,6 +176,29 @@ async function grantSuccessfulPayment(
       p_payload: payload,
     });
     if (error) throw error;
+    // A successful recurring payment is sufficient to grant the purchased plan.
+    // Do this here as well as in subscription.* handling because Dodo can deliver
+    // the payment and subscription lifecycle events independently.
+    await activateCreativePlan(admin, identity.workspaceId, purchase.planId);
+
+    if (data.subscription_id) {
+      const subscription = await getDodoPayments().subscriptions.retrieve(data.subscription_id);
+      const subscriptionData = subscription as unknown as DodoData;
+      const subscriptionIdentity = await eventIdentity(admin, subscriptionData);
+      await syncSubscription(
+        admin,
+        subscriptionData,
+        purchase,
+        `${eventId}:subscription-sync`,
+        "subscription.active",
+        {
+          providerCustomerId: subscriptionIdentity.providerCustomerId || identity.providerCustomerId,
+          workspaceId: subscriptionIdentity.workspaceId || identity.workspaceId,
+          userId: subscriptionIdentity.userId || identity.userId,
+          accountEmail: subscriptionIdentity.accountEmail || identity.accountEmail,
+        },
+      );
+    }
     if (identity.accountEmail) void sendEmail({
       to: identity.accountEmail,
       subject: `Your OpenCreative ${purchase.planId} plan is active`,
@@ -214,8 +247,7 @@ async function syncSubscription(
     if (error) throw error;
     await setProductEntitlement(admin, identity.workspaceId, purchase.family, active ? purchase.planId : null);
     if (purchase.family === "creative" && active) {
-      const { error: planError } = await admin.from("workspaces").update({ plan: purchase.planId }).eq("id", identity.workspaceId);
-      if (planError) throw planError;
+      await activateCreativePlan(admin, identity.workspaceId, purchase.planId);
     }
     if (identity.accountEmail && ["subscription.cancelled", "subscription.expired", "subscription.updated", "subscription.plan_changed"].includes(type)) {
       const cancelled = !active || Boolean(data.cancel_at_next_billing_date);
