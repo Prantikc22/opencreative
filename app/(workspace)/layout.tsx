@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { AppTopbar } from "@/components/app-topbar";
+import { WorkspaceNavigationFeedback } from "@/components/workspace-navigation-feedback";
 import { getWorkspaceContext } from "@/lib/workspace";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +29,9 @@ export default async function WorkspaceLayout({
         plan={context.workspace?.plan || "free"}
       />
       <div className="app-main">
+        <Suspense fallback={null}>
+          <WorkspaceNavigationFeedback />
+        </Suspense>
         <AppTopbar
           credits={context.wallet?.balance || 0}
           name={name}

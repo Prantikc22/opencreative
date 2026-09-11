@@ -93,10 +93,12 @@
 .sidebar-account-toggle { width: calc(100% - 20px); min-height: 42px; margin: 0 10px; padding: 0 11px; display: grid; grid-template-columns: 18px 1fr 16px; align-items: center; gap: 10px; border: 0; border-radius: 8px; background: transparent; color: rgba(255,255,255,.66); text-align: left; cursor: pointer; transition: background .18s ease,color .18s ease,transform .12s ease; }
 .sidebar-account-toggle:hover,.sidebar-account-toggle.active { background: rgba(255,255,255,.08); color: #fff; }
 .sidebar-account-toggle:active,.app-sidebar a:active { transform: scale(.975); }
+.sidebar-nav { min-height: 0; }
+.sidebar-bottom { flex: 0 0 auto; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
 .sidebar-account-chevron { transition: transform .2s ease; }
 .sidebar-account-toggle.is-open .sidebar-account-chevron { transform: rotate(180deg); }
 .sidebar-account-menu { max-height: 0; overflow: hidden; opacity: 0; transition: max-height .24s ease,opacity .18s ease,padding .18s ease; }
-.sidebar-account-menu.is-open { max-height: 210px; padding-top: 4px; opacity: 1; }
+.sidebar-account-menu.is-open { max-height: 252px; padding-top: 4px; opacity: 1; }
 .sidebar-account-menu a { min-height: 36px; margin: 1px 10px 1px 28px; padding: 0 10px; display: flex; align-items: center; gap: 10px; border-radius: 7px; color: rgba(255,255,255,.52); }
 .sidebar-account-menu a:hover,.sidebar-account-menu a.active { color: #fff; background: rgba(255,255,255,.07); }
 .sidebar-collapsed .sidebar-account-toggle { grid-template-columns: 18px; justify-content: center; }
@@ -106,6 +108,127 @@
 .route-progress.is-active { opacity: 1; }
 .route-progress.is-active::after { animation: route-progress 850ms ease-in-out infinite; }
 @keyframes route-progress { to { transform: translateX(340%); } }
+
+/* Immediate feedback for every internal dashboard navigation. */
+.workspace-navigation-feedback {
+  position: fixed;
+  z-index: 24;
+  top: 74px;
+  right: 0;
+  left: 260px;
+  height: 3px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .14s ease;
+}
+.workspace-navigation-feedback > span {
+  display: block;
+  width: 36%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--coral) 28%, #ff8a7e 72%, transparent);
+  filter: drop-shadow(0 0 7px rgba(255,77,61,.55));
+  transform: translateX(-115%);
+}
+.workspace-navigation-feedback.is-active { opacity: 1; }
+.workspace-navigation-feedback.is-active > span { animation: workspace-progress 900ms cubic-bezier(.4,0,.2,1) infinite; }
+.sidebar-collapsed + .app-main .workspace-navigation-feedback { left: 68px; }
+@keyframes workspace-progress { to { transform: translateX(390%); } }
+
+/* Route fallback: keeps the familiar workspace shape visible while data streams. */
+.workspace-route-loading {
+  width: min(1220px, calc(100% - 60px));
+  margin: 0 auto;
+  padding: 54px 0 90px;
+  opacity: 0;
+  animation: workspace-loading-enter .22s ease .1s forwards;
+}
+.workspace-loading-status {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #5f5b54;
+  font-size: 13px;
+  letter-spacing: .01em;
+}
+.workspace-loading-status > span {
+  width: 9px;
+  height: 9px;
+  border: 2px solid rgba(255,77,61,.25);
+  border-top-color: var(--coral);
+  border-radius: 50%;
+  animation: workspace-spinner .72s linear infinite;
+}
+.workspace-loading-heading {
+  max-width: 680px;
+  margin-top: 34px;
+  display: grid;
+  gap: 14px;
+}
+.workspace-loading-heading i,
+.workspace-loading-grid i {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8e5de;
+}
+.workspace-loading-heading i::after,
+.workspace-loading-grid i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 18%, rgba(255,255,255,.82) 48%, transparent 78%);
+  transform: translateX(-100%);
+  animation: workspace-shimmer 1.35s ease-in-out infinite;
+}
+.workspace-loading-heading i:nth-child(1) { width: 118px; height: 12px; }
+.workspace-loading-heading i:nth-child(2) { width: min(560px, 84vw); height: 48px; }
+.workspace-loading-heading i:nth-child(3) { width: min(390px, 68vw); height: 16px; }
+.workspace-loading-grid {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 16px;
+}
+.workspace-loading-grid section {
+  min-height: 230px;
+  padding: 24px;
+  display: grid;
+  align-content: end;
+  gap: 13px;
+  border: 1px solid #dedbd3;
+  border-radius: 14px;
+  background: rgba(255,255,255,.72);
+}
+.workspace-loading-grid i:nth-child(1) { width: 42px; height: 42px; border-radius: 11px; }
+.workspace-loading-grid i:nth-child(2) { width: 72%; height: 18px; }
+.workspace-loading-grid i:nth-child(3) { width: 92%; height: 12px; }
+@keyframes workspace-loading-enter { to { opacity: 1; } }
+@keyframes workspace-spinner { to { transform: rotate(360deg); } }
+@keyframes workspace-shimmer { to { transform: translateX(100%); } }
+
+@media (max-width: 1000px) {
+  .workspace-navigation-feedback { left: 244px; }
+  .workspace-loading-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .workspace-loading-grid section:last-child { display: none; }
+}
+@media (max-width: 760px) {
+  .workspace-navigation-feedback,
+  .sidebar-collapsed + .app-main .workspace-navigation-feedback { top: 74px; left: 0; }
+  .workspace-route-loading { width: calc(100% - 30px); padding-top: 36px; }
+  .workspace-loading-grid { grid-template-columns: 1fr; }
+  .workspace-loading-grid section:nth-child(2) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-navigation-feedback.is-active > span,
+  .workspace-loading-status > span,
+  .workspace-loading-heading i::after,
+  .workspace-loading-grid i::after { animation: none; }
+  .workspace-route-loading { opacity: 1; animation: none; }
+}
 
 /* Dodo checkout CTAs must win over the legacy plan-card button selector. */
 .dodo-buy-button,.plan-grid .dodo-buy-button { width: 100%; min-height: 46px; padding: 0 15px; justify-content: space-between; border: 1px solid #171715; border-radius: 8px; background: #171715; color: #fff; font-size: 14px; font-weight: 750; }
