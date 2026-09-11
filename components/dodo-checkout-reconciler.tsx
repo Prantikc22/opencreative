@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function DodoCheckoutReconciler({ subscriptionId }: { subscriptionId: string }) {
+export function DodoCheckoutReconciler({
+  subscriptionId,
+  showStatus = false,
+}: {
+  subscriptionId?: string;
+  showStatus?: boolean;
+}) {
   const router = useRouter();
   const [failed, setFailed] = useState(false);
 
@@ -19,7 +25,7 @@ export function DodoCheckoutReconciler({ subscriptionId }: { subscriptionId: str
         setFailed(true);
         return;
       }
-      router.replace("/account/credits?checkout=success", { scroll: false });
+      if (subscriptionId) router.replace("/account/credits?checkout=success", { scroll: false });
       router.refresh();
     }).catch(() => {
       if (active) setFailed(true);
@@ -28,6 +34,8 @@ export function DodoCheckoutReconciler({ subscriptionId }: { subscriptionId: str
       active = false;
     };
   }, [router, subscriptionId]);
+
+  if (!showStatus) return null;
 
   return (
     <p className="checkout-success" role="status">

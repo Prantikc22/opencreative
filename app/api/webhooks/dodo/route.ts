@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { billingAppUrl, dodoPurchase, dodoPurchaseForProduct, getDodoPayments, type BillingCadence, type DodoPurchase } from "@/lib/dodo/server";
+import { persistDodoSubscription } from "@/lib/dodo/subscription-sync";
 import { escapeHtml, sendEmail } from "@/lib/email/resend";
 
 export const runtime = "nodejs";
@@ -243,8 +244,7 @@ async function syncSubscription(
       items: [{ product_id: purchase.productId, quantity: 1 }],
       metadata: { event_id: eventId, family: purchase.family, cadence: purchase.cadence },
     };
-    const { error } = await admin.from("subscriptions").upsert(payload, { onConflict: "provider_subscription_id" });
-    if (error) throw error;
+    await persistDodoSubscription(admin, payload);
     await setProductEntitlement(admin, identity.workspaceId, purchase.family, active ? purchase.planId : null);
     if (purchase.family === "creative" && active) {
       await activateCreativePlan(admin, identity.workspaceId, purchase.planId);

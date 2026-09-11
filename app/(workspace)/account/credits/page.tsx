@@ -26,12 +26,17 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
   const { data: transactions } = await supabase
     .from("credit_transactions")
     .select(
-      "id,transaction_type,status,amount,balance_after,description,created_at",
+      "id,transaction_type,status,amount,balance_after,description,metadata,created_at",
     )
     .eq("workspace_id", workspaceId)
     .order("created_at", { ascending: false })
     .limit(25);
   const checkoutConfirmed = Boolean(params.checkout === "success" && transactions?.some((transaction) => transaction.status === "settled" && transaction.amount > 0));
+  const hasUnreconciledDodoPlan = currentPlan === "free" && Boolean(transactions?.some((transaction) => {
+    const metadata = transaction.metadata;
+    return metadata && typeof metadata === "object" && !Array.isArray(metadata)
+      && metadata.provider === "dodo" && typeof metadata.plan === "string" && metadata.plan !== "top-up";
+  }));
   return (
     <div className="billing-page">
       <header className="library-head">
@@ -52,7 +57,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
           <small>credits · {currentPlan} plan</small>
         </div>
       </header>
-      {params.checkout === "success" && params.subscription_id && <DodoCheckoutReconciler subscriptionId={params.subscription_id} />}
+      {(params.checkout === "success" && params.subscription_id) || hasUnreconciledDodoPlan
+        ? <DodoCheckoutReconciler subscriptionId={params.subscription_id} showStatus={params.checkout === "success"} />
+        : null}
       {params.checkout === "success" && !checkoutConfirmed && <p className="checkout-success">Payment received. We’re waiting for Dodo Payments&apos; signed confirmation. Your balance will update automatically.</p>}
       {params.checkout === "cancelled" && <p className="checkout-success">Checkout was cancelled. You have not been charged.</p>}
       <nav className="billing-cadence" aria-label="Billing frequency">

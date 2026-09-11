@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { dodoPurchase, dodoPurchaseForProduct, getDodoPayments, type BillingCadence } from "@/lib/dodo/server";
+import { persistDodoSubscription } from "@/lib/dodo/subscription-sync";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceContext } from "@/lib/workspace";
 
@@ -8,7 +9,7 @@ export const runtime = "nodejs";
 export const maxDuration = 15;
 
 const reconcileSchema = z.object({
-  subscriptionId: z.string().min(5).max(100),
+  subscriptionId: z.string().min(5).max(100).optional(),
 });
 
 function metadataValue(metadata: Record<string, unknown>, key: string) {
@@ -20,7 +21,35 @@ export async function POST(request: Request) {
   try {
     const { subscriptionId } = reconcileSchema.parse(await request.json());
     const { workspaceId, user } = await getWorkspaceContext();
-    const subscription = await getDodoPayments().subscriptions.retrieve(subscriptionId);
+    const admin = createAdminClient();
+    let subscription;
+    if (subscriptionId) {
+      subscription = await getDodoPayments().subscriptions.retrieve(subscriptionId);
+    } else {
+      const { data: billingCustomer, error: customerError } = await admin
+        .from("billing_customers")
+        .select("provider_customer_id")
+        .eq("workspace_id", workspaceId)
+        .eq("user_id", user.id)
+        .eq("provider", "dodo")
+        .maybeSingle();
+      if (customerError) throw customerError;
+      if (!billingCustomer?.provider_customer_id) {
+        return NextResponse.json({ error: "No Dodo Payments customer was found." }, { status: 404 });
+      }
+      const subscriptions = await getDodoPayments().subscriptions.list({
+        customer_id: billingCustomer.provider_customer_id,
+        status: "active",
+        page_size: 100,
+      });
+      subscription = subscriptions.items.find((candidate) => {
+        const match = dodoPurchaseForProduct(candidate.product_id);
+        return match?.purchaseType === "subscription" && match.family === "creative";
+      });
+      if (!subscription) {
+        return NextResponse.json({ error: "No active Creative subscription was found." }, { status: 404 });
+      }
+    }
     const metadata = (subscription.metadata || {}) as Record<string, unknown>;
 
     if (metadataValue(metadata, "workspace_id") !== workspaceId || metadataValue(metadata, "user_id") !== user.id) {
@@ -37,9 +66,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "The subscription is not active." }, { status: 409 });
     }
 
-    const admin = createAdminClient();
     const customerId = subscription.customer?.customer_id || null;
-    const { error: subscriptionError } = await admin.from("subscriptions").upsert({
+    await persistDodoSubscription(admin, {
       workspace_id: workspaceId,
       provider: "dodo",
       provider_customer_id: customerId,
@@ -56,8 +84,7 @@ export async function POST(request: Request) {
       scheduled_change: { cancel_at_next_billing_date: Boolean(subscription.cancel_at_next_billing_date) },
       items: [{ product_id: purchase.productId, quantity: subscription.quantity || 1 }],
       metadata: { source: "checkout_return_reconciliation", family: purchase.family, cadence: purchase.cadence },
-    }, { onConflict: "provider_subscription_id" });
-    if (subscriptionError) throw subscriptionError;
+    });
 
     const { data: workspace, error: workspaceError } = await admin
       .from("workspaces")
