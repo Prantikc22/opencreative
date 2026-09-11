@@ -19,7 +19,7 @@ export default function TermsPage() {
           These are the core conditions for using the hosted OpenCreative
           service.
         </p>
-        <small>Effective September 7, 2026 · Last updated September 7, 2026</small>
+        <small>Effective September 11, 2026 · Last updated September 11, 2026</small>
       </header>
       <section className="legal-copy">
         <h2>Agreement</h2>
@@ -66,10 +66,10 @@ export default function TermsPage() {
         </p>
         <h2>Payment processing</h2>
         <p>
-          Our order process is conducted by our online reseller Paddle.com.
-          Paddle.com is the Merchant of Record for paid orders and processes
+          Our order process is conducted by our online reseller Dodo Payments.
+          Dodo Payments is the Merchant of Record for paid orders and processes
           payment, tax, invoices, subscription management and approved refunds.
-          You may manage a purchase from the receipt or at <a href="https://paddle.net" target="_blank" rel="noreferrer">paddle.net</a>.
+          You may manage a purchase using the secure customer-portal link in your receipt or billing account.
         </p>
         <h2>Suspension and termination</h2>
         <p>

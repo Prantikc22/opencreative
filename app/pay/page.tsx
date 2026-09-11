@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { PaddlePaymentLink } from "@/components/paddle-payment-link";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = { title: "Secure payment", robots: { index: false, follow: false } };
 
-export default function Page() { return <PaddlePaymentLink />; }
+export default function Page() { redirect("/account/credits"); }

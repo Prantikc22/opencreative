@@ -4,8 +4,8 @@ import {
   annualTotal,
   agentModelStack,
   agentPricingPlans,
-  paddlePercentageFee,
-  paddleTransactionFee,
+  dodoPercentageFee,
+  dodoTransactionFee,
   pricingPlans,
   targetAgentProviderCostPerMinute,
   targetProviderCostPerCredit,
@@ -42,7 +42,7 @@ describe("pricing economics", () => {
     }
   });
 
-  it("retains at least 60% contribution margin under a 15% cost shock and Paddle fees", () => {
+  it("retains at least 60% contribution margin under a 15% cost shock and Dodo Payments fees", () => {
     const paidPlans = pricingPlans.filter(
       (plan) => !plan.custom && plan.monthlyPrice > 0,
     );
@@ -54,12 +54,12 @@ describe("pricing economics", () => {
         {
           label: "monthly",
           revenue: plan.monthlyPrice,
-          paymentFee: paddleTransactionFee(plan.monthlyPrice),
+          paymentFee: dodoTransactionFee(plan.monthlyPrice),
         },
         {
           label: "annual",
           revenue: annualTotal(plan.monthlyPrice) / 12,
-          paymentFee: paddleTransactionFee(annualTotal(plan.monthlyPrice)) / 12,
+          paymentFee: dodoTransactionFee(annualTotal(plan.monthlyPrice)) / 12,
         },
       ];
 
@@ -77,8 +77,8 @@ describe("pricing economics", () => {
     for (const plan of paidPlans) {
       const stressedProviderCost = plan.includedMinutes * targetAgentProviderCostPerMinute * 1.15;
       const scenarios = [
-        { label: "monthly", revenue: plan.monthlyPrice, paymentFee: paddleTransactionFee(plan.monthlyPrice) },
-        { label: "annual", revenue: annualTotal(plan.monthlyPrice) / 12, paymentFee: paddleTransactionFee(annualTotal(plan.monthlyPrice)) / 12 },
+        { label: "monthly", revenue: plan.monthlyPrice, paymentFee: dodoTransactionFee(plan.monthlyPrice) },
+        { label: "annual", revenue: annualTotal(plan.monthlyPrice) / 12, paymentFee: dodoTransactionFee(annualTotal(plan.monthlyPrice)) / 12 },
       ];
       for (const scenario of scenarios) {
         const contributionMargin = (scenario.revenue - stressedProviderCost - scenario.paymentFee) / scenario.revenue;
@@ -91,7 +91,7 @@ describe("pricing economics", () => {
     for (const plan of agentPricingPlans.filter((plan) => plan.overagePerMinute)) {
       const revenue = plan.overagePerMinute!;
       const stressedCost = targetAgentProviderCostPerMinute * 1.15;
-      const margin = (revenue - stressedCost - revenue * paddlePercentageFee) / revenue;
+      const margin = (revenue - stressedCost - revenue * dodoPercentageFee) / revenue;
       expect(margin, plan.name).toBeGreaterThanOrEqual(0.6);
     }
   });

@@ -4513,15 +4513,15 @@ body .pricing-public .pricing-footnote {
 .mcp-connect-guide li > span { display: grid; gap: 7px; min-width: 0; }
 .mcp-connect-guide code { padding: 9px 11px; overflow-wrap: anywhere; background: rgba(255,255,255,.08); color: #ff8176; font: 12px/1.5 var(--font-geist-mono); }
 .mcp-connect-guide small { color: #918e87; font-size: 13px; }
-.copy-action, .support-reply-toggle, .paddle-buy-button { min-height: 46px; padding: 0 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--border-strong); background: #171715; color: #fff; font-weight: 750; cursor: pointer; }
+.copy-action, .support-reply-toggle, .dodo-buy-button { min-height: 46px; padding: 0 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--border-strong); background: #171715; color: #fff; font-weight: 750; cursor: pointer; }
 .copy-action { flex: 0 0 auto; }
 .copy-action-wrap { display: grid; justify-items: end; gap: 7px; }
 .copy-action-wrap > small { max-width: 260px; color: #b52e23; text-align: right; }
-.paddle-buy-wrap { margin-top: auto; display: grid; gap: 6px; }
-.paddle-buy-button { width: 100%; justify-content: space-between; }
-.paddle-buy-button:disabled { opacity: .46; cursor: not-allowed; }
-.paddle-buy-wrap > small { color: #b52e23; }
-.bundle-grid .paddle-buy-wrap { margin-top: auto; }
+.dodo-buy-wrap { margin-top: auto; display: grid; gap: 6px; }
+.dodo-buy-button { width: 100%; justify-content: space-between; }
+.dodo-buy-button:disabled { opacity: .46; cursor: not-allowed; }
+.dodo-buy-wrap > small { color: #b52e23; }
+.bundle-grid .dodo-buy-wrap { margin-top: auto; }
 .support-reply-composer { width: min(520px,100%); display: grid; gap: 10px; }
 .support-reply-composer label { display: grid; gap: 7px; font-weight: 700; }
 .support-reply-composer textarea { min-height: 120px; resize: vertical; }

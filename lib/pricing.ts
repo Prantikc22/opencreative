@@ -161,11 +161,11 @@ export const creditBundles = [
 ] as const;
 
 export const annualDiscount = 20;
-export const paddlePercentageFee = 0.05;
-export const paddleFixedFeeUsd = 0.5;
+export const dodoPercentageFee = 0.05;
+export const dodoFixedFeeUsd = 0.5;
 
-export function paddleTransactionFee(amountUsd: number) {
-  return amountUsd * paddlePercentageFee + paddleFixedFeeUsd;
+export function dodoTransactionFee(amountUsd: number) {
+  return amountUsd * dodoPercentageFee + dodoFixedFeeUsd;
 }
 
 export function monthlyEquivalent(monthlyPrice: number) {

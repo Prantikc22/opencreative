@@ -52,7 +52,7 @@ export default function DevelopersPage() {
       </section>
 
       <section className="developer-billing">
-        <div><p className="section-kicker">PAY AS YOU GO</p><h2>Prepaid capacity.<br /><em>No surprise invoice.</em></h2><p>Start with the 50-credit free wallet, subscribe for recurring capacity, or add a one-time Paddle credit bundle. Top-ups do not expire and developer calls draw from the same balance as the workspace.</p><Link className="oc-button oc-button-dark" href="/login?next=/account/credits">Open billing <ArrowRight size={16} /></Link></div>
+        <div><p className="section-kicker">PAY AS YOU GO</p><h2>Prepaid capacity.<br /><em>No surprise invoice.</em></h2><p>Start with the 50-credit free wallet, subscribe for recurring capacity, or add a one-time Dodo Payments credit bundle. Top-ups do not expire and developer calls draw from the same balance as the workspace.</p><Link className="oc-button oc-button-dark" href="/login?next=/account/credits">Open billing <ArrowRight size={16} /></Link></div>
         <div className="developer-bundle-grid">
           {creditBundles.map((bundle) => <article className={bundle.featured ? "featured" : ""} key={bundle.credits}><span>{bundle.featured ? "MOST POPULAR" : "ONE-TIME"}</span><strong>{bundle.credits.toLocaleString()} credits</strong><b>${bundle.price}</b><p>{bundle.description}</p></article>)}
         </div>

@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           This page explains the data the hosted OpenCreative service needs to
           operate.
         </p>
-        <small>Effective September 7, 2026 · Last updated September 7, 2026</small>
+        <small>Effective September 11, 2026 · Last updated September 11, 2026</small>
       </header>
       <section className="legal-copy">
         <h2>What we process</h2>
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
         <h2>Storage and providers</h2>
         <p>
           Workspace data is stored in Supabase and private media in Cloudflare
-          R2. Paddle processes purchases and Resend may deliver transactional
+          R2. Dodo Payments processes purchases and Resend may deliver transactional
           email. Creative requests are sent to configured model providers only
           when you initiate a workflow. These providers may process data in other
           countries under their own security and transfer safeguards.
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
         </p>
         <h2>Payments</h2>
         <p>
-          Paddle acts as merchant of record for paid orders. Paddle processes
+          Dodo Payments acts as merchant of record for paid orders and processes
           payment and billing information under its own privacy terms. We
           receive subscription, transaction and entitlement status needed to
           provide the product.

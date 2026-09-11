@@ -191,7 +191,7 @@ export function ApiReference() {
         </section>
         <section id="billing" className="api-docs-guide api-docs-billing-guide">
           <div><p className="section-kicker">CREDITS &amp; BILLING</p><h2>One wallet.<br /><em>Pay as you go.</em></h2></div>
-          <div><p>API calls use the same credits as the OpenCreative studio. Add one-time Paddle top-ups or use recurring plan credits. A generation reserves its estimated cost before provider work begins; failed jobs return that reservation.</p><p>Check your balance with <code>GET /api/v1/credits</code>. If it is too low, the API returns <code>402</code> before generation starts.</p></div>
+          <div><p>API calls use the same credits as the OpenCreative studio. Add one-time Dodo Payments top-ups or use recurring plan credits. A generation reserves its estimated cost before provider work begins; failed jobs return that reservation.</p><p>Check your balance with <code>GET /api/v1/credits</code>. If it is too low, the API returns <code>402</code> before generation starts.</p></div>
         </section>
         <section className="api-docs-endpoint-list" aria-label="API endpoints">
           {endpoints.map((endpoint) => (

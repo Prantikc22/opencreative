@@ -1,6 +1,6 @@
 "use server";
 
-import { getPaddle } from "@/lib/paddle/server";
+import { billingAppUrl, getDodoPayments } from "@/lib/dodo/server";
 import { getWorkspaceContext } from "@/lib/workspace";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -11,11 +11,12 @@ export async function createBillingPortalSession() {
     .select("provider_customer_id")
     .eq("workspace_id", workspaceId)
     .eq("user_id", user.id)
+    .eq("provider", "dodo")
     .maybeSingle();
   let customerId = customer?.provider_customer_id || "";
   if (!customerId && user.email) {
-    for await (const candidate of getPaddle().customers.list({ email: [user.email], perPage: 10 })) {
-      customerId = candidate.id;
+    for await (const candidate of getDodoPayments().customers.list({ email: user.email, page_size: 10 })) {
+      customerId = candidate.customer_id;
       break;
     }
     if (customerId) {
@@ -24,19 +25,16 @@ export async function createBillingPortalSession() {
         workspace_id: workspaceId,
         user_id: user.id,
         email: user.email,
+        provider: "dodo",
         metadata: { recovered_from: "customer_email" },
       });
       if (error) throw error;
     }
   }
-  if (!customerId) return { error: "No completed Paddle checkout was found for this account." };
+  if (!customerId) return { error: "No completed Dodo Payments checkout was found for this account." };
 
-  const { data: subscriptions } = await supabase
-    .from("subscriptions")
-    .select("provider_subscription_id")
-    .eq("workspace_id", workspaceId)
-    .not("provider_subscription_id", "is", null);
-  const ids = (subscriptions || []).map((item) => item.provider_subscription_id).filter(Boolean) as string[];
-  const session = await getPaddle().customerPortalSessions.create(customerId, ids);
-  return { url: session.urls.general.overview };
+  const session = await getDodoPayments().customers.customerPortal.create(customerId, {
+    return_url: `${billingAppUrl()}/account/credits`,
+  });
+  return { url: session.link };
 }

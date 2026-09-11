@@ -3,20 +3,19 @@ import Link from "next/link";
 import { ArrowRight, Check, Coins, CreditCard, Sparkles } from "lucide-react";
 import { getWorkspaceContext } from "@/lib/workspace";
 import { agentPricingPlans, annualTotal, capacityOptionFor, capacityOptionsFor, creditBundles, monthlyEquivalent, pricingPlans } from "@/lib/pricing";
-import { PaddleCheckoutButton } from "@/components/paddle-checkout-button";
-import { paddlePriceId } from "@/lib/paddle/server";
+import { DodoCheckoutButton } from "@/components/dodo-checkout-button";
 import { ManageBillingButton } from "@/components/manage-billing-button";
 export const metadata: Metadata = { title: "Credits & billing" };
 export default async function Page({ searchParams }: { searchParams: Promise<{ billing?: string; checkout?: string; plan?: string }> }) {
   const params = await searchParams;
   const cadence = params.billing === "annual" ? "annual" : "monthly";
-  const { user, supabase, workspaceId, wallet, workspace } =
+  const { supabase, workspaceId, wallet, workspace } =
     await getWorkspaceContext();
   const { data: syncedSubscription } = await supabase
     .from("subscriptions")
     .select("plan,status,cancel_at_period_end,current_period_end")
     .eq("workspace_id", workspaceId)
-    .eq("provider", "paddle")
+    .eq("provider", "dodo")
     .in("status", ["active", "trialing", "past_due"])
     .order("created_at", { ascending: false })
     .limit(1)
@@ -52,7 +51,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
           <small>credits · {currentPlan} plan</small>
         </div>
       </header>
-      {params.checkout === "success" && !checkoutConfirmed && <p className="checkout-success">Payment received. We’re waiting for Paddle’s signed confirmation. Your balance will update automatically.</p>}
+      {params.checkout === "success" && !checkoutConfirmed && <p className="checkout-success">Payment received. We’re waiting for Dodo Payments&apos; signed confirmation. Your balance will update automatically.</p>}
+      {params.checkout === "cancelled" && <p className="checkout-success">Checkout was cancelled. You have not been charged.</p>}
       <nav className="billing-cadence" aria-label="Billing frequency">
         <Link className={cadence === "monthly" ? "active" : ""} href="/account/credits?billing=monthly">Monthly</Link>
         <Link className={cadence === "annual" ? "active" : ""} href="/account/credits?billing=annual">Annual · save 20% except Starter</Link>
@@ -97,7 +97,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
             {plan.id === currentPlan ? (
               <span className="plan-state">Current plan</span>
             ) : plan.monthlyPrice > 0 ? (
-              <PaddleCheckoutButton priceId={paddlePriceId(selectedOption.id, effectiveCadence)} label={`Choose ${plan.name}`} workspaceId={workspaceId} userId={user.id} purchaseType="subscription" itemId={selectedOption.id} />
+              <DodoCheckoutButton itemId={selectedOption.id} cadence={effectiveCadence} label={`Choose ${plan.name}`} />
             ) : (
               <Link className="plan-state plan-action" href={`/pricing#${plan.id}`}>
                 View plan <ArrowRight size={14} />
@@ -115,7 +115,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
               <span>{plan.name}</span>
               <strong>${cadence === "annual" ? monthlyEquivalent(plan.monthlyPrice).toFixed(2) : plan.monthlyPrice}<small>/mo</small></strong>
               <p>{plan.includedMinutes.toLocaleString()} included agent minutes · {plan.agents} agents</p>
-              <PaddleCheckoutButton priceId={paddlePriceId(plan.id, cadence)} label={`Add ${plan.name}`} workspaceId={workspaceId} userId={user.id} purchaseType="subscription" itemId={plan.id} />
+              <DodoCheckoutButton itemId={plan.id} cadence={cadence} label={`Add ${plan.name}`} />
             </article>
           ))}
         </div>
@@ -135,11 +135,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
               <span>{bundle.credits.toLocaleString()} credits</span>
               <strong>${bundle.price}</strong>
               <p>{bundle.description}</p>
-              <PaddleCheckoutButton priceId={paddlePriceId(`credits-${bundle.credits}`, "one-time")} label={`Buy ${bundle.credits.toLocaleString()} credits`} workspaceId={workspaceId} userId={user.id} purchaseType="credit_topup" itemId={`credits-${bundle.credits}`} />
+              <DodoCheckoutButton itemId={`credits-${bundle.credits}`} cadence="one-time" label={`Buy ${bundle.credits.toLocaleString()} credits`} />
             </article>
           ))}
         </div>
-        <p className="payment-note"><CreditCard size={16} /> Secure checkout is handled by Paddle. Credits are added only after signed payment confirmation.</p>
+        <p className="payment-note"><CreditCard size={16} /> Secure checkout is handled by Dodo Payments. Credits are added only after signed payment confirmation.</p>
       </section>
       <section className="ledger-section">
         <div className="section-head">

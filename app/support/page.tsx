@@ -10,8 +10,8 @@ export default function SupportPage() {
   return <main className="legal-page"><nav><Link href="/"><ArrowLeft size={15} />OpenCreative</Link></nav><header><p className="eyebrow">Customer support</p><h1>Help for product and billing.</h1><p>Send the account email, transaction details and a concise description so we can investigate quickly.</p></header><section className="legal-copy">
     <h2>Email</h2><p><a href={`mailto:${productConfig.supportEmail}`}>{productConfig.supportEmail}</a></p>
     <h2>Phone</h2><p><a href={`tel:${phoneHref}`}>{productConfig.supportPhone}</a></p>
-    <h2>Billing and cancellation</h2><p>Use the Paddle buyer portal linked from your purchase receipt to review invoices, update payment details or cancel a subscription. You can also use <a href="https://paddle.net" target="_blank" rel="noreferrer">paddle.net</a>, or contact us and we will help locate the transaction.</p>
+    <h2>Billing and cancellation</h2><p>Use the secure Dodo Payments customer portal linked from your purchase receipt or OpenCreative billing page to review invoices, update payment details or cancel a subscription. You can also contact us and we will help locate the transaction.</p>
     <h2>Response targets</h2><p>Billing and account-access requests are prioritized. Standard product requests are handled during normal business hours in India.</p>
-    <h2>Company</h2><p>OpenCreative is operated by {productConfig.legalName}. Last updated September 7, 2026.</p>
+    <h2>Company</h2><p>OpenCreative is operated by {productConfig.legalName}. Last updated September 11, 2026.</p>
   </section></main>;
 }
