@@ -50,7 +50,6 @@ export async function POST(request: Request) {
         allow_currency_selection: true,
         allow_phone_number_collection: false,
         redirect_immediately: true,
-        single_page: true,
       },
     });
 
