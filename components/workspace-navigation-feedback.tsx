@@ -64,6 +64,10 @@ export function WorkspaceNavigationFeedback() {
       aria-label={pending ? "Opening page" : undefined}
     >
       <span aria-hidden="true" />
+      <div className="workspace-navigation-toast" aria-hidden="true">
+        <i />
+        <span>Opening</span>
+      </div>
     </div>
   );
 }
