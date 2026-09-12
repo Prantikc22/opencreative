@@ -62,9 +62,7 @@ export async function POST(request: Request) {
     if (!purchase || purchase.purchaseType !== "subscription" || purchase.family !== "creative") {
       return NextResponse.json({ error: "This is not a Creative subscription." }, { status: 400 });
     }
-    if (!["active", "past_due"].includes(subscription.status)) {
-      return NextResponse.json({ error: "The subscription is not active." }, { status: 409 });
-    }
+    const active = ["active", "past_due"].includes(subscription.status);
 
     const customerId = subscription.customer?.customer_id || null;
     await persistDodoSubscription(admin, {
@@ -95,11 +93,14 @@ export async function POST(request: Request) {
     const entitlements = (workspace?.product_entitlements || {}) as Record<string, string | null>;
     const { error: planError } = await admin
       .from("workspaces")
-      .update({ plan: purchase.planId, product_entitlements: { ...entitlements, creative: purchase.planId } })
+      .update({
+        plan: active ? purchase.planId : "free",
+        product_entitlements: { ...entitlements, creative: active ? purchase.planId : null },
+      })
       .eq("id", workspaceId);
     if (planError) throw planError;
 
-    return NextResponse.json({ reconciled: true, plan: purchase.planId });
+    return NextResponse.json({ reconciled: true, plan: active ? purchase.planId : "free", status: subscription.status });
   } catch (cause) {
     if (cause instanceof z.ZodError) return NextResponse.json({ error: "Invalid subscription." }, { status: 400 });
     console.error("Dodo subscription reconciliation error", cause);

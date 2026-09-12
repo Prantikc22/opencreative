@@ -2,11 +2,12 @@ import { chmod, writeFile } from "node:fs/promises";
 import DodoPayments from "dodopayments";
 
 const apiKey = process.env.DODO_PAYMENTS_API_KEY;
-const outputPath = process.env.DODO_SYNC_OUTPUT || ".env.dodo.generated";
+const environment = process.env.DODO_PAYMENTS_ENVIRONMENT === "live_mode" ? "live_mode" : "test_mode";
+const outputPath = process.env.DODO_SYNC_OUTPUT || (environment === "live_mode" ? ".env.dodo.live.generated" : ".env.dodo.generated");
 const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://www.opencreativehq.com").replace(/\/$/, "");
 if (!apiKey) throw new Error("DODO_PAYMENTS_API_KEY is required.");
 
-const client = new DodoPayments({ bearerToken: apiKey, environment: "test_mode" });
+const client = new DodoPayments({ bearerToken: apiKey, environment });
 const annual = (monthly) => Math.round(monthly * 12 * 0.8);
 const plans = [
   ["DODO_PRODUCT_CREATIVE_STARTER_MONTHLY", "starter-monthly", "OpenCreative Starter — monthly", 900, "Month", "creative", "starter", 250],
@@ -100,7 +101,7 @@ if (!webhook) {
 if (!webhook) {
   webhook = await client.webhooks.create({
     url: webhookUrl,
-    description: "OpenCreative test billing events",
+    description: `OpenCreative ${environment === "live_mode" ? "live" : "test"} billing events`,
     filter_types: [
       "payment.succeeded", "payment.failed", "payment.cancelled",
       "subscription.active", "subscription.renewed", "subscription.updated",
@@ -108,7 +109,7 @@ if (!webhook) {
       "subscription.paused", "subscription.unpaused", "subscription.cancelled",
       "subscription.failed", "subscription.expired", "refund.succeeded",
     ],
-    metadata: { application: "opencreative", environment: "test_mode" },
+    metadata: { application: "opencreative", environment },
   });
   console.log(`Created webhook ${webhookUrl}`);
 }
@@ -116,7 +117,7 @@ const webhookSecret = await client.webhooks.retrieveSecret(webhook.id);
 
 const values = {
   DODO_PAYMENTS_API_KEY: apiKey,
-  DODO_PAYMENTS_ENVIRONMENT: "test_mode",
+  DODO_PAYMENTS_ENVIRONMENT: environment,
   DODO_PAYMENTS_WEBHOOK_KEY: webhookSecret.secret,
   DODO_PAYMENTS_WEBHOOK_ID: webhook.id,
   DODO_PAYMENTS_RETURN_URL: `${appUrl}/account/credits?checkout=success`,
@@ -124,5 +125,5 @@ const values = {
 };
 await writeFile(outputPath, `${Object.entries(values).map(([key, value]) => `${key}=${value}`).join("\n")}\n`, { mode: 0o600 });
 await chmod(outputPath, 0o600);
-console.log(`Dodo test catalog ready: ${plans.length + topups.length} products and one signed webhook.`);
+console.log(`Dodo ${environment} catalog ready: ${plans.length + topups.length} products and one signed webhook.`);
 console.log(`Environment values written to ${outputPath}.`);

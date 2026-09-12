@@ -9,7 +9,7 @@ export async function sendEmail(input: EmailInput) {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from: process.env.RESEND_FROM_EMAIL || "OpenCreative <onboarding@resend.dev>",
+      from: process.env.RESEND_FROM_EMAIL || "OpenCreative <engineering@opencreativehq.com>",
       to: [input.to],
       subject: input.subject,
       html: input.html,

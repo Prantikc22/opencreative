@@ -158,9 +158,10 @@ async function grantSuccessfulPayment(
       p_payload: payload,
     });
     if (error) throw error;
-    if (identity.accountEmail) void sendEmail({
+    if (identity.accountEmail) await sendEmail({
       to: identity.accountEmail,
       subject: `${purchase.credits.toLocaleString()} credits added to your OpenCreative wallet`,
+      replyTo: process.env.SUPPORT_REPLY_TO_EMAIL || "engineering@resolutexhq.com",
       html: `<p>Your payment was confirmed and <strong>${purchase.credits.toLocaleString()} credits</strong> were added to your OpenCreative wallet.</p><p><a href="${escapeHtml(billingAppUrl())}/account/credits">View Credits &amp; billing</a></p>`,
     }).catch((cause) => console.error("Credit purchase email error", cause));
     return;
@@ -200,9 +201,10 @@ async function grantSuccessfulPayment(
         },
       );
     }
-    if (identity.accountEmail) void sendEmail({
+    if (identity.accountEmail) await sendEmail({
       to: identity.accountEmail,
       subject: `Your OpenCreative ${purchase.planId} plan is active`,
+      replyTo: process.env.SUPPORT_REPLY_TO_EMAIL || "engineering@resolutexhq.com",
       html: `<p>Your <strong>${escapeHtml(purchase.planId)}</strong> plan is active with ${purchase.credits.toLocaleString()} recurring credits.</p><p><a href="${escapeHtml(billingAppUrl())}/account/credits">Manage your plan</a></p>`,
     }).catch((cause) => console.error("Plan purchase email error", cause));
   } else {
@@ -251,9 +253,10 @@ async function syncSubscription(
     }
     if (identity.accountEmail && ["subscription.cancelled", "subscription.expired", "subscription.updated", "subscription.plan_changed"].includes(type)) {
       const cancelled = !active || Boolean(data.cancel_at_next_billing_date);
-      void sendEmail({
+      await sendEmail({
         to: identity.accountEmail,
         subject: cancelled ? "Your OpenCreative subscription was canceled" : `Your OpenCreative ${purchase.planId} plan was updated`,
+        replyTo: process.env.SUPPORT_REPLY_TO_EMAIL || "engineering@resolutexhq.com",
         html: cancelled
           ? `<p>Your ${escapeHtml(purchase.planId)} subscription has been canceled. Your Dodo Payments customer portal shows the effective date and any remaining access.</p>`
           : `<p>Your ${escapeHtml(purchase.planId)} plan was updated successfully.</p>`,

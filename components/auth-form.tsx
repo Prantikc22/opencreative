@@ -59,6 +59,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
           password,
         });
         if (error) throw error;
+        await fetch("/api/email/welcome", { method: "POST" }).catch(() => undefined);
         router.push(safeNext(params.get("next")));
         router.refresh();
       } else if (mode === "signup") {
@@ -76,6 +77,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         });
         if (error) throw error;
         if (data.session) {
+          await fetch("/api/email/welcome", { method: "POST" }).catch(() => undefined);
           router.push(onboardingPath);
           router.refresh();
         } else setMessage("Check your inbox to confirm your account.");
