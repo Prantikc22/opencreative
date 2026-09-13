@@ -76,6 +76,27 @@ async function activateCreativePlan(
   if (error) throw error;
 }
 
+async function downgradePrimaryPlanIfItMatches(
+  admin: ReturnType<typeof createAdminClient>,
+  workspaceId: string,
+  purchasedPlan: string,
+  family: "creative" | "agents",
+) {
+  const { data: workspace, error: readError } = await admin
+    .from("workspaces")
+    .select("plan")
+    .eq("id", workspaceId)
+    .single();
+  if (readError) throw readError;
+  if (workspace?.plan !== purchasedPlan) return;
+
+  const { error } = await admin
+    .from("workspaces")
+    .update({ plan: family === "agents" ? "agent-sandbox" : "free" })
+    .eq("id", workspaceId);
+  if (error) throw error;
+}
+
 async function eventIdentity(admin: ReturnType<typeof createAdminClient>, data: DodoData) {
   const providerCustomerId = String(data.customer?.customer_id || "");
   let workspaceId = metadataValue(data.metadata, "workspace_id");
@@ -250,6 +271,10 @@ async function syncSubscription(
     await setProductEntitlement(admin, identity.workspaceId, purchase.family, active ? purchase.planId : null);
     if (purchase.family === "creative" && active) {
       await activateCreativePlan(admin, identity.workspaceId, purchase.planId);
+    } else if (!active) {
+      // The legacy `workspaces.plan` column is still consulted as a fallback.
+      // Clear a matching cancelled plan so it cannot silently re-grant access.
+      await downgradePrimaryPlanIfItMatches(admin, identity.workspaceId, purchase.planId, purchase.family);
     }
     if (identity.accountEmail && ["subscription.cancelled", "subscription.expired", "subscription.updated", "subscription.plan_changed"].includes(type)) {
       const cancelled = !active || Boolean(data.cancel_at_next_billing_date);

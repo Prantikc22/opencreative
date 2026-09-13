@@ -6,6 +6,7 @@ import { sendWelcomeEmailOnce } from "@/lib/email/welcome";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
+  const shouldSendWelcome = url.searchParams.get("welcome") === "1";
   const next = url.searchParams.get("next")?.startsWith("/") && !url.searchParams.get("next")?.startsWith("//") && !url.searchParams.get("next")?.includes("\\")
     ? url.searchParams.get("next")!
     : "/app";
@@ -14,7 +15,7 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email && process.env.RESEND_API_KEY) {
+      if (shouldSendWelcome && user?.email && process.env.RESEND_API_KEY) {
         await sendWelcomeEmailOnce({ id: user.id, email: user.email }, url.origin)
           .catch((cause) => console.error("Welcome email error", cause));
       }

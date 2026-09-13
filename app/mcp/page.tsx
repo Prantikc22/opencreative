@@ -3,11 +3,9 @@ import { ArrowRight, Bot, Braces, ImageIcon, Music2, ShieldCheck, Sparkles, Vide
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "MCP Server | OpenCreative",
-  description: "Connect AI agents to OpenCreative image, video, voice, music, avatar, and campaign tools through MCP.",
-};
+export const metadata = marketingMetadata({ title: "MCP server for AI creative tools", description: "Connect Codex, ChatGPT, Claude, Cursor, and other AI agents to OpenCreative image, video, voice, avatar, and campaign tools through MCP.", path: "/mcp" });
 
 const toolCards = [
   [ImageIcon, "Create images", "Generate campaign stills with up to five reference-image URLs."],

@@ -73,7 +73,7 @@ export function SupportAgentWidget({ agentId }: { agentId?: string } = {}) {
           </div>}
         </div>
       )}
-      <button className="support-agent-launcher" type="button" onClick={() => setOpen((current) => !current)} aria-expanded={open}>
+      <button className="support-agent-launcher" type="button" onClick={() => setOpen((current) => !current)} aria-expanded={open} aria-label={open ? "Close Nori support" : "Open Nori support"}>
         <Mic size={19} /><span>Talk to Nori</span>
       </button>
     </aside>

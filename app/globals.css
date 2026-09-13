@@ -3660,6 +3660,27 @@ a {
 .selected-voice small {
   display: block;
 }
+.speech-language-select {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 13px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 10px;
+  font-weight: 700;
+}
+.speech-language-select select {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #242422;
+  color: white;
+}
+.speech-language-select small {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 1.5;
+}
 .selected-voice strong {
   font-size: 12px;
 }
@@ -3808,6 +3829,68 @@ a {
 .transcribe-copy {
   padding-right: 25px;
 }
+.language-count-badge {
+  width: fit-content;
+  margin: 20px 0 24px;
+  padding: 8px 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  background: #fff0ed;
+  color: #c93f32;
+  font-weight: 750;
+}
+.dub-panel {
+  grid-template-areas:
+    "copy drop"
+    "route route"
+    "error error"
+    "action action"
+    "result result";
+  align-items: stretch;
+}
+.dub-panel .transcribe-copy { grid-area: copy; }
+.dub-panel .audio-drop { grid-area: drop; }
+.dub-panel > .form-error { grid-area: error; }
+.dub-panel > .generate-button { grid-area: action; }
+.dub-panel .transcript-result { grid-area: result; }
+.dub-language-route {
+  grid-area: route;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+  align-items: end;
+  gap: 16px;
+  border: 1px solid var(--line);
+  background: #f7f4ef;
+}
+.dub-language-route label {
+  display: grid;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+.dub-language-route select {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 1px solid #d0cbc2;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 15px;
+}
+.dub-route-arrow {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+}
 .audio-drop {
   min-height: 220px;
   border: 1px dashed #aaa49a;
@@ -3926,6 +4009,16 @@ a {
   }
   .transcribe-panel {
     grid-template-columns: 1fr;
+  }
+  .dub-panel {
+    grid-template-areas: "copy" "drop" "route" "error" "action" "result";
+  }
+  .dub-language-route {
+    grid-template-columns: 1fr;
+  }
+  .dub-route-arrow {
+    transform: rotate(90deg);
+    justify-self: center;
   }
   .transcribe-copy {
     padding: 0;

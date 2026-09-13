@@ -80,7 +80,7 @@ export function AppSidebar({
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(pathname.startsWith("/account"));
+  const [accountOpen, setAccountOpen] = useState(false);
 
   function beginNavigation() {
     setOpen(false);

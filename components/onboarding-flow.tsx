@@ -17,6 +17,7 @@ import {
   Upload,
 } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
+import { trackDataFastGoal } from "@/lib/datafast-goals";
 
 const intents = [
   ["ugc", "UGC Ad", "Creator-led ads", CircleUserRound],
@@ -50,6 +51,10 @@ export function OnboardingFlow({ firstName }: { firstName: string }) {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
+      trackDataFastGoal("onboarding_completed", {
+        intent,
+        brand_mode: brandMode,
+      });
       router.push(data.next || "/app");
       router.refresh();
     } catch (cause) {

@@ -1,7 +1,18 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { trackAICrawlerRequest } from "@datafast/ai-crawl";
+import {
+  NextResponse,
+  type NextFetchEvent,
+  type NextRequest,
+} from "next/server";
 
-export async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest, event: NextFetchEvent) {
+  trackAICrawlerRequest(request, event, {
+    websiteId: "dfid_vUB4PHjlIYWuk6iDUImtA",
+    domain: "opencreativehq.com",
+    publicOrigin: "https://www.opencreativehq.com",
+    authToken: process.env.DATAFAST_BOT_TOKEN,
+  });
   let response = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;

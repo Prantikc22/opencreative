@@ -5,11 +5,9 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
 import { DeveloperApiConsole } from "@/components/developer-api-console";
 import { creditBundles } from "@/lib/pricing";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Developer API",
-  description: "Build with OpenCreative image, video, speech, music, transcription, and avatar APIs using one key and prepaid credit wallet.",
-};
+export const metadata = marketingMetadata({ title: "AI media generation API for developers", description: "Build with OpenCreative image, video, speech, music, transcription, and avatar APIs using one key and a transparent prepaid credit wallet.", path: "/developers" });
 
 const endpoints = [
   [ImageIcon, "Images", "POST", "/api/v1/images", "Create, edit, expand, enhance, and transform images."],

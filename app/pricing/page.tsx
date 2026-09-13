@@ -5,10 +5,8 @@ import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
 import { PricingExperience } from "@/components/pricing-experience";
-export const metadata: Metadata = {
-  title: "Pricing from $9/month",
-  description: "Compare OpenCreative plans for creative production and customer agents, then estimate the right usage level.",
-};
+import { marketingMetadata } from "@/lib/seo";
+export const metadata: Metadata = marketingMetadata({ title: "AI creative studio pricing from $9/month", description: "Compare OpenCreative plans for AI image, video, voice, avatars, agents, and creative production, then estimate the right usage level.", path: "/pricing" });
 export default function Page() {
   return (
     <main className="home-2026 pricing-public">

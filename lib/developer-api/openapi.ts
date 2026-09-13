@@ -142,7 +142,7 @@ export function openCreativeOpenApi() {
         },
         TranscriptionRequest: {
           type: "object", required: ["base64", "format"],
-          properties: { base64: { type: "string", description: "Base64-encoded audio or video bytes" }, format: { type: "string", enum: ["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac", "mp4", "mov"] }, language: { type: "string", minLength: 2, maxLength: 2 }, durationSeconds: { type: "number", maximum: 3600 }, quality: { type: "string", enum: ["standard", "premium"] }, idempotencyKey: { type: "string", format: "uuid" } },
+          properties: { base64: { type: "string", description: "Base64-encoded audio or video bytes" }, format: { type: "string", enum: ["wav", "mp3", "flac", "m4a", "ogg", "webm", "aac", "mp4", "mov"] }, language: { type: "string", minLength: 2, maxLength: 10, description: "Optional ISO or BCP-47 source language code" }, durationSeconds: { type: "number", maximum: 3600 }, quality: { type: "string", enum: ["standard", "premium"] }, idempotencyKey: { type: "string", format: "uuid" } },
         },
         Quality: { type: "string", enum: ["fast", "standard", "premium", "advanced"], default: "standard" },
       },

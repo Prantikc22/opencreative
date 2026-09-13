@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { productConfig } from "@/lib/config";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Customer support" };
+export const metadata: Metadata = marketingMetadata({ title: "OpenCreative customer support", description: "Get help with your OpenCreative account, billing, subscription, credits, creative generation, API, or self-hosted deployment.", path: "/support" });
 
 export default function SupportPage() {
   const phoneHref = productConfig.supportPhone.replace(/[^+\d]/g, "");

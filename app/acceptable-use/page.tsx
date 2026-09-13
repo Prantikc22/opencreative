@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { productConfig } from "@/lib/config";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Acceptable use" };
+export const metadata: Metadata = marketingMetadata({ title: "Acceptable use policy", description: "OpenCreative rules for consent, likeness, voice, avatar, intellectual property, deceptive media, agents, and responsible AI creation.", path: "/acceptable-use" });
 
 export default function AcceptableUsePage() {
   return <main className="legal-page"><nav><Link href="/"><ArrowLeft size={15} />OpenCreative</Link></nav><header><p className="eyebrow">Acceptable use</p><h1>Creative power needs consent.</h1><p>These rules protect people, brands and the wider public.</p><small>Effective September 7, 2026 · Last updated September 7, 2026</small></header><section className="legal-copy">

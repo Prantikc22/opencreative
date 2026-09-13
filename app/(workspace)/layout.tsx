@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -6,6 +7,7 @@ import { WorkspaceNavigationFeedback } from "@/components/workspace-navigation-f
 import { getWorkspaceContext } from "@/lib/workspace";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function WorkspaceLayout({
   children,
@@ -13,11 +15,7 @@ export default async function WorkspaceLayout({
   children: React.ReactNode;
 }) {
   const context = await getWorkspaceContext();
-  if (
-    !context.profile?.onboarding_completed &&
-    !String(context.user.user_metadata?.onboarding_skipped || "")
-  )
-    redirect("/onboarding");
+  if (!context.profile?.onboarding_completed) redirect("/onboarding");
   const name =
     context.profile?.full_name ||
     context.user.email?.split("@")[0] ||

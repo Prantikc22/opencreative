@@ -22,6 +22,7 @@ import { creativeToolIcons, getCreativeTool } from "@/lib/creative-tools";
 import { SpecializedTools } from "@/components/studio/specialized-tools";
 import { ToolIcon, type ToolIconName } from "@/components/tool-icon";
 import type { QualityTier } from "@/lib/types";
+import { trackDataFastGoal } from "@/lib/datafast-goals";
 
 type Mode = "image" | "video" | "avatar";
 type ResultAsset = { id: string; url: string; mime_type: string; kind: string };
@@ -158,6 +159,12 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
         clearInterval(timer);
         setLoading(false);
         setAssets(data.assets || []);
+        if (data.generation.status === "completed") {
+          trackDataFastGoal("creative_generation_completed", {
+            kind: mode,
+            tool: activeTool?.id || mode,
+          });
+        }
         if (data.generation.status !== "completed")
           setError(
             data.generation.error_message ||
@@ -166,7 +173,7 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
       }
     }, 15000);
     return () => clearInterval(timer);
-  }, [generationId, loading, mode]);
+  }, [activeTool?.id, generationId, loading, mode]);
   async function generate() {
     if (prompt.trim().length < 3) return;
     const generationPrompt = activeTool?.promptPrefix
@@ -229,6 +236,10 @@ export function CreativeStudio({ mode }: { mode: Mode }) {
       setStatus(data.status);
       if (mode === "image") {
         setAssets(data.assets || []);
+        trackDataFastGoal("creative_generation_completed", {
+          kind: mode,
+          tool: activeTool?.id || mode,
+        });
         setLoading(false);
       }
     } catch (cause) {

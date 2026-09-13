@@ -4,11 +4,9 @@ import { ApiReference } from "@/components/api-reference";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "API Documentation",
-  description: "Human-readable OpenCreative API documentation for image, video, speech, music, avatar, and transcription workflows.",
-};
+export const metadata = marketingMetadata({ title: "OpenCreative API documentation", description: "Human-readable OpenCreative API documentation for image, video, speech, music, avatar, transcription, credits, authentication, and webhook workflows.", path: "/docs/api" });
 
 export default function ApiDocsPage() {
   return (

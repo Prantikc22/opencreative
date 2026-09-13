@@ -5,6 +5,7 @@ import { Bot, FileText, Globe2, LoaderCircle, Mic, Plus, Save, Send, Trash2, Upl
 import { useOpenCreativeAgent } from "@/components/marketing/use-opencreative-agent";
 import { CopyButton } from "@/components/copy-button";
 import type { AgentResource } from "@/lib/agents/knowledge";
+import { supportedLanguages } from "@/lib/languages";
 
 type WidgetSettings = {
   accent?: string;
@@ -196,7 +197,7 @@ export function AgentStudio() {
             {resources.length > 0 && <div className="agent-resource-list">{resources.map((resource) => <div key={resource.id}><span>{resource.type === "pdf" ? <FileText size={15} /> : <Globe2 size={15} />}<span><strong>{resource.name}</strong><small>{resource.type === "pdf" ? "PDF" : resource.source}</small></span></span><button type="button" aria-label={`Remove ${resource.name}`} onClick={() => setResources((current) => current.filter((item) => item.id !== resource.id))}><Trash2 size={15} /></button></div>)}</div>}
           </div>
           <div className="control-section"><label className="control-label">Behaviour</label><textarea className="studio-prompt agent-system-prompt" value={systemPrompt} onChange={(event) => setSystemPrompt(event.target.value)} /></div>
-          <div className="agent-compact-fields"><label><span>Language</span><select value={language} onChange={(event) => setLanguage(event.target.value)}><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="ja">Japanese</option></select></label><label><span>Voice</span><select value={voice} onChange={(event) => setVoice(event.target.value)}><option value="Kore">Kore</option><option value="Aoede">Aoede</option><option value="Orus">Orus</option><option value="Leda">Leda</option><option value="Puck">Puck</option><option value="Charon">Charon</option></select></label></div>
+          <div className="agent-compact-fields"><label><span>Language</span><select value={language} onChange={(event) => setLanguage(event.target.value)}>{supportedLanguages.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select></label><label><span>Voice</span><select value={voice} onChange={(event) => setVoice(event.target.value)}><option value="Kore">Kore</option><option value="Aoede">Aoede</option><option value="Orus">Orus</option><option value="Leda">Leda</option><option value="Puck">Puck</option><option value="Charon">Charon</option></select></label></div>
           <div className="agent-widget-settings">
             <div><span className="control-label">Website widget</span><small>Customize the launcher your visitors see.</small></div>
             <label><span>Button label</span><input className="studio-input" maxLength={32} value={widgetLabel} onChange={(event) => setWidgetLabel(event.target.value)} /></label>

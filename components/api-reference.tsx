@@ -109,7 +109,7 @@ const endpoints: Endpoint[] = [
   {
     id: "transcriptions", name: "Transcribe media", method: "POST", path: "/api/v1/transcriptions",
     summary: "Transcribe base64-encoded audio or video into text and timestamped segments.",
-    fields: [["base64", "string · required", "Base64 media bytes, without a data-URL prefix."], ["format", "enum · required", "wav, mp3, flac, m4a, ogg, webm, aac, mp4, or mov."], ["language", "string", "Optional two-letter language code."], ["durationSeconds", "number", "Optional duration estimate, up to 3,600 seconds."], ["quality", "enum", "standard or premium."], ["idempotencyKey", "UUID", "Prevents duplicate transcription charges."]],
+    fields: [["base64", "string · required", "Base64 media bytes, without a data-URL prefix."], ["format", "enum · required", "wav, mp3, flac, m4a, ogg, webm, aac, mp4, or mov."], ["language", "string", "Optional ISO or BCP-47 source language code; omit it for auto detection."], ["durationSeconds", "number", "Optional duration estimate, up to 3,600 seconds."], ["quality", "enum", "standard or premium."], ["idempotencyKey", "UUID", "Prevents duplicate transcription charges."]],
     request: `{
   "base64": "<base64 media bytes>",
   "format": "mp3",

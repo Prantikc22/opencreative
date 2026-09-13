@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Code2 } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
+import { CookieSettingsButton } from "@/components/privacy-consent";
 import { productConfig } from "@/lib/config";
 import { creativeTools } from "@/lib/creative-tools";
 
@@ -22,6 +23,8 @@ const utilityGroups = [
   {
     label: "Resources",
     links: [
+      ["Guides", "/resources"],
+      ["Alternatives", "/alternatives"],
       ["API documentation", "/docs/api"],
       ["Developer API", "/developers"],
       ["Self-hosting", "/open-source#self-hosting"],
@@ -74,6 +77,7 @@ export function SiteFooter() {
             <Code2 size={15} /> GitHub <ArrowUpRight size={13} />
           </a>
           <Link href="/privacy">Privacy</Link>
+          <CookieSettingsButton />
           <Link href="/terms">Terms</Link>
           <Link href="/refund-policy">Refunds</Link>
           <Link href="/support">Support</Link>

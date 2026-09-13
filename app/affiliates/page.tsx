@@ -4,8 +4,9 @@ import { ArrowRight, BadgeDollarSign, ChartNoAxesCombined, Link2, MousePointerCl
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "OpenCreative affiliate program", description: "Share OpenCreative with your audience and track referral clicks, conversions, and rewards." };
+export const metadata: Metadata = marketingMetadata({ title: "OpenCreative affiliate program", description: "Share the open-source OpenCreative AI studio with your audience and track referral clicks, conversions, pending rewards, and paid earnings.", path: "/affiliates" });
 
 export default function AffiliatesPage() {
   return <main className="home-2026 affiliate-public">

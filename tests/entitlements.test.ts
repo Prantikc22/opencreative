@@ -2,17 +2,24 @@ import { describe, expect, it } from "vitest";
 import { hasProductEntitlement, productEntitlements } from "@/lib/entitlements";
 
 describe("product entitlements", () => {
-  it("keeps creative plans out of Agent Studio", () => {
+  it("gives creative plans the free Agent Sandbox", () => {
     expect(hasProductEntitlement({ plan: "pro" }, "creative")).toBe(true);
-    expect(hasProductEntitlement({ plan: "pro" }, "agents")).toBe(false);
+    expect(productEntitlements({ plan: "pro" })).toEqual({ creative: "pro", agents: "agent-sandbox" });
   });
 
-  it("keeps agent plans out of Creative Studio", () => {
+  it("gives agent plans the free Creative Studio", () => {
     expect(hasProductEntitlement({ plan: "agent-growth" }, "agents")).toBe(true);
-    expect(hasProductEntitlement({ plan: "agent-growth" }, "creative")).toBe(false);
+    expect(productEntitlements({ plan: "agent-growth" })).toEqual({ creative: "free", agents: "agent-growth" });
   });
 
   it("supports two independently purchased product families", () => {
     expect(productEntitlements({ product_entitlements: { creative: "creator", agents: "agent-launch" } })).toEqual({ creative: "creator", agents: "agent-launch" });
+  });
+
+  it("repairs stale null entitlements from the active paid plan", () => {
+    expect(productEntitlements({ plan: "creator", product_entitlements: { creative: null } })).toEqual({
+      creative: "creator",
+      agents: "agent-sandbox",
+    });
   });
 });

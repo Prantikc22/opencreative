@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -14,12 +15,12 @@ import {
   Music2,
   ScanFace,
   ShieldCheck,
-  Sparkles,
   Upload,
   Video,
   WandSparkles,
 } from "lucide-react";
 import { AgentDemo } from "@/components/marketing/agent-demo";
+import { DeferredVideo } from "@/components/marketing/deferred-video";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MusicDemo } from "@/components/marketing/music-demo";
 import { ScrollMotion } from "@/components/marketing/scroll-motion";
@@ -28,18 +29,26 @@ import { SupportAgentWidget } from "@/components/marketing/support-agent-widget"
 import { VoiceDemos } from "@/components/marketing/voice-demos";
 import { creativeTools, creativeToolIcons } from "@/lib/creative-tools";
 import { ToolIcon, type ToolIconName } from "@/components/tool-icon";
+import { marketingMetadata } from "@/lib/seo";
 
-const customerMarks = [
+export const metadata: Metadata = marketingMetadata({
+  title: "Open-source AI creative studio for complete campaigns",
+  description: "Create AI video, images, ads, UGC, speech, dubbing, avatars, and customer agents from one connected, open-source marketing studio.",
+  path: "/",
+  keywords: ["open source AI creative studio", "AI marketing studio", "AI content creation platform"],
+});
+
+const customerMarks: readonly { name: string; logo: string | null; mark?: string }[] = [
   { name: "eBay", logo: "https://cdn.simpleicons.org/ebay/000000" },
   { name: "Randstad", logo: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Randstad%20Logo.svg" },
-  { name: "The Baker’s Street", logo: "https://www.thebakersstreet.com/brand-wordmark.png" },
+  { name: "The Baker’s Street", logo: null, mark: "THE BAKER’S STREET" },
   { name: "OnePlus", logo: "https://cdn.simpleicons.org/oneplus/000000" },
-  { name: "RVCJ Media", logo: null },
+  { name: "RVCJ Media", logo: null, mark: "RVCJ" },
   { name: "Twilio", logo: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Twilio-logo-red.svg" },
   { name: "Ramp", logo: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Ramp_Business_Corporation_Logo.svg" },
   { name: "DHL", logo: "https://cdn.simpleicons.org/dhl/000000" },
   { name: "Epic Games", logo: "https://cdn.simpleicons.org/epicgames/000000" },
-] as const;
+];
 
 const avatars = [
   ["Mina", "Founder energy", "01"], ["Malik", "Bold and direct", "02"],
@@ -62,7 +71,7 @@ const reactions = [
 const products = [
   { icon: ImageIcon, number: "01", title: "Image", copy: "Art direct campaign stills, product photography and visual concepts with your references intact.", className: "spectrum-image", href: "/studio/image", use: "Product launch" },
   { icon: Video, number: "02", title: "Video", copy: "Build shots, edits, extensions and finished campaign films without losing the thread between scenes.", className: "spectrum-video", href: "/studio/video", use: "Campaign film" },
-  { icon: AudioLines, number: "03", title: "Voice & translation", copy: "Create expressive speech in 80+ languages, translate dialogue, and localize uploaded video without losing the message.", className: "spectrum-voice", href: "/studio/audio", use: "Global narration" },
+  { icon: AudioLines, number: "03", title: "Voice & translation", copy: "Create expressive speech in 70+ languages, translate dialogue, and localize uploaded video without losing the message.", className: "spectrum-voice", href: "/studio/audio", use: "Global narration" },
   { icon: Music2, number: "04", title: "Music", copy: "Create original arrangements and sonic identities that land on the same creative brief.", className: "spectrum-music", href: "/studio/music", use: "Original score" },
   { icon: ScanFace, number: "05", title: "Avatars", copy: "Choose a global presenter or build an authorized digital twin for repeatable production.", className: "spectrum-avatar", href: "/studio/avatar", use: "Presenter video" },
   { icon: Bot, number: "06", title: "Agents", copy: "Give customers a voice-first support agent on phone, laptop, or inside your product widget.", className: "spectrum-agent", href: "/studio/agents", use: "Customer support" },
@@ -89,11 +98,10 @@ export default function Home() {
 
       <section className="hero-2026">
         <div className="hero-film" aria-hidden="true">
-          <video autoPlay muted loop playsInline preload="metadata" poster="/hero-imagination-warm.png"><source src="/opencreative-hero-v2.mp4" type="video/mp4" /><source src="/opencreative-hero.mp4" type="video/mp4" /></video>
+          <DeferredVideo poster="/hero-imagination-warm.webp" src="/opencreative-hero-optimized.mp4" sizes="100vw" priority strategy="interaction" />
           <div className="hero-film-shade" />
         </div>
         <div className="hero-copy-2026">
-          <p><Sparkles size={15} /> The entire marketing studio</p>
           <h1>One idea.<br /><em>Every way it can move.</em></h1>
           <span>Create the film, campaign stills, presenter, voice, music and support agent in one directed workspace.</span>
           <div className="hero-actions-2026"><Link className="oc-button oc-button-coral" href="/signup">Make your first campaign <ArrowRight size={17} /></Link><a className="oc-button oc-button-outline-light" href="#platform">Explore the platform</a></div>
@@ -104,13 +112,13 @@ export default function Home() {
 
       <section className="customer-band" aria-label="Teams using OpenCreative">
         <header><span>BUILT FOR TEAMS LIKE</span><p>One creative system for every channel and every market.</p></header>
-        <div className="logo-marquee"><div className="logo-track">{[...customerMarks, ...customerMarks].map(({ name, logo }, index) => <article key={`${name}-${index}`} aria-label={name}>{logo ? <img src={logo} alt={`${name} logo`} loading="lazy" /> : <span className="logo-wordmark" aria-label={`${name} logo`}>RVCJ</span>}</article>)}</div></div>
+        <div className="logo-marquee"><div className="logo-track">{[...customerMarks, ...customerMarks].map((customer, index) => <article key={`${customer.name}-${index}`} aria-label={customer.name}>{customer.logo ? <img src={customer.logo} alt={`${customer.name} logo`} loading="lazy" /> : <span className="logo-wordmark" aria-label={`${customer.name} logo`}>{customer.mark ?? customer.name}</span>}</article>)}</div></div>
       </section>
 
       <section className="platform-spectrum" id="platform">
         <header className="home-display-heading"><p>THE CREATIVE SUPER APP</p><h2>Stop assembling a stack.<br /><em>Start making the work.</em></h2><span>Six creative systems share one brief, one brand memory and one asset library. Nothing gets lost between tools.</span></header>
         <div className="spectrum-grid">
-          {products.map(({ icon: Icon, number, title, copy, className, href, use }) => <article className={className} key={title}><header><span>{number}</span><Icon size={24} /></header><div className="product-use-visual"><Icon size={34} /><span>{use}</span><i /></div><h3>{title}</h3><p>{copy}</p><Link href={href}>Open studio <ArrowRight size={15} /></Link></article>)}
+          {products.map(({ icon: Icon, number, title, copy, className, href, use }) => <article className={className} key={title}><header><span>{number}</span><Icon size={24} /></header><div className="product-use-visual"><Icon size={34} /><span>{use}</span><i /></div><h3>{title}</h3><p>{copy}</p><Link href={href} aria-label={`Open ${title} studio`}>Open studio <ArrowRight size={15} /></Link></article>)}
         </div>
       </section>
 
@@ -149,7 +157,7 @@ export default function Home() {
       </section>
 
       <section className="voice-section-2026" id="voices">
-        <header className="home-display-heading home-display-light"><p>VOICE WITHOUT BORDERS</p><h2>One message.<br /><em>80+ languages.</em></h2><span>Preview expressive speakers, translate uploaded audio or video, and direct localized speech before you generate.</span></header>
+        <header className="home-display-heading home-display-light"><p>VOICE WITHOUT BORDERS</p><h2>One message.<br /><em>70+ languages.</em></h2><span>Preview expressive speakers, translate uploaded audio or video, and direct localized speech before you generate.</span></header>
         <VoiceDemos />
       </section>
 
@@ -162,7 +170,7 @@ export default function Home() {
         <header className="home-display-heading"><p>OPENCREATIVE AGENTS</p><h2>Resolve more conversations.<br /><em>Keep every answer on brand.</em></h2><span>Launch tenant-isolated voice and text agents from approved company knowledge. Help buyers choose, answer support questions, qualify leads, and hand complex cases to a person.</span></header>
         <div className="agent-value-grid">
           <article><strong>24/7</strong><span>Product and support answers</span></article>
-          <article><strong>80+</strong><span>Languages for global buyers</span></article>
+          <article><strong>70+</strong><span>Languages for global buyers</span></article>
           <article><strong>1 workspace</strong><span>Knowledge, sessions, and analytics</span></article>
           <article><strong>Escalation ready</strong><span>Define when a person takes over</span></article>
         </div>
@@ -184,7 +192,7 @@ export default function Home() {
 
       <section className="showcase-2026" id="showcase">
         <header className="home-display-heading home-display-light"><p>MADE WITH OPENCREATIVE</p><h2>One brief.<br /><em>Four original worlds.</em></h2><span>Each project below was art directed as its own campaign, not recycled from the hero.</span></header>
-        <div className="showcase-grid-2026"><figure className="showcase-hero-card showcase-video-card"><video autoPlay muted loop playsInline preload="metadata" poster="/showcase/forest-fragrance.png"><source src="/opencreative-hero.mp4" type="video/mp4" /></video><figcaption><span>PRODUCT FILM</span><strong>ROOT / FIRST LIGHT</strong><small>Video · Voice · Music</small></figcaption></figure><figure><Image src="/showcase/coastal-serum.png" alt="Coastal skincare creator campaign" fill sizes="30vw" /><figcaption><span>CREATOR CAMPAIGN</span><strong>FIELD / OPEN AIR</strong></figcaption></figure><figure><Image src="/showcase/alpine-drive.png" alt="North Blue Hour outdoor campaign" fill sizes="30vw" /><figcaption><span>LAUNCH FILM</span><strong>NORTH / BLUE HOUR</strong></figcaption></figure><figure><Image src="/showcase/forest-studio.png" alt="Music producer in a forest listening studio" fill sizes="30vw" /><figcaption><span>ORIGINAL MUSIC</span><strong>CANOPY / LIVE SIGNAL</strong></figcaption></figure></div>
+        <div className="showcase-grid-2026"><figure className="showcase-hero-card showcase-video-card"><DeferredVideo poster="/showcase/forest-fragrance.png" src="/opencreative-hero-optimized.mp4" sizes="(max-width: 700px) 100vw, 58vw" /><figcaption><span>PRODUCT FILM</span><strong>ROOT / FIRST LIGHT</strong><small>Video · Voice · Music</small></figcaption></figure><figure><Image src="/showcase/coastal-serum.png" alt="Coastal skincare creator campaign" fill sizes="30vw" /><figcaption><span>CREATOR CAMPAIGN</span><strong>FIELD / OPEN AIR</strong></figcaption></figure><figure><Image src="/showcase/alpine-drive.png" alt="North Blue Hour outdoor campaign" fill sizes="30vw" /><figcaption><span>LAUNCH FILM</span><strong>NORTH / BLUE HOUR</strong></figcaption></figure><figure><Image src="/showcase/forest-studio.png" alt="Music producer in a forest listening studio" fill sizes="30vw" /><figcaption><span>ORIGINAL MUSIC</span><strong>CANOPY / LIVE SIGNAL</strong></figcaption></figure></div>
       </section>
 
       <section className="safety-2026" id="safety">

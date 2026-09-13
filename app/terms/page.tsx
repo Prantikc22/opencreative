@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { productConfig } from "@/lib/config";
-export const metadata: Metadata = { title: "Terms" };
+import { marketingMetadata } from "@/lib/seo";
+export const metadata: Metadata = marketingMetadata({ title: "Terms of service", description: "Terms for OpenCreative accounts, AI-generated media, credits, subscriptions, consent, acceptable use, and third-party model providers.", path: "/terms" });
 export default function TermsPage() {
   return (
     <main className="legal-page">

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, AudioLines, Bot, Clapperboard, ImageIcon, Music2, ScanFace, Sparkles } from "lucide-react";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { marketingMetadata } from "@/lib/seo";
 
 const solutions = {
   marketing: {
@@ -60,7 +61,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const solution = solutions[slug as keyof typeof solutions];
-  return solution ? { title: solution.eyebrow.replace("FOR ", "") } : {};
+  return solution ? marketingMetadata({ title: `${solution.eyebrow.replace("FOR ", "").toLowerCase()} AI creative studio`, description: solution.copy, path: `/solutions/${slug}` }) : {};
 }
 
 export default async function SolutionPage({ params }: { params: Promise<{ slug: string }> }) {

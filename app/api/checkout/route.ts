@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { z } from "zod";
+import { dataFastCheckoutMetadata } from "@/lib/datafast";
 import { billingAppUrl, dodoPurchase, getDodoPayments } from "@/lib/dodo/server";
 import { getWorkspaceContext } from "@/lib/workspace";
 
@@ -29,6 +31,11 @@ export async function POST(request: Request) {
     if (!email) return NextResponse.json({ error: "Your account needs an email address before checkout." }, { status: 400 });
 
     const baseUrl = billingAppUrl();
+    const cookieStore = await cookies();
+    const attributionMetadata = dataFastCheckoutMetadata({
+      visitorId: cookieStore.get("datafast_visitor_id")?.value,
+      sessionId: cookieStore.get("datafast_session_id")?.value,
+    });
     const session = await getDodoPayments().checkoutSessions.create({
       product_cart: [{ product_id: purchase.productId, quantity: 1 }],
       customer: knownCustomer?.provider_customer_id
@@ -43,6 +50,7 @@ export async function POST(request: Request) {
         item_id: purchase.itemId,
         cadence: purchase.cadence,
         family: purchase.family,
+        ...attributionMetadata,
       },
       customization: { theme: "light", show_order_details: true },
       feature_flags: {

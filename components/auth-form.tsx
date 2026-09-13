@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, LoaderCircle, Mail } from "lucide-react";
+import { ArrowRight, LoaderCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { trackDataFastGoal } from "@/lib/datafast-goals";
 
 type Mode = "login" | "signup" | "forgot" | "update";
 
@@ -29,6 +30,7 @@ function safeNext(value: string | null) {
 export function AuthForm({ mode }: { mode: Mode }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -40,8 +42,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const copy = {
     login: ["Welcome back", "Continue creating where you left off."],
     signup: [
-      "Make something impossible",
-      "Start with 50 credits. No card required.",
+      "Create your Marketing Studio",
+      "Build campaigns across image, video, voice, music, avatars, and agents. Start free—no card required.",
     ],
     forgot: ["Reset your password", "We’ll send a secure recovery link."],
     update: ["Choose a new password", "Use at least 8 characters."],
@@ -59,10 +61,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
           password,
         });
         if (error) throw error;
-        await fetch("/api/email/welcome", { method: "POST" }).catch(() => undefined);
         router.push(safeNext(params.get("next")));
         router.refresh();
       } else if (mode === "signup") {
+        if (password !== confirmPassword) {
+          throw new Error("Passwords do not match.");
+        }
         const desiredProduct = params.get("product") === "agents" ? "agents" : "creative";
         const desiredPlan = params.get("plan") || (desiredProduct === "agents" ? "agent-sandbox" : "free");
         const desiredBilling = params.get("billing") === "annual" ? "annual" : "monthly";
@@ -72,10 +76,15 @@ export function AuthForm({ mode }: { mode: Mode }) {
           password,
           options: {
             data: { full_name: fullName, desired_product: desiredProduct, desired_plan: desiredPlan, desired_billing: desiredBilling },
-            emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(onboardingPath)}`,
+            emailRedirectTo: `${location.origin}/auth/callback?welcome=1&next=${encodeURIComponent(onboardingPath)}`,
           },
         });
         if (error) throw error;
+        trackDataFastGoal("signup_completed", {
+          method: "email",
+          product: desiredProduct,
+          plan: desiredPlan,
+        });
         if (data.session) {
           await fetch("/api/email/welcome", { method: "POST" }).catch(() => undefined);
           router.push(onboardingPath);
@@ -100,24 +109,6 @@ export function AuthForm({ mode }: { mode: Mode }) {
     }
   }
 
-  async function magicLink() {
-    if (!email) {
-      setError("Enter your email first.");
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${location.origin}/auth/callback?next=/app`,
-      },
-    });
-    setLoading(false);
-    if (error) setError(authErrorMessage(error));
-    else setMessage("Magic link sent. Check your inbox.");
-  }
-
   async function googleAuth() {
     setLoading(true);
     setError(null);
@@ -126,10 +117,17 @@ export function AuthForm({ mode }: { mode: Mode }) {
     const desiredBilling = params.get("billing") === "annual" ? "annual" : "monthly";
     const signupNext = `/onboarding?product=${desiredProduct}&plan=${encodeURIComponent(desiredPlan)}&billing=${desiredBilling}`;
     const next = safeNext(params.get("next")) === "/app" && mode === "signup" ? signupNext : safeNext(params.get("next"));
+    if (mode === "signup") {
+      trackDataFastGoal("signup_started", {
+        method: "google",
+        product: desiredProduct,
+        plan: desiredPlan,
+      });
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        redirectTo: `${location.origin}/auth/callback?${mode === "signup" ? "welcome=1&" : ""}next=${encodeURIComponent(next)}`,
         queryParams: { access_type: "offline", prompt: "select_account" },
       },
     });
@@ -193,6 +191,21 @@ export function AuthForm({ mode }: { mode: Mode }) {
             />
           </label>
         )}
+        {mode === "signup" && (
+          <label>
+            Confirm password
+            <input
+              type="password"
+              minLength={8}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="new-password"
+              required
+              placeholder="Enter your password again"
+              aria-invalid={Boolean(confirmPassword && password !== confirmPassword)}
+            />
+          </label>
+        )}
         {mode === "login" && (
           <Link className="forgot-link" href="/forgot-password">
             Forgot password?
@@ -225,11 +238,6 @@ export function AuthForm({ mode }: { mode: Mode }) {
           )}
         </button>
       </form>
-      {mode === "login" && (
-        <button className="magic-button" onClick={magicLink} disabled={loading}>
-          <Mail size={15} /> Email me a magic link
-        </button>
-      )}
       <p className="auth-switch">
         {mode === "login" ? (
           <>

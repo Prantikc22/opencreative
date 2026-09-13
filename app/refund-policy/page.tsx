@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { productConfig } from "@/lib/config";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Refund policy" };
+export const metadata: Metadata = marketingMetadata({ title: "Refund policy", description: "OpenCreative subscription renewal, cancellation, failed-generation credit return, money-back guarantee, and refund request policy.", path: "/refund-policy" });
 
 export default function RefundPolicyPage() {
   return <main className="legal-page"><nav><Link href="/"><ArrowLeft size={15} />OpenCreative</Link></nav><header><p className="eyebrow">Refund policy</p><h1>Clear before checkout.</h1><p>This policy explains renewals, cancellation and refund requests for hosted OpenCreative plans.</p><small>Effective September 11, 2026 · Last updated September 11, 2026</small></header><section className="legal-copy">

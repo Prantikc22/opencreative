@@ -15,6 +15,7 @@ const schema = z.object({
   text: z.string().trim().min(1).max(10000),
   voice: z.string().min(1).max(200).default("alloy"),
   speed: z.number().min(0.7).max(1.3).default(1),
+  language: z.string().min(2).max(10).optional(),
   quality: z.enum(["fast", "standard", "premium"]).default("standard"),
   projectId: z.string().uuid().optional(),
   idempotencyKey: z.string().uuid().optional(),
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
         characters: input.text.length,
         voice: input.voice,
         speed: input.speed,
+        language: input.language,
       },
       idempotencyKey: input.idempotencyKey,
     });
@@ -91,7 +93,7 @@ export async function POST(request: Request) {
       supabase: context.supabase,
       generationId,
       userId: context.user.id,
-      outputMetadata: { voice: input.voice },
+      outputMetadata: { voice: input.voice, language: input.language },
     });
     return NextResponse.json({
       generationId,

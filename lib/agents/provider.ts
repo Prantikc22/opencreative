@@ -27,7 +27,7 @@ export async function transcribeAgentAudio(input: {
     model: agentModels.transcription,
     base64: input.audio.base64,
     format: input.audio.format,
-    language: input.language?.slice(0, 2),
+    language: input.language,
   });
   const transcript = transcription.text.trim();
   if (!transcript) throw new Error("I could not hear a question. Please try again.");

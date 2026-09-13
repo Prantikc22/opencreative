@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
+  ArrowRight,
   AudioWaveform,
   Check,
   Download,
@@ -16,6 +17,7 @@ import {
   Upload,
 } from "lucide-react";
 import { SpecializedTools } from "@/components/studio/specialized-tools";
+import { languageName, supportedLanguages } from "@/lib/languages";
 
 const voices = [
   {
@@ -164,7 +166,9 @@ export function AudioStudio() {
     "Create without limits. OpenCreative turns your idea into finished creative.",
   );
   const [speed, setSpeed] = useState(1);
-  const [language, setLanguage] = useState("English");
+  const [speechLanguage, setSpeechLanguage] = useState("en");
+  const [sourceLanguage, setSourceLanguage] = useState("auto");
+  const [targetLanguage, setTargetLanguage] = useState("hi");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
@@ -223,6 +227,7 @@ export function AudioStudio() {
             : text,
           voice: selectedVoice.id,
           speed,
+          language: speechLanguage,
           quality: "standard",
           idempotencyKey: crypto.randomUUID(),
         }),
@@ -269,6 +274,7 @@ export function AudioStudio() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...media,
+          language: sourceLanguage === "auto" ? undefined : sourceLanguage,
           quality: "standard",
           idempotencyKey: crypto.randomUUID(),
         }),
@@ -282,7 +288,7 @@ export function AudioStudio() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             text: data.transcript,
-            language,
+            language: languageName(targetLanguage),
             tone: "natural spoken dialogue",
           }),
         });
@@ -316,7 +322,7 @@ export function AudioStudio() {
             In any language.
           </h1>
           <p>
-            Expressive speech in 80+ languages, transcription, and video dubbing
+            Expressive speech in 70+ languages, transcription, and video dubbing
             routed through the right model. Provider details stay out of your way.
           </p>
         </div>
@@ -420,10 +426,22 @@ export function AudioStudio() {
               <div>
                 <strong>{voice.name}</strong>
                 <small>
-                  {voice.style} · {voice.accent}
+                  {languageName(speechLanguage)} · {voice.style} · {voice.accent}
                 </small>
               </div>
             </div>
+            <label className="speech-language-select">
+              Script language
+              <select
+                value={speechLanguage}
+                onChange={(event) => setSpeechLanguage(event.target.value)}
+              >
+                {supportedLanguages.map((item) => (
+                  <option value={item.code} key={item.code}>{item.name}</option>
+                ))}
+              </select>
+              <small>The voice follows the language written in your script; this selection keeps the generation labeled correctly.</small>
+            </label>
             <textarea
               value={text}
               onChange={(event) => setText(event.target.value)}
@@ -494,7 +512,7 @@ export function AudioStudio() {
         </div>
       )}
       {(tab === "stt" || tab === "dub") && (
-        <section className="transcribe-panel">
+        <section className={`transcribe-panel ${tab === "dub" ? "dub-panel" : ""}`}>
           <div className="transcribe-copy">
             <p className="eyebrow">
               {tab === "dub" ? "Dubbing workflow" : "Transcription"}
@@ -509,25 +527,40 @@ export function AudioStudio() {
                 ? "Upload, transcribe, translate, then generate replacement speech. Composition stays a separate export step so you remain in control."
                 : "Upload audio or video and receive a clean transcript. Supported formats include MP3, WAV, M4A, MP4, MOV, OGG, WebM and AAC."}
             </p>
-            {tab === "dub" && (
+            <span className="language-count-badge"><Languages size={14} /> {supportedLanguages.length} languages available</span>
+            {tab === "stt" && (
               <label className="form-field">
-                Target language
+                Recording language
                 <select
-                  value={language}
-                  onChange={(event) => setLanguage(event.target.value)}
+                  value={sourceLanguage}
+                  onChange={(event) => setSourceLanguage(event.target.value)}
                 >
-                  <option>English</option>
-                  <option>Hindi</option>
-                  <option>Spanish</option>
-                  <option>French</option>
-                  <option>German</option>
-                  <option>Japanese</option>
-                  <option>Korean</option>
-                  <option>Portuguese</option>
+                  <option value="auto">Auto detect</option>
+                  {supportedLanguages.map((item) => (
+                    <option value={item.code} key={item.code}>{item.name}</option>
+                  ))}
                 </select>
               </label>
             )}
           </div>
+          {tab === "dub" && (
+            <div className="dub-language-route">
+              <label>
+                <span>Source language</span>
+                <select value={sourceLanguage} onChange={(event) => setSourceLanguage(event.target.value)}>
+                  <option value="auto">Auto detect</option>
+                  {supportedLanguages.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}
+                </select>
+              </label>
+              <span className="dub-route-arrow" aria-hidden="true"><ArrowRight size={20} /></span>
+              <label>
+                <span>Target language</span>
+                <select value={targetLanguage} onChange={(event) => setTargetLanguage(event.target.value)}>
+                  {supportedLanguages.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}
+                </select>
+              </label>
+            </div>
+          )}
           <label className="audio-drop">
             <Upload size={25} />
             <strong>{file ? file.name : "Drop audio or video here"}</strong>
@@ -561,7 +594,7 @@ export function AudioStudio() {
               <p>{transcript}</p>
               {translated && (
                 <>
-                  <span>{language} translation</span>
+                  <span>{languageName(targetLanguage)} translation</span>
                   <p>{translated}</p>
                   <button
                     className="button button-dark"

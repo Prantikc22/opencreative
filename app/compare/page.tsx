@@ -4,8 +4,9 @@ import { ArrowRight, Check, Minus } from "lucide-react";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Compare OpenCreative", description: "Compare OpenCreative with ElevenLabs, HeyGen, Runway, and Higgsfield across creative tools, agents, open source access, and pricing." };
+export const metadata: Metadata = marketingMetadata({ title: "Compare OpenCreative with specialist AI tools", description: "Compare OpenCreative with ElevenLabs, HeyGen, Runway, and Higgsfield across AI video, voice, avatars, agents, open-source access, and campaign workflow.", path: "/compare" });
 
 const companies = [
   { name: "OpenCreative", price: "One account, broad workflow", focus: "Campaign operating system", href: "/pricing", note: "Create, organize, translate, deploy agents, and connect through MCP." },

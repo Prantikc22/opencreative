@@ -2,6 +2,7 @@
 
 import { ArrowRight, LoaderCircle } from "lucide-react";
 import { useState } from "react";
+import { trackDataFastGoal } from "@/lib/datafast-goals";
 
 export function DodoCheckoutButton({
   itemId,
@@ -26,6 +27,10 @@ export function DodoCheckoutButton({
       });
       const payload = (await response.json()) as { checkoutUrl?: string; error?: string };
       if (!response.ok || !payload.checkoutUrl) throw new Error(payload.error || "Checkout could not open.");
+      trackDataFastGoal("initiate_checkout", {
+        item_id: itemId,
+        cadence,
+      });
       window.location.assign(payload.checkoutUrl);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Checkout could not open.");

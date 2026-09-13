@@ -5,11 +5,9 @@ import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SupportAgentWidget } from "@/components/marketing/support-agent-widget";
 import { productConfig } from "@/lib/config";
+import { marketingMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Open source and self-hosting",
-  description: "Inspect, extend, and self-host the OpenCreative core with your own Supabase, R2, and OpenRouter accounts.",
-};
+export const metadata: Metadata = marketingMetadata({ title: "Open-source AI creative studio and self-hosting", description: "Inspect, extend, and self-host OpenCreative with your own Next.js, Supabase, Cloudflare R2, and OpenRouter accounts.", path: "/open-source", keywords: ["open source AI creative studio", "self hosted AI creative platform", "open source AI marketing tools"] });
 
 const architecture = [
   [Route, "Inspectable routing", "Model selection, capability rules, fallbacks, and credit estimates remain visible in application code."],
@@ -18,10 +16,10 @@ const architecture = [
 ] as const;
 
 const steps = [
-  ["01", "Clone and configure", "Copy the environment template and choose the provider accounts that your deployment will use."],
-  ["02", "Apply the data model", "Run the Supabase migrations to install workspace isolation, RLS policies, credits, agents, and generation history."],
-  ["03", "Connect private media", "Create an R2 bucket and provide the credentials used for private uploads and signed asset delivery."],
-  ["04", "Build and deploy", "Typecheck, test, and build the same Next.js application that runs the hosted product."],
+  ["01", "Clone and configure", "Clone the public GitHub repository, run npm ci, copy .env.example to .env.local, and fill the required service credentials."],
+  ["02", "Apply the data model", "Link the Supabase CLI and run npx supabase db push to install workspace isolation, RLS, credits, agents, and generation history."],
+  ["03", "Connect private media", "Run npm run storage:setup to create the private R2 bucket and configure browser upload origins."],
+  ["04", "Verify and deploy", "Run lint, typecheck, tests, and a production build before deploying the same application to Vercel or Docker."],
 ] as const;
 
 const safeguards = [
@@ -43,7 +41,7 @@ const envGroups = [
   ["Application", "NEXT_PUBLIC_APP_URL", "NEXT_PUBLIC_APP_NAME"],
   ["Supabase", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "SUPABASE_SERVICE_ROLE_KEY"],
   ["OpenRouter", "OPENROUTER_API_KEY", "OPENROUTER_SITE_URL", "OPENROUTER_APP_NAME"],
-  ["Cloudflare R2", "R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET_NAME"],
+  ["Cloudflare R2", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_R2_ACCESS_KEY_ID", "CLOUDFLARE_R2_SECRET_ACCESS_KEY", "CLOUDFLARE_R2_BUCKET"],
 ] as const;
 
 export default function OpenSourcePage() {
@@ -84,7 +82,7 @@ export default function OpenSourcePage() {
         <div className="oss-steps">{steps.map(([number, title, copy]) => <article key={number}><span>{number}</span><h3>{title}</h3><p>{copy}</p></article>)}</div>
         <div className="oss-terminal">
           <header><span>PRODUCTION CHECK</span><small>zsh</small></header>
-          <pre><code>npm install{"\n"}npm run typecheck{"\n"}npm test{"\n"}npm run build{"\n"}npm start</code></pre>
+          <pre><code>git clone {productConfig.githubUrl}{"\n"}cd opencreative{"\n"}npm ci{"\n"}cp .env.example .env.local{"\n"}npx supabase db push{"\n"}npm run storage:setup{"\n"}npm run lint &amp;&amp; npm run typecheck{"\n"}npm test &amp;&amp; npm run build{"\n"}npm start</code></pre>
           <footer><Check size={15} /> No local video transcoding required</footer>
         </div>
       </section>
