@@ -3,7 +3,7 @@
 const launchBadges = [
   {
     href: "https://smollaunch.com",
-    src: "https://smollaunch.com/badges/featured.svg",
+    src: "https://smollaunch.com/badges/featured-dark.svg",
     alt: "OpenCreative — Featured on Smol Launch",
     width: 250,
     height: 60,
@@ -16,8 +16,8 @@ const launchBadges = [
     height: 65,
   },
   {
-    href: "https://fazier.com",
-    src: "https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=neutral",
+    href: "https://fazier.com/launches/www.opencreativehq.com",
+    src: "https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=dark",
     alt: "OpenCreative featured on Fazier",
     width: 250,
     height: 59,
