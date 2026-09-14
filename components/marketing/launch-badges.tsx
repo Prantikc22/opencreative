@@ -22,6 +22,13 @@ const launchBadges = [
     width: 250,
     height: 59,
   },
+  {
+    href: "https://www.tinyshelf.co/?ref=opencreativehq.com",
+    src: "https://www.tinyshelf.co/badge/tinyshelf-badge-dark-f4d1216a.svg",
+    alt: "Featured on TinyShelf",
+    width: 216,
+    height: 64,
+  },
 ] as const;
 
 export function LaunchBadges({ placement }: { placement: "hero" | "footer" }) {
