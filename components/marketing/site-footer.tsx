@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, Code2 } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { CookieSettingsButton } from "@/components/privacy-consent";
+import { LaunchBadges } from "@/components/marketing/launch-badges";
 import { productConfig } from "@/lib/config";
 import { creativeTools } from "@/lib/creative-tools";
 
@@ -60,6 +61,11 @@ export function SiteFooter() {
 
       <div className="site-footer-utility">
         {utilityGroups.map((group) => <nav key={group.label} aria-label={`${group.label} links`}><span>{group.label}</span><div>{group.links.map(([label, href]) => <Link href={href} key={label}>{label}</Link>)}</div></nav>)}
+      </div>
+
+      <div className="site-footer-launch-row">
+        <span>Featured and launching on</span>
+        <LaunchBadges placement="footer" />
       </div>
 
       <div className="site-footer-wordmark" aria-hidden="true">

@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { AgentDemo } from "@/components/marketing/agent-demo";
 import { DeferredVideo } from "@/components/marketing/deferred-video";
+import { LaunchBadges } from "@/components/marketing/launch-badges";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MusicDemo } from "@/components/marketing/music-demo";
 import { ScrollMotion } from "@/components/marketing/scroll-motion";
@@ -107,6 +108,7 @@ export default function Home() {
           <div className="hero-actions-2026"><Link className="oc-button oc-button-coral" href="/signup">Make your first campaign <ArrowRight size={17} /></Link><a className="oc-button oc-button-outline-light" href="#platform">Explore the platform</a></div>
           <small>50 free credits · No card · Open-source core</small>
         </div>
+        <LaunchBadges placement="hero" />
         <div className="hero-format-rail" aria-hidden="true"><span>IMAGE</span><span>VIDEO</span><span>VOICE</span><span>MUSIC</span><span>AVATAR</span><span>AGENT</span></div>
       </section>
 
